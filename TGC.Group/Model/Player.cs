@@ -86,10 +86,12 @@ namespace TGC.Group.Model
             else if (input.keyDown(Key.X))
             {
                 movementDirection = -TGCVector3.Up;
-            } else if (input.keyDown(Key.Q))
+            }
+            else if (input.keyDown(Key.Q))
             {
-                var rotationY = TGCMatrix.RotationY(movementSpeed);
-                Mesh.Transform = rotationY;
+                float angle = movementSpeed / 50 * GameInstance.ElapsedTime;
+                Mesh.Rotation += new TGCVector3(0, angle, 0);
+                Mesh.Transform = TGCMatrix.RotationY(Mesh.Rotation.Y);
             }
 
             if (!CollisionDetected())
