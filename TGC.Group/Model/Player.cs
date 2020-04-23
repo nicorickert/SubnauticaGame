@@ -1,9 +1,6 @@
 ﻿using Microsoft.DirectX.DirectInput;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using TGC.Core.Direct3D;
 using TGC.Core.Example;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
@@ -89,6 +86,10 @@ namespace TGC.Group.Model
             else if (input.keyDown(Key.X))
             {
                 movementDirection = -TGCVector3.Up;
+            } else if (input.keyDown(Key.Q))
+            {
+                var rotationY = TGCMatrix.RotationY(movementSpeed);
+                Mesh.Transform = rotationY;
             }
 
             if (!CollisionDetected())
