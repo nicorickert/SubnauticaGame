@@ -6,7 +6,7 @@ namespace TGC.Group.Model
 {
     public abstract class GameObject
     {
-        public TGCExample GameInstance { get; private set; }
+        public Subnautica GameInstance { get; private set; }
         public string Name { get; private set; }
         public TgcMesh Mesh { get; protected set; }
         public TGCVector3 LookDirection { get; protected set; }
@@ -20,15 +20,22 @@ namespace TGC.Group.Model
             }
         }
 
-
-        public GameObject(TGCExample gameInstance, string name)
+        public GameObject(Subnautica gameInstance, string name)
         {
             GameInstance = gameInstance;
             Name = name;
+            GameInstance.InstanceObject(this);
         }
 
         public abstract void Update();
         public abstract void Render();
         public abstract void Dispose();
+
+
+        protected void Translate(TGCVector3 displacement)
+        {
+            Mesh.Position += displacement;
+            Mesh.Transform = TGCMatrix.Translation(Mesh.Position);
+        }
     }
 }

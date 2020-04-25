@@ -11,11 +11,9 @@ namespace TGC.Group.Model
     public class Player : GameObject
     {
         /* STATS */
-        private int health = 100;
-        private int oxygen = 100;
         private float movementSpeed = 130.0f;
 
-        public Player(TGCExample gameInstance, string name) : base(gameInstance, name)
+        public Player(Subnautica gameInstance, string name) : base(gameInstance, name)
         {
             var loader = new TgcSceneLoader();
             var playerScene = loader.loadSceneFromFile(GameInstance.MediaDir + "Player\\Player-TgcScene.xml");
@@ -45,16 +43,6 @@ namespace TGC.Group.Model
         #endregion
 
         #region PRIVATE_METHODS
-
-        private void ChangeHealth(int change)
-        {
-            health = FastMath.Clamp(health + change, 0, 100);
-        }
-
-        private void ChangeOxygen(int change)
-        {
-            oxygen = FastMath.Clamp(oxygen + change, 0, 100);
-        }
 
         private void ManageMovement()
         {
@@ -90,14 +78,13 @@ namespace TGC.Group.Model
             else if (input.keyDown(Key.Q))
             {
                 float angle = movementSpeed / 50 * GameInstance.ElapsedTime;
-                Mesh.Rotation += new TGCVector3(0, angle, 0);
+                Mesh.Rotation -= new TGCVector3(0, angle, 0);
                 Mesh.Transform = TGCMatrix.RotationY(Mesh.Rotation.Y);
             }
 
             if (!CollisionDetected())
             {
-                Mesh.Position += movementDirection * movementSpeed * GameInstance.ElapsedTime;
-                Mesh.Transform = TGCMatrix.Translation(Mesh.Position);
+                Translate(movementDirection * movementSpeed * GameInstance.ElapsedTime);
             }
         }
 
@@ -117,27 +104,6 @@ namespace TGC.Group.Model
 
         #region PUBLIC_METHODS
 
-        public void LooseHealth(int loss)
-        {
-            ChangeHealth(-loss);
-        }
-
-        public void GainHealth(int gain)
-        {
-            ChangeHealth(gain);
-        }
-
-        public void LooseOxygen(int loss)
-        {
-            ChangeOxygen(-loss);
-        }
-
-        public void GainOxygen(int gain)
-        {
-            ChangeOxygen(gain);
-        }
-
-        public bool IsDead() => health == 0;
 
         #endregion
     }

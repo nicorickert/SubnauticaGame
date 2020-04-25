@@ -6,7 +6,7 @@ using TGC.Group.Model.Utils;
 
 namespace TGC.Group.Model
 {
-    class Subnautica : TGCExample
+    public class Subnautica : TGCExample
     {
         private List<GameObject> sceneObjects = new List<GameObject>();
         private TgcScene scene;
@@ -29,7 +29,6 @@ namespace TGC.Group.Model
             var loader = new TgcSceneLoader();
 
             Player = new Player(this, "player");
-            InstanceObject(Player);
 
             Camera = new FPSCamera(Player, new TGCVector3(0, 100, 200));
 
