@@ -44,6 +44,9 @@ namespace TGC.Group.Model
 
         #region PRIVATE_METHODS
 
+        // <summary>
+        //      Dado un input WASD el Mesh se mueve a la izquierda, derecha, adelante y atras respecto del vector LookDirection
+        // <summary>
         private void ManageMovement()
         {
             TgcD3dInput input = GameInstance.Input;
