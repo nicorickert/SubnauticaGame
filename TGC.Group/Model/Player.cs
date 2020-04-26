@@ -1,26 +1,29 @@
-﻿using Microsoft.DirectX.DirectInput;
+﻿using System;
+using Microsoft.DirectX.DirectInput;
 using System.Diagnostics;
 using TGC.Core.Direct3D;
 using TGC.Core.Example;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
+using Microsoft.DirectX.Direct3D;
 
 namespace TGC.Group.Model
 {
     public class Player : GameObject
     {
         /* STATS */
-        private float movementSpeed = 130.0f;
+        private float movementSpeed = 400.0f;
+        private float rotationSpeed = 80f;
+        private TGCMatrix transformPlayer;
 
         public Player(Subnautica gameInstance, string name) : base(gameInstance, name)
         {
             var loader = new TgcSceneLoader();
             var playerScene = loader.loadSceneFromFile(GameInstance.MediaDir + "Player\\Player-TgcScene.xml");
             Mesh = playerScene.Meshes[0];
-            Mesh.Scale = new TGCVector3(0.1f, 0.1f, 0.1f);
-            Mesh.Position = new TGCVector3(0, 100, -1000);
-            LookDirection = new TGCVector3(0, 0, -1);  // Por como esta orientado el Mesh originalmente
+            Mesh.Position = new TGCVector3(0f, 200f, 1200f);
+            LookDirection = new TGCVector3(0.5f, 0, 0.5f);  // Por como esta orientado el Mesh originalmente
         }
 
         #region GameObject
@@ -28,10 +31,23 @@ namespace TGC.Group.Model
         public override void Update()
         {
             ManageMovement();
+
+            /*
+            // Rotacion
+            TGCQuaternion rotationX = TGCQuaternion.RotationAxis(new TGCVector3(1.0f, 0f, 0f), rotation.X);
+            TGCQuaternion rotationY = TGCQuaternion.RotationAxis(new TGCVector3(0f, 1.0f, 0f), rotation.Y);
+            TGCQuaternion rotationZ = TGCQuaternion.RotationAxis(new TGCVector3(0f, 0f, 1.0f), rotation.Z);
+
+            TGCQuaternion totalRotation = rotationX * rotationY * rotationZ;
+            transformPlayer = baseScale * TGCMatrix.RotationTGCQuaternion(totalRotation) * position; // Roto antes de desplazar para que gire sobre el origen de coords
+            */
+           
+
         }
 
         public override void Render()
         {
+            Mesh.Transform = transformPlayer;
             Mesh.Render();
         }
 
@@ -51,45 +67,60 @@ namespace TGC.Group.Model
         {
             TgcD3dInput input = GameInstance.Input;
             TGCVector3 movementDirection = TGCVector3.Empty;
+            var moveForward = 0f; // Para detectar si se mueve hacia adelante o hacia atras
+            float rotate = 0;
+
+            var lastPos = Mesh.Position;
 
             if (input.keyDown(Key.W))  // Adelante
             {
-                movementDirection = LookDirection;
+                moveForward = -movementSpeed;
             }
-            else if (input.keyDown(Key.S))  // Atras
+            if (input.keyDown(Key.S))  // Atras
             {
-                movementDirection = -LookDirection;
+                moveForward = movementSpeed;
             }
-            else if (input.keyDown(Key.A))  // Izquierda
+            if (input.keyDown(Key.A))  // Adelante
             {
-                TGCMatrix rotationMatrix = TGCMatrix.RotationY(FastMath.PI_HALF);
-                movementDirection = ApplyTransformation(rotationMatrix, LookDirection);
+                Mesh.Position += ApplyTransformation(TGCMatrix.RotationY(FastMath.PI_HALF), LookDirection) * movementSpeed * GameInstance.ElapsedTime; ;
             }
-            else if (input.keyDown(Key.D))  // Derecha
+            if (input.keyDown(Key.D))  // Atras
             {
-                TGCMatrix rotationMatrix = TGCMatrix.RotationY(FastMath.PI_HALF * 3);
-                movementDirection = ApplyTransformation(rotationMatrix, LookDirection);
+                Mesh.Position += ApplyTransformation(TGCMatrix.RotationY(FastMath.PI_HALF * 3), LookDirection) * movementSpeed * GameInstance.ElapsedTime; ;
             }
-            else if (input.keyDown(Key.Space))    // De acá para abajo son solo de prueba para poder moverme en la escena libremente
+            if (input.keyDown(Key.Q))  // Rotar Izquierda
             {
-                movementDirection = TGCVector3.Up;
+                rotate -= rotationSpeed;
             }
-            else if (input.keyDown(Key.X))
+            if (input.keyDown(Key.E))  // Rotar Derecha
             {
-                movementDirection = -TGCVector3.Up;
+                rotate += rotationSpeed;
             }
-            else if (input.keyDown(Key.Q))   // No funca
+            if (input.keyDown(Key.Space))    // De acá para abajo son solo de prueba para poder moverme en la escena libremente
             {
-                System.Console.WriteLine("Q pressed");
-                System.Console.WriteLine("Previous rotation: " + Mesh.Rotation);
-                Mesh.Rotation -= new TGCVector3(0, 1000 * GameInstance.ElapsedTime, 0);
-                Mesh.Transform = TGCMatrix.RotationY(Mesh.Rotation.Y);
-                System.Console.WriteLine("Final rotation: " + Mesh.Rotation);
+                Mesh.Position += TGCVector3.Up * movementSpeed * GameInstance.ElapsedTime;
             }
+            if (input.keyDown(Key.LeftShift))
+            {
+                Mesh.Position += -TGCVector3.Up * movementSpeed * GameInstance.ElapsedTime;
+            }
+            
 
             if (!CollisionDetected())
             {
-                Translate(movementDirection * movementSpeed * GameInstance.ElapsedTime);
+                //Rotacion
+                var rotAngle = Geometry.DegreeToRadian(rotate * GameInstance.ElapsedTime);
+                Mesh.Rotation += new TGCVector3(0, rotAngle, 0);
+
+                // Posicion
+                var moveF = moveForward * GameInstance.ElapsedTime;
+                var z = (float)Math.Cos(Mesh.Rotation.Y) * moveF;
+                var x = (float)Math.Sin(Mesh.Rotation.Y) * moveF;
+                Mesh.Position += new TGCVector3(x, 0, z); // No pongo Y ya que solo quiero moverme en el plano XZ
+
+                LookDirection = new TGCVector3(-(float)Math.Sin(Mesh.Rotation.Y), 0, -(float)Math.Cos(Mesh.Rotation.Y));
+
+                transformPlayer = TGCMatrix.RotationYawPitchRoll(Mesh.Rotation.Y, Mesh.Rotation.X, Mesh.Rotation.Z) * TGCMatrix.Translation(Mesh.Position);
             }
         }
 

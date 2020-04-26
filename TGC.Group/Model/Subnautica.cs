@@ -4,6 +4,7 @@ using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Group.Model.Utils;
 
+
 namespace TGC.Group.Model
 {
     public class Subnautica : TGCExample
@@ -12,7 +13,6 @@ namespace TGC.Group.Model
         private TgcScene scene;
         
         public Player Player { get; private set; }
-
 
         public Subnautica(string mediaDir, string shadersDir) : base(mediaDir, shadersDir)
         {
@@ -30,7 +30,7 @@ namespace TGC.Group.Model
 
             Player = new Player(this, "player");
 
-            Camera = new FPSCamera(Player, new TGCVector3(0, 100, 200));
+            Camera = new FPSCamera(Player, new TGCVector3(0, 100, 300));
 
             scene = loader.loadSceneFromFile(MediaDir + "Scene\\Isla-TgcScene.xml");
         }
@@ -38,7 +38,6 @@ namespace TGC.Group.Model
         public override void Update()
         {
             PreUpdate();
-
             foreach (GameObject o in sceneObjects)
                 o.Update();
 
