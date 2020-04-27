@@ -31,7 +31,6 @@ namespace TGC.Group.Model
             Camera = new FPSCamera(Player, new TGCVector3(0, 120, -20));
 
             TgcSceneLoader loader = new TgcSceneLoader();
-
             scene = loader.loadSceneFromFile(MediaDir + "Scene\\Isla-TgcScene.xml");
 
             LoadMainScene();
@@ -80,7 +79,7 @@ namespace TGC.Group.Model
 
         private void LoadMainScene()
         {
-            InstanceObject(new StaticObject(this, "pilar coral", TGCVector3.Empty, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+            InstanceObject(new StaticObject(this, "coral", TGCVector3.Empty, TGCVector3.One * 2, TGCVector3.Empty, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
         }
     }
 }
