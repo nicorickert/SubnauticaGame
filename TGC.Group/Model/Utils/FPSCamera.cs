@@ -17,18 +17,13 @@ namespace TGC.Group.Model.Utils
 
         public override void UpdateCamera(float elapsedTime)
         {
-            TGCVector3 camaraPosition = player.Position + eyePosition;
+            //TGCVector3 camaraPosition = player.Position + eyePosition;
 
-            //float normEyePosition = NormOfVector3(eyePosition);
-            //TGCVector3 eyePositionLookingTo = -normEyePosition * TGCVector3.Normalize(player.LookDirection);  // Pongo la norma del eyePosition en la direccion del lookDir
-            //TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + new TGCVector3(0, eyePosition.Y, 0);
+            float normEyePosition = MathExtended.NormOfVector3(eyePosition);
+            TGCVector3 eyePositionLookingTo = normEyePosition * TGCVector3.Normalize(player.LookDirection);  // Pongo la norma del eyePosition en la direccion del lookDir
+            TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + new TGCVector3(0, eyePosition.Y, 0);
 
             SetCamera(camaraPosition, camaraPosition + player.LookDirection);
-        }
-
-        float NormOfVector3(TGCVector3 v)
-        {
-            return FastMath.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
         }
     }
 }

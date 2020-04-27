@@ -1,10 +1,8 @@
 ﻿using Microsoft.DirectX.DirectInput;
-using System.Diagnostics;
-using TGC.Core.Direct3D;
-using TGC.Core.Example;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
+using TGC.Group.Model.Utils;
 
 namespace TGC.Group.Model
 {
@@ -66,12 +64,12 @@ namespace TGC.Group.Model
             else if (input.keyDown(Key.A))  // Izquierda
             {
                 TGCMatrix rotationMatrix = TGCMatrix.RotationY(FastMath.PI_HALF);
-                movementDirection = ApplyTransformation(rotationMatrix, LookDirection);
+                movementDirection = MathExtended.TransformVector3(rotationMatrix, LookDirection);
             }
             else if (input.keyDown(Key.D))  // Derecha
             {
                 TGCMatrix rotationMatrix = TGCMatrix.RotationY(FastMath.PI_HALF * 3);
-                movementDirection = ApplyTransformation(rotationMatrix, LookDirection);
+                movementDirection = MathExtended.TransformVector3(rotationMatrix, LookDirection);
             }
             else if (input.keyDown(Key.Space))    // De acá para abajo son solo de prueba para poder moverme en la escena libremente
             {
@@ -99,25 +97,12 @@ namespace TGC.Group.Model
                 Mesh.Rotation -= totalRotation;
 
                 TGCMatrix rotacionRespectoDelMesh = TGCMatrix.RotationYawPitchRoll(totalRotation.Y, totalRotation.X, totalRotation.Z); // Esta rotacion debería ser respecto de el eje Y del mesh.
-                LookDirection = ApplyTransformation(rotacionRespectoDelMesh, LookDirection);
+                LookDirection = MathExtended.TransformVector3(rotacionRespectoDelMesh, LookDirection);
 
                 TGCMatrix translationMatrix = TGCMatrix.Translation(Mesh.Position);
                 TGCMatrix rotationMatrix = TGCMatrix.RotationYawPitchRoll(Mesh.Rotation.Y, Mesh.Rotation.X, Mesh.Rotation.Z);
                 nextTransform = rotationMatrix * translationMatrix;
             }
-        }
-
-        // <summary>
-        //      Multiplico la matriz por el vector a transformar.
-        // <summary>
-        private TGCVector3 ApplyTransformation(TGCMatrix transform, TGCVector3 vector)
-        {
-            TGCVector3 result = TGCVector3.Empty;
-            result.X = transform.M11 * vector.X + transform.M12 * vector.Y + transform.M13 * vector.Z;
-            result.Y = transform.M21 * vector.X + transform.M22 * vector.Y + transform.M23 * vector.Z;
-            result.Z = transform.M31 * vector.X + transform.M32 * vector.Y + transform.M33 * vector.Z;
-
-            return result;
         }
 
         private bool CollisionDetected() => false;  // TODO Tal vez podria ir en la clase GameObject
