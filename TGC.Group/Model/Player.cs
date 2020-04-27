@@ -97,7 +97,7 @@ namespace TGC.Group.Model
                 Mesh.Position += totalTranslation;
                 Mesh.Rotation -= totalRotation;
 
-                //TGCMatrix rotacionRespectoDelMesh = TGCMatrix.RotationYawPitchRoll(totalRotation.Y, totalRotation.X, totalRotation.Z); Esta rotacion debería ser respecto de el eje Y del mesh.
+                TGCMatrix rotacionRespectoDelMesh = TGCMatrix.RotationYawPitchRoll(totalRotation.Y, totalRotation.X, totalRotation.Z); // Esta rotacion debería ser respecto de el eje Y del mesh.
                 LookDirection = ApplyTransformation(rotacionRespectoDelMesh, LookDirection);
 
                 TGCMatrix translationMatrix = TGCMatrix.Translation(Mesh.Position);
@@ -109,12 +109,12 @@ namespace TGC.Group.Model
         // <summary>
         //      Multiplico la matriz por el vector a transformar.
         // <summary>
-        private TGCVector3 ApplyTransformation(TGCMatrix rotationMatrix, TGCVector3 vector)
+        private TGCVector3 ApplyTransformation(TGCMatrix transform, TGCVector3 vector)
         {
             TGCVector3 result = TGCVector3.Empty;
-            result.X = rotationMatrix.M11 * vector.X + rotationMatrix.M12 * vector.Y + rotationMatrix.M13 * vector.Z;
-            result.Y = rotationMatrix.M21 * vector.X + rotationMatrix.M22 * vector.Y + rotationMatrix.M23 * vector.Z;
-            result.Z = rotationMatrix.M31 * vector.X + rotationMatrix.M32 * vector.Y + rotationMatrix.M33 * vector.Z;
+            result.X = transform.M11 * vector.X + transform.M12 * vector.Y + transform.M13 * vector.Z;
+            result.Y = transform.M21 * vector.X + transform.M22 * vector.Y + transform.M23 * vector.Z;
+            result.Z = transform.M31 * vector.X + transform.M32 * vector.Y + transform.M33 * vector.Z;
 
             return result;
         }
