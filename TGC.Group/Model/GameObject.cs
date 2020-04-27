@@ -29,12 +29,5 @@ namespace TGC.Group.Model
         public abstract void Update();
         public abstract void Render();
         public abstract void Dispose();
-
-
-        protected void Translate(TGCVector3 displacement)
-        {
-            Mesh.Position += displacement;
-            Mesh.Transform = TGCMatrix.Translation(Mesh.Position);
-        }
     }
 }

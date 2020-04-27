@@ -12,6 +12,7 @@ namespace TGC.Group.Model
     {
         /* STATS */
         private float movementSpeed = 130.0f;
+        private float angularVelocity = 1.0f;
 
         public Player(Subnautica gameInstance, string name) : base(gameInstance, name)
         {
@@ -51,6 +52,7 @@ namespace TGC.Group.Model
         {
             TgcD3dInput input = GameInstance.Input;
             TGCVector3 movementDirection = TGCVector3.Empty;
+            TGCVector3 rotationVector = TGCVector3.Empty;
 
             if (input.keyDown(Key.W))  // Adelante
             {
@@ -78,18 +80,27 @@ namespace TGC.Group.Model
             {
                 movementDirection = -TGCVector3.Up;
             }
-            else if (input.keyDown(Key.Q))   // No funca
+            else if (input.keyDown(Key.Q))
             {
-                System.Console.WriteLine("Q pressed");
-                System.Console.WriteLine("Previous rotation: " + Mesh.Rotation);
-                Mesh.Rotation -= new TGCVector3(0, 1000 * GameInstance.ElapsedTime, 0);
-                Mesh.Transform = TGCMatrix.RotationY(Mesh.Rotation.Y);
-                System.Console.WriteLine("Final rotation: " + Mesh.Rotation);
+                rotationVector = new TGCVector3(0, 1, 0);
+            } else if (input.keyDown(Key.E))
+            {
+                rotationVector = new TGCVector3(0, -1, 0);
             }
 
             if (!CollisionDetected())
             {
-                Translate(movementDirection * movementSpeed * GameInstance.ElapsedTime);
+                TGCVector3 totalTranslation = movementDirection * movementSpeed * GameInstance.ElapsedTime;
+                TGCVector3 totalRotation = rotationVector * angularVelocity * GameInstance.ElapsedTime;
+
+                Mesh.Position += totalTranslation;
+                Mesh.Rotation -= totalRotation;
+
+                LookDirection = ApplyTransformation(TGCMatrix.RotationYawPitchRoll(totalRotation.Y, totalRotation.X, totalRotation.Z), LookDirection);
+
+                TGCMatrix translationMatrix = TGCMatrix.Translation(Mesh.Position);
+                TGCMatrix rotationMatrix = TGCMatrix.RotationY(Mesh.Rotation.Y);
+                Mesh.Transform = translationMatrix * rotationMatrix;
             }
         }
 
