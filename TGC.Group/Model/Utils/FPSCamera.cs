@@ -18,7 +18,7 @@ namespace TGC.Group.Model.Utils
         public override void UpdateCamera(float elapsedTime)
         {
             TGCVector3 camaraPosition = player.Position + eyePosition;
-            SetCamera(camaraPosition, camaraPosition + player.LookDirection, TGCVector3.Up);
+            SetCamera(camaraPosition, camaraPosition + player.LookDirection);
         }
     }
 }
