@@ -31,7 +31,7 @@ namespace TGC.Group.Model
         {
             GameInstance = gameInstance;
             Name = name;
-            GameInstance.InstanceObject(this);
+            //GameInstance.InstanceObject(this);
         }
 
         public abstract void Update();

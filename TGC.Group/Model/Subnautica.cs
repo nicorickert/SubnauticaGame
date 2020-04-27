@@ -25,14 +25,16 @@ namespace TGC.Group.Model
 
         public override void Init()
         {
-            // Inicializar recursos
-            var loader = new TgcSceneLoader();
-
             Player = new Player(this, "player");
+            InstanceObject(Player); //Tal vez no sea necesario meter al Player dentro de la bolsa de GameObjects
 
             Camera = new FPSCamera(Player, new TGCVector3(0, 120, -20));
 
+            TgcSceneLoader loader = new TgcSceneLoader();
+
             scene = loader.loadSceneFromFile(MediaDir + "Scene\\Isla-TgcScene.xml");
+
+            LoadMainScene();
         }
 
         public override void Update()
@@ -75,5 +77,10 @@ namespace TGC.Group.Model
         }
 
         #endregion
+
+        private void LoadMainScene()
+        {
+            InstanceObject(new StaticObject(this, "pilar coral", TGCVector3.Empty, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+        }
     }
 }
