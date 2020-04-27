@@ -12,7 +12,7 @@ namespace TGC.Group.Model
     {
         /* STATS */
         private float movementSpeed = 130.0f;
-        private float angularVelocity = 1.0f;
+        private float angularVelocity = 2.0f;
 
         public Player(Subnautica gameInstance, string name) : base(gameInstance, name)
         {
@@ -83,7 +83,8 @@ namespace TGC.Group.Model
             else if (input.keyDown(Key.Q))
             {
                 rotationVector = new TGCVector3(0, 1, 0);
-            } else if (input.keyDown(Key.E))
+            }
+            else if (input.keyDown(Key.E))
             {
                 rotationVector = new TGCVector3(0, -1, 0);
             }
@@ -96,11 +97,12 @@ namespace TGC.Group.Model
                 Mesh.Position += totalTranslation;
                 Mesh.Rotation -= totalRotation;
 
-                LookDirection = ApplyTransformation(TGCMatrix.RotationYawPitchRoll(totalRotation.Y, totalRotation.X, totalRotation.Z), LookDirection);
+                //TGCMatrix rotacionRespectoDelMesh = TGCMatrix.RotationYawPitchRoll(totalRotation.Y, totalRotation.X, totalRotation.Z); Esta rotacion debería ser respecto de el eje Y del mesh.
+                LookDirection = ApplyTransformation(rotacionRespectoDelMesh, LookDirection);
 
                 TGCMatrix translationMatrix = TGCMatrix.Translation(Mesh.Position);
-                TGCMatrix rotationMatrix = TGCMatrix.RotationY(Mesh.Rotation.Y);
-                Mesh.Transform = translationMatrix * rotationMatrix;
+                TGCMatrix rotationMatrix = TGCMatrix.RotationYawPitchRoll(Mesh.Rotation.Y, Mesh.Rotation.X, Mesh.Rotation.Z);
+                Mesh.Transform = rotationMatrix * translationMatrix;
             }
         }
 

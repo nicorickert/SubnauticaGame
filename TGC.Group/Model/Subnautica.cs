@@ -30,7 +30,7 @@ namespace TGC.Group.Model
 
             Player = new Player(this, "player");
 
-            Camera = new FPSCamera(Player, new TGCVector3(0, 100, 200));
+            Camera = new FPSCamera(Player, new TGCVector3(0, 120, -20));
 
             scene = loader.loadSceneFromFile(MediaDir + "Scene\\Isla-TgcScene.xml");
         }
