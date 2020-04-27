@@ -9,13 +9,12 @@ namespace TGC.Group.Model
         public Subnautica GameInstance { get; private set; }
         public string Name { get; private set; }
         public TgcMesh Mesh { get; protected set; }
-        public TGCVector3 LookDirection { get; protected set; }
+        public TGCVector3 LookDirection { get; protected set; } = new TGCVector3(0, 0, -1);
         public TGCVector3 Position
         {
             get { return Mesh.Position; }
             protected set
             {
-                Position = value;
                 Mesh.Position = value;
             }
         }
