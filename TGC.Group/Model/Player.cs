@@ -10,6 +10,8 @@ namespace TGC.Group.Model
 {
     public class Player : GameObject
     {
+        private TGCMatrix nextTransform = TGCMatrix.Identity;
+
         /* STATS */
         private float movementSpeed = 130.0f;
         private float angularVelocity = 2.0f;
@@ -19,9 +21,7 @@ namespace TGC.Group.Model
             var loader = new TgcSceneLoader();
             var playerScene = loader.loadSceneFromFile(GameInstance.MediaDir + "Player\\Player-TgcScene.xml");
             Mesh = playerScene.Meshes[0];
-            Mesh.Scale = new TGCVector3(0.1f, 0.1f, 0.1f);
-            Mesh.Position = new TGCVector3(0, 100, -1000);
-            LookDirection = new TGCVector3(0, 0, -1);  // Por como esta orientado el Mesh originalmente
+            Mesh.Position = new TGCVector3(0, 100, 2000);
         }
 
         #region GameObject
@@ -33,6 +33,7 @@ namespace TGC.Group.Model
 
         public override void Render()
         {
+            Mesh.Transform = nextTransform;
             Mesh.Render();
         }
 
@@ -102,7 +103,7 @@ namespace TGC.Group.Model
 
                 TGCMatrix translationMatrix = TGCMatrix.Translation(Mesh.Position);
                 TGCMatrix rotationMatrix = TGCMatrix.RotationYawPitchRoll(Mesh.Rotation.Y, Mesh.Rotation.X, Mesh.Rotation.Z);
-                Mesh.Transform = rotationMatrix * translationMatrix;
+                nextTransform = rotationMatrix * translationMatrix;
             }
         }
 

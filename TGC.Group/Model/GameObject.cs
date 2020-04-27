@@ -18,6 +18,14 @@ namespace TGC.Group.Model
                 Mesh.Position = value;
             }
         }
+        public TGCMatrix Transform
+        {
+            get { return Mesh.Transform; }
+            protected set
+            {
+                Mesh.Transform = value;
+            }
+        }
 
         public GameObject(Subnautica gameInstance, string name)
         {
