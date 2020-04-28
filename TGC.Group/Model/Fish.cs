@@ -51,15 +51,15 @@ namespace TGC.Group.Model
                 timeSinceLastDirection = 0f;
 
                 Random random = new Random();
-                float randomX = random.Next();  // Son todas positivas
-                float randomZ = random.Next();  // Son todas positivas
+                float randomX = random.Next(-100, 100);
+                float randomZ = random.Next(-100, 100);
 
                 TGCVector3 lastDirection = LookDirection;
                 LookDirection = TGCVector3.Normalize(new TGCVector3(randomX, LookDirection.Y, randomZ));
 
                 float angle = MathExtended.AngleBetween(new TGCVector2(lastDirection.X, lastDirection.Z), new TGCVector2(LookDirection.X, LookDirection.Z));
 
-                rotationVector.Y += angle;
+                rotationVector.Y = angle;
             }
 
             Rotation += rotationVector;
@@ -67,8 +67,8 @@ namespace TGC.Group.Model
 
             TGCMatrix rotation = TGCMatrix.RotationYawPitchRoll(Rotation.Y, Rotation.X, Rotation.Z);
             TGCMatrix translation = TGCMatrix.Translation(Position);
-            
-            nextTransform = rotation * translation;
+
+            nextTransform = TGCMatrix.Scaling(10, 10, 10) *  rotation * translation;
         }
     }
 }
