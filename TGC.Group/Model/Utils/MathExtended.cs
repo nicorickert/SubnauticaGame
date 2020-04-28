@@ -19,9 +19,15 @@ namespace TGC.Group.Model
 
         public static float AngleBetween(TGCVector2 v1, TGCVector2 v2)
         {
+            /*
             float dotProduct = TGCVector2.Dot(v1, v2);
             float cosineOfAngle = dotProduct / (TGCVector2.Length(v1) * TGCVector2.Length(v2));
             return FastMath.Acos(cosineOfAngle);
+            */
+            double sin = v1.X * v2.Y - v2.X * v1.Y;
+            double cos = v1.X * v2.X + v1.Y * v2.Y;
+
+            return (float)Math.Atan2(sin, cos);
         }
 
         public static int GetRandomNumberBetween(int min, int max) => random.Next(min, max);
