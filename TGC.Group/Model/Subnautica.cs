@@ -111,6 +111,14 @@ namespace TGC.Group.Model
 
             /* OBJETOS INDIVIDUALES */
             InstanceObject(new StaticObject(this, "coral", new TGCVector3(500, FloorY + 500, 0), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+            InstanceObject(new StaticObject(this, "coral", new TGCVector3(1000, FloorY + 500, 300), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+
+            InstanceObject(new StaticObject(this, "coral", new TGCVector3(3000, FloorY + 300, -1000), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+            InstanceObject(new StaticObject(this, "coral", new TGCVector3(3500, FloorY + 300, -700), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+
+            InstanceObject(new StaticObject(this, "coral", new TGCVector3(300, FloorY + 700, 2800), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+
+            InstanceObject(new StaticObject(this, "coral", new TGCVector3(1000, FloorY + 300, -3000), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
         }
 
         private void LoadShip()
