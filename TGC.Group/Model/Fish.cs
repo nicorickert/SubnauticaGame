@@ -59,13 +59,13 @@ namespace TGC.Group.Model
 
                 float angle = MathExtended.AngleBetween(new TGCVector2(lastDirection.X, lastDirection.Z), new TGCVector2(LookDirection.X, LookDirection.Z));
 
-                rotationVector.Y = angle;
+                rotationVector.Y = -angle;
             }
 
             Rotation += rotationVector;
             Position += LookDirection * movementSpeed * GameInstance.ElapsedTime;
 
-            TGCMatrix rotation = TGCMatrix.RotationYawPitchRoll(Rotation.Y, Rotation.X, Rotation.Z);
+            TGCMatrix rotation = TGCMatrix.RotationY(Rotation.Y);
             TGCMatrix translation = TGCMatrix.Translation(Position);
 
             nextTransform = TGCMatrix.Scaling(10, 10, 10) *  rotation * translation;
