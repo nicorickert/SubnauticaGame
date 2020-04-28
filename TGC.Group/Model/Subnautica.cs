@@ -79,8 +79,10 @@ namespace TGC.Group.Model
             TgcSceneLoader loader = new TgcSceneLoader();
             scene = loader.loadSceneFromFile(MediaDir + "Scene\\Isla-TgcScene.xml");
 
+            InstanceObject(new Fish(this, "pecesito", TGCVector3.Empty));
+
             /* OBJETOS INDIVIDUALES */
-            InstanceObject(new StaticObject(this, "coral", TGCVector3.Empty, TGCVector3.One * 2, TGCVector3.Empty, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+            //InstanceObject(new StaticObject(this, "coral", TGCVector3.Empty, TGCVector3.One * 2, TGCVector3.Empty, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
         }
     }
 }
