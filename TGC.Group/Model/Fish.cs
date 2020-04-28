@@ -9,6 +9,7 @@ namespace TGC.Group.Model
     class Fish : GameObject
     {
         private float movementSpeed = 100f;
+        private float size;
 
 
         private TGCMatrix nextTransform = TGCMatrix.Identity;
@@ -21,7 +22,8 @@ namespace TGC.Group.Model
             var loader = new TgcSceneLoader();
             Mesh = loader.loadSceneFromFile(gameInstance.MediaDir + "Aquatic\\Meshes\\fish-TgcScene.xml").Meshes[0];
             Position = spawnLocation;
-            Scale = TGCVector3.One * MathExtended.GetRandomNumberBetween(8, 15);
+            size = MathExtended.GetRandomNumberBetween(3, 20);
+            Scale = TGCVector3.One * size;
         }
 
         public override void Update()
