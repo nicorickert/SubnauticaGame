@@ -9,10 +9,13 @@ namespace TGC.Group.Model
     public class Subnautica : TGCExample
     {
         private List<GameObject> sceneObjects = new List<GameObject>();
-        private TgcScene scene;
-        
+        private TgcScene island;
+        private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
+
         public Player Player { get; private set; }
-        public List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
+        public TgcScene Ship { get; private set; }
+        public float FloorY { get; } = -3000;
+        public float WaterY { get; } = 0;
 
 
         public Subnautica(string mediaDir, string shadersDir) : base(mediaDir, shadersDir)
@@ -30,16 +33,6 @@ namespace TGC.Group.Model
             InstanceObject(Player); //Tal vez no sea necesario meter al Player dentro de la bolsa de GameObjects
 
             Camera = new FPSCamera(Player, new TGCVector3(0, 120, -20));
-
-            // Genero el terreno
-            heightMaps.Add(new HeightMapTextured(this, "SeaFloor", new TGCVector3(0, -3000, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "image.png"));
-
-            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, 10, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Terrain\\" + "blueTransparent.png"));
-
-            foreach (HeightMapTextured hm in heightMaps)
-            {
-                hm.Init();
-            }
 
             LoadMainScene();
         }
@@ -66,11 +59,12 @@ namespace TGC.Group.Model
             foreach (GameObject o in sceneObjects)
                 o.Render();
 
-            scene.RenderAll();
-
             // HeightMaps
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Render();
+
+            island.RenderAll();
+            Ship.RenderAll();
 
             PostRender();
         }
@@ -84,7 +78,8 @@ namespace TGC.Group.Model
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Dispose();
 
-            scene.DisposeAll();
+            island.DisposeAll();
+            Ship.DisposeAll();
         }
 
         #endregion
@@ -100,11 +95,38 @@ namespace TGC.Group.Model
 
         private void LoadMainScene()
         {
+            // Genero el terreno
+            heightMaps.Add(new HeightMapTextured(this, "SeaFloor", new TGCVector3(0, FloorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "image.png"));
+
+            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, WaterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Terrain\\" + "blueTransparent.png"));
+
+            foreach (HeightMapTextured hm in heightMaps)
+            {
+                hm.Init();
+            }
+
+            // Isla
             TgcSceneLoader loader = new TgcSceneLoader();
-            scene = loader.loadSceneFromFile(MediaDir + "Scene\\Isla-TgcScene.xml");
+            island = loader.loadSceneFromFile(MediaDir + "Scene\\Isla-TgcScene.xml");
+
+            /* Cargo el barco, probablemente sea una clase individual en el futuro como "Player" */
+            Ship = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\ship-TgcScene.xml");
+            foreach(TgcMesh mesh in Ship.Meshes)
+            {
+                mesh.Position += new TGCVector3(3500, 60, 0);   // seteo la posicion del barco
+                mesh.Scale *= 3;
+                mesh.Rotation += new TGCVector3(0, FastMath.PI_HALF,0);
+
+                TGCMatrix translation = TGCMatrix.Translation(mesh.Position);
+                TGCMatrix scaling = TGCMatrix.Scaling(mesh.Scale);
+                TGCMatrix rotation = TGCMatrix.RotationYawPitchRoll(mesh.Rotation.Y, mesh.Rotation.X, mesh.Rotation.Z);
+
+                mesh.Transform = rotation * scaling * translation;
+            }
 
             /* OBJETOS INDIVIDUALES */
-            InstanceObject(new StaticObject(this, "coral", new TGCVector3(0,0, 0), TGCVector3.One * 3, new TGCVector3(0,0,0), MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+            InstanceObject(new StaticObject(this, "coral", new TGCVector3(500, FloorY + 500, 0), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+
         }
     }
 }
