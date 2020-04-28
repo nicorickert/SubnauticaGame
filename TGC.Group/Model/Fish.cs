@@ -21,6 +21,7 @@ namespace TGC.Group.Model
             var loader = new TgcSceneLoader();
             Mesh = loader.loadSceneFromFile(gameInstance.MediaDir + "Aquatic\\Meshes\\fish-TgcScene.xml").Meshes[0];
             Position = spawnLocation;
+            Scale = TGCVector3.One * MathExtended.GetRandomNumberBetween(8, 15);
         }
 
         public override void Update()
@@ -67,8 +68,9 @@ namespace TGC.Group.Model
 
             TGCMatrix rotation = TGCMatrix.RotationYawPitchRoll(Rotation.Y, Rotation.X, Rotation.Z);
             TGCMatrix translation = TGCMatrix.Translation(Position);
+            TGCMatrix scaling = TGCMatrix.Scaling(Scale);
 
-            nextTransform = TGCMatrix.Scaling(10, 10, 10) *  rotation * translation;
+            nextTransform = scaling *  rotation * translation;
         }
     }
 }
