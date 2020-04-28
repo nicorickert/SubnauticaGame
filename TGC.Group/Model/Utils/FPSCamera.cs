@@ -19,7 +19,7 @@ namespace TGC.Group.Model.Utils
         {
             //TGCVector3 camaraPosition = player.Position + eyePosition;
 
-            float normEyePosition = MathExtended.NormOfVector3(eyePosition);
+            float normEyePosition = TGCVector3.Length(eyePosition);
             TGCVector3 eyePositionLookingTo = normEyePosition * TGCVector3.Normalize(player.LookDirection);  // Pongo la norma del eyePosition en la direccion del lookDir
             TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + new TGCVector3(0, eyePosition.Y, 0);
 
