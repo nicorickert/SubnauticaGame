@@ -1,6 +1,6 @@
 ﻿using TGC.Core.Mathematica;
 
-namespace TGC.Group.Model.Utils
+namespace TGC.Group.Model
 {
     public static class MathExtended
     {
