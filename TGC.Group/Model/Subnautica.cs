@@ -93,6 +93,8 @@ namespace TGC.Group.Model
 
         #endregion
 
+        #region PRIVATE_METHODS
+
         private void LoadMainScene()
         {
             // Genero el terreno
@@ -126,7 +128,8 @@ namespace TGC.Group.Model
 
             /* OBJETOS INDIVIDUALES */
             InstanceObject(new StaticObject(this, "coral", new TGCVector3(500, FloorY + 500, 0), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
-
         }
+
+        #endregion
     }
 }
