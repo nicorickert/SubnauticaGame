@@ -18,6 +18,22 @@ namespace TGC.Group.Model
                 Mesh.Position = value;
             }
         }
+        public TGCVector3 Scale
+        {
+            get { return Mesh.Scale; }
+            protected set
+            {
+                Mesh.Scale = value;
+            }
+        }
+        public TGCVector3 Rotation
+        {
+            get { return Mesh.Rotation; }
+            protected set
+            {
+                Mesh.Rotation = value;
+            }
+        }
         public TGCMatrix Transform
         {
             get { return Mesh.Transform; }

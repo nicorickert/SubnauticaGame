@@ -102,6 +102,7 @@
       <DependentUpon>Game.settings</DependentUpon>
     </Compile>
     <Compile Include="Model\GameObject.cs" />
+    <Compile Include="Model\Fish.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\StaticObject.cs" />
     <Compile Include="Model\Subnautica.cs" />

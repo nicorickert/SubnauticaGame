@@ -1,4 +1,5 @@
 ﻿using TGC.Core.Mathematica;
+using System;
 
 namespace TGC.Group.Model
 {
@@ -12,6 +13,13 @@ namespace TGC.Group.Model
             result.Z = transform.M31 * vector.X + transform.M32 * vector.Y + transform.M33 * vector.Z;
 
             return result;
+        }
+
+        public static float AngleBetween(TGCVector2 v1, TGCVector2 v2)
+        {
+            float dotProduct = TGCVector2.Dot(v1, v2);
+            float cosineOfAngle = dotProduct / (TGCVector2.Length(v1) * TGCVector2.Length(v2));
+            return FastMath.Acos(cosineOfAngle);
         }
     }
 }

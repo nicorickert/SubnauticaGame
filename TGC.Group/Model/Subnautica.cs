@@ -107,6 +107,8 @@ namespace TGC.Group.Model
             /* Cargo el barco, probablemente sea una clase individual en el futuro como "Player" */
             LoadShip();
 
+            InstanceObject(new Fish(this, "pecesito", TGCVector3.Empty));
+
             /* OBJETOS INDIVIDUALES */
             InstanceObject(new StaticObject(this, "coral", new TGCVector3(500, FloorY + 500, 0), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
         }
