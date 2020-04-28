@@ -8,12 +8,12 @@ namespace TGC.Group.Model
 {
     class Fish : GameObject
     {
-        private float movementSpeed = 10f;
+        private float movementSpeed = 100f;
 
 
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private float timeSinceLastDirection = 0f;
-        private readonly int movingRadius = 1000;
+        private float timeToChangeDirection = 3f;
 
 
         public Fish(Subnautica gameInstance, string name, TGCVector3 spawnLocation) : base(gameInstance, name)
@@ -46,13 +46,13 @@ namespace TGC.Group.Model
 
             TGCVector3 rotationVector = TGCVector3.Empty;
 
-            if (timeSinceLastDirection > 3f)
+            if (timeSinceLastDirection > timeToChangeDirection)
             {
                 timeSinceLastDirection = 0f;
+                timeToChangeDirection = MathExtended.GetRandomNumberBetween(2, 5);
 
-                Random random = new Random();
-                float randomX = random.Next(-100, 100);
-                float randomZ = random.Next(-100, 100);
+                float randomX = MathExtended.GetRandomNumberBetween(-100, 100);
+                float randomZ = MathExtended.GetRandomNumberBetween(-100, 100);
 
                 TGCVector3 lastDirection = LookDirection;
                 LookDirection = TGCVector3.Normalize(new TGCVector3(randomX, LookDirection.Y, randomZ));

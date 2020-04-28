@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TGC.Core.Example;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
@@ -107,7 +108,8 @@ namespace TGC.Group.Model
             /* Cargo el barco, probablemente sea una clase individual en el futuro como "Player" */
             LoadShip();
 
-            InstanceObject(new Fish(this, "pecesito", TGCVector3.Empty));
+            /* 20 peces */ 
+            SpawnFishes();
 
             /* OBJETOS INDIVIDUALES */
             InstanceObject(new StaticObject(this, "coral", new TGCVector3(500, FloorY + 500, 0), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
@@ -149,6 +151,28 @@ namespace TGC.Group.Model
             {
                 hm.Init();
             }
+        }
+
+        // Spawnea 20 peces
+        private void SpawnFishes()
+        {
+            for(int i = 0; i < 20; i++)
+            {
+                TGCVector3 spawnLocation = RandomSpawnLocation();
+                spawnLocation.Y = MathExtended.GetRandomNumberBetween((int)FloorY + 900, (int)WaterY - 100);
+                InstanceObject(new Fish(this, "fish" + i, spawnLocation));
+            }
+        }
+
+        private TGCVector3 RandomSpawnLocation()
+        {
+            Random random = new Random();
+            TGCVector3 spawnLocation = TGCVector3.Empty;
+            spawnLocation.X = MathExtended.GetRandomNumberBetween(-5000, 5000);
+            spawnLocation.Y = MathExtended.GetRandomNumberBetween(-5000, 5000);
+            spawnLocation.Z = MathExtended.GetRandomNumberBetween(-5000, 5000);
+
+            return spawnLocation;
         }
 
         #endregion
