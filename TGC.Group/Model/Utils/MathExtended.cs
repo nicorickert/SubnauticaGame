@@ -5,6 +5,8 @@ namespace TGC.Group.Model
 {
     public static class MathExtended
     {
+        private static Random random = new Random();
+
         public static TGCVector3 TransformVector3(TGCMatrix transform, TGCVector3 vector)
         {
             TGCVector3 result = TGCVector3.Empty;
@@ -27,5 +29,7 @@ namespace TGC.Group.Model
 
             return (float)Math.Atan2(sin, cos);
         }
+
+        public static int GetRandomNumberBetween(int min, int max) => random.Next(min, max);
     }
 }
