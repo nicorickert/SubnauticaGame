@@ -11,7 +11,7 @@ namespace TGC.Group.Model
         private TGCMatrix nextTransform = TGCMatrix.Identity;
 
         /* STATS */
-        private float movementSpeed = 500.0f;
+        private float movementSpeed = 3000.0f;
         private float angularVelocity = 2.0f;
 
         public Player(Subnautica gameInstance, string name) : base(gameInstance, name)
@@ -55,37 +55,37 @@ namespace TGC.Group.Model
 
             if (input.keyDown(Key.W))  // Adelante
             {
-                movementDirection = LookDirection;
+                movementDirection += LookDirection;
             }
-            else if (input.keyDown(Key.S))  // Atras
+            if (input.keyDown(Key.S))  // Atras
             {
-                movementDirection = -LookDirection;
+                movementDirection -= LookDirection;
             }
-            else if (input.keyDown(Key.A))  // Izquierda
+            if (input.keyDown(Key.A))  // Izquierda
             {
                 TGCMatrix rotationMatrix = TGCMatrix.RotationY(FastMath.PI_HALF);
-                movementDirection = MathExtended.TransformVector3(rotationMatrix, LookDirection);
+                movementDirection +=   MathExtended.TransformVector3(rotationMatrix, LookDirection);
             }
-            else if (input.keyDown(Key.D))  // Derecha
+            if (input.keyDown(Key.D))  // Derecha
             {
                 TGCMatrix rotationMatrix = TGCMatrix.RotationY(FastMath.PI_HALF * 3);
-                movementDirection = MathExtended.TransformVector3(rotationMatrix, LookDirection);
+                movementDirection += MathExtended.TransformVector3(rotationMatrix, LookDirection);
             }
-            else if (input.keyDown(Key.Space))    // De acá para abajo son solo de prueba para poder moverme en la escena libremente
+            if (input.keyDown(Key.Space))    // De acá para abajo son solo de prueba para poder moverme en la escena libremente
             {
-                movementDirection = TGCVector3.Up;
+                movementDirection += new TGCVector3(0, 1, 0);
             }
-            else if (input.keyDown(Key.X))
+            if (input.keyDown(Key.X))
             {
-                movementDirection = -TGCVector3.Up;
+                movementDirection += new TGCVector3(0, -1, 0);
             }
-            else if (input.keyDown(Key.Q))
+            if (input.keyDown(Key.Q))
             {
-                rotationVector = new TGCVector3(0, 1, 0);
+                rotationVector += new TGCVector3(0, 1, 0);
             }
-            else if (input.keyDown(Key.E))
+            if (input.keyDown(Key.E))
             {
-                rotationVector = new TGCVector3(0, -1, 0);
+                rotationVector += new TGCVector3(0, -1, 0);
             }
 
             if (!CollisionDetected())
