@@ -42,7 +42,7 @@ namespace TGC.Group.Model
         }
 
         public HeightMapTextured(Subnautica gameInstance, string name, string heightMap, string texture)
-        :this(gameInstance, name, TGCVector3.Empty, heightMap, texture) { }
+            :this(gameInstance, name, TGCVector3.Empty, heightMap, texture) { }
 
         public void Init()
         {
