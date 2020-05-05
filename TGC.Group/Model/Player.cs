@@ -14,12 +14,6 @@ namespace TGC.Group.Model
         private float movementSpeed = 1000.0f;
         private float angularVelocity = 2.0f;
 
-        private float mousePositionX = 0;
-        private float prevMousePositionX = 0;
-        private float mousePositionY = 0;
-        private float mouseSensibility = 0.1f;
-        private float MaxUpDownView = FastMath.PI_HALF - 0.01f;
-
         public Player(Subnautica gameInstance, string name) : base(gameInstance, name)
         {
             var loader = new TgcSceneLoader();
@@ -91,26 +85,6 @@ namespace TGC.Group.Model
             {
                 movementDirection += new TGCVector3(0, -1, 0);
             }
-
-
-
-            // MOVER LOOK DIRECTION CON MOVIMIENTO DEL MOUSE
-            if (GameInstance.focusInGame)
-            {
-                mousePositionY -= -input.XposRelative * mouseSensibility; // ENTENDER PORQUE TENGO QUE INVERTIR LAS X CON Y
-  
-                if (mousePositionX >= 0)                // Para que no se haga gimball lock en la camara, limito el maximo que se puede llegar hasta arriba y abajo
-                {
-                    mousePositionX = FastMath.Min(mousePositionX - input.YposRelative * mouseSensibility, MaxUpDownView);
-                } else
-                {
-                    mousePositionX = FastMath.Max(mousePositionX - input.YposRelative * mouseSensibility, -MaxUpDownView);
-                }
-            }
-
-            TGCMatrix cameraRotationMatrix = TGCMatrix.RotationX(mousePositionX) * TGCMatrix.RotationY(mousePositionY);
-            LookDirection = TGCVector3.TransformNormal(InitialLookDirection, cameraRotationMatrix);
-            
 
             if (!CollisionDetected())
             {
