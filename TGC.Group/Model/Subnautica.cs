@@ -55,14 +55,18 @@ namespace TGC.Group.Model
                 UpdateHUD();
             }
 
-            // Objetos
-            foreach (GameObject o in sceneObjects)
-                o.Update();
+            if (focusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
+            {
 
-            // HeightMaps
-            foreach (HeightMapTextured hm in heightMaps)
-                hm.Update();
+                // Objetos
+                foreach (GameObject o in sceneObjects)
+                    o.Update();
 
+                // HeightMaps
+                foreach (HeightMapTextured hm in heightMaps)
+                    hm.Update();
+
+            }
             PostUpdate();
         }
 
