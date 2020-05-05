@@ -45,7 +45,6 @@ namespace TGC.Group.Model.Utils
             player.LookDirection = TGCVector3.TransformNormal(player.InitialLookDirection, cameraRotationMatrix);
 
 
-
             // SETEO LA CAMARA
 
             //TGCVector3 camaraPosition = player.Position + eyePosition;

@@ -16,9 +16,9 @@ namespace TGC.Group.Model
             get
             {
                 //Se busca el vector que es producto del (0,1,0)Up y la direccion de vista.
-                TGCVector3 crossDirection = TGCVector3.Cross(TGCVector3.Up, LookDirection);
+                TGCVector3 relativeXDirection = TGCVector3.Cross(TGCVector3.Up, LookDirection);
                 //El vector de Up correcto dependiendo del LookDirection
-                return TGCVector3.Cross(LookDirection, crossDirection);
+                return TGCVector3.Cross(LookDirection, relativeXDirection);  // LookDirection sería como el relativeZDirection
             }
         }
         public TGCVector3 Position
