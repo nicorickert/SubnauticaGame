@@ -41,12 +41,8 @@ namespace TGC.Group.Model
 
             Camera = new FPSCamera(Player, new TGCVector3(0, 120, -20));
 
-            
-
             LoadMainScene();
-            updateHUD();
-
-
+            UpdateHUD();
         }
 
         public override void Update()
@@ -56,7 +52,7 @@ namespace TGC.Group.Model
             if (Input.keyDown(Key.Escape) && escapeDelay > 0.5f) { // uso el delay porque no me funciona el keyUp o keyPressed
                 escapeDelay = 0;
                 focusInGame = !focusInGame;
-                updateHUD();
+                UpdateHUD();
             }
 
             // Objetos
@@ -192,14 +188,15 @@ namespace TGC.Group.Model
             return spawnLocation;
         }
 
-        private void updateHUD()
+        private void UpdateHUD()
         {
             if (focusInGame)
             {
                 
                 Cursor.Clip = new System.Drawing.Rectangle(Cursor.Position.X, Cursor.Position.Y, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
                 Cursor.Hide();
-            } else
+            }
+            else
             {
                 Cursor.Clip = new System.Drawing.Rectangle(); // libero el mouse
                 Cursor.Show();
