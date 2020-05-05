@@ -25,6 +25,12 @@ namespace TGC.Group.Model
             return (float)Math.Atan2(sin, cos);
         }
 
+        public static float AngleBetween(TGCVector3 v1, TGCVector3 v2)
+        {
+            float cosine = TGCVector3.Dot(v1, v2) / (TGCVector3.Length(v1) * TGCVector3.Length(v2));
+            return FastMath.Acos(cosine);
+        }
+
         public static int Sign(float n) => Math.Sign(n);
 
         public static int GetRandomNumberBetween(int min, int max) => random.Next(min, max);

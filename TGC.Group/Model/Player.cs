@@ -25,6 +25,8 @@ namespace TGC.Group.Model
 
         public override void Update()
         {
+            nextTransform = TGCMatrix.Identity;
+            FixRotation();
             ManageMovement();
         }
 
@@ -89,11 +91,19 @@ namespace TGC.Group.Model
                 Mesh.Position += totalTranslation;
 
                 TGCMatrix translationMatrix = TGCMatrix.Translation(Mesh.Position);
-                nextTransform = translationMatrix;
+                nextTransform *= translationMatrix;
             }
         }
 
         private bool CollisionDetected() => false;  // TODO Tal vez podria ir en la clase GameObject
+
+        private void FixRotation()
+        {
+            TGCVector3 rotationAxis = TGCVector3.Cross(InitialLookDirection, LookDirection);  // Ojo el orden - no es conmutativo
+            TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, MathExtended.AngleBetween(InitialLookDirection, LookDirection));
+            TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(rotation);
+            nextTransform *= rotationMatrix;
+        }
 
         #endregion
 
