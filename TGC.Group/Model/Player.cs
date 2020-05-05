@@ -11,8 +11,7 @@ namespace TGC.Group.Model
         private TGCMatrix nextTransform = TGCMatrix.Identity;
 
         /* STATS */
-        private float movementSpeed = 1000.0f;
-        private float angularVelocity = 2.0f;
+        private readonly float movementSpeed = 1000.0f;
 
         public Player(Subnautica gameInstance, string name) : base(gameInstance, name)
         {
