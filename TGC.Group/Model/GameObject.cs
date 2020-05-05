@@ -9,7 +9,8 @@ namespace TGC.Group.Model
         public Subnautica GameInstance { get; private set; }
         public string Name { get; private set; }
         public TgcMesh Mesh { get; protected set; }
-        public TGCVector3 LookDirection { get; set; } = new TGCVector3(0, 0, -1);
+        public TGCVector3 InitialLookDirection = new TGCVector3(0, 0, -1);
+        public TGCVector3 LookDirection { get; set; }
         public TGCVector3 Position
         {
             get { return Mesh.Position; }
@@ -47,6 +48,7 @@ namespace TGC.Group.Model
         {
             GameInstance = gameInstance;
             Name = name;
+            LookDirection = InitialLookDirection;
             //GameInstance.InstanceObject(this);
         }
 
