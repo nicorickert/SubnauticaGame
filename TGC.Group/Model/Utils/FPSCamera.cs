@@ -23,7 +23,18 @@ namespace TGC.Group.Model.Utils
         public override void UpdateCamera(float elapsedTime)
         {
             // ROTO EL LOOKDIRECTION DEL PLAYER
+            UpdatePlayerLookDirection();
 
+            // SETEO LA CAMARA
+            float normEyePosition = TGCVector3.Length(eyePosition);
+            TGCVector3 eyePositionLookingTo = normEyePosition * TGCVector3.Normalize(player.LookDirection);  // Pongo la norma del eyePosition en la direccion del lookDir
+            TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + new TGCVector3(0, eyePosition.Y, 0);
+
+            SetCamera(camaraPosition, camaraPosition + player.LookDirection);
+        }
+
+        private void UpdatePlayerLookDirection()
+        {
             TgcD3dInput input = player.GameInstance.Input;
 
             // MOVER LOOK DIRECTION CON MOVIMIENTO DEL MOUSE
@@ -43,16 +54,6 @@ namespace TGC.Group.Model.Utils
 
             TGCMatrix cameraRotationMatrix = TGCMatrix.RotationX(mousePositionX) * TGCMatrix.RotationY(mousePositionY);
             player.LookDirection = TGCVector3.TransformNormal(player.InitialLookDirection, cameraRotationMatrix);
-
-
-            // SETEO LA CAMARA
-
-            //TGCVector3 camaraPosition = player.Position + eyePosition;
-            float normEyePosition = TGCVector3.Length(eyePosition);
-            TGCVector3 eyePositionLookingTo = normEyePosition * TGCVector3.Normalize(player.LookDirection);  // Pongo la norma del eyePosition en la direccion del lookDir
-            TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + new TGCVector3(0, eyePosition.Y, 0);
-
-            SetCamera(camaraPosition, camaraPosition + player.LookDirection);
         }
     }
 }
