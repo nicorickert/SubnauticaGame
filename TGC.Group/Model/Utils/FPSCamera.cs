@@ -43,7 +43,7 @@ namespace TGC.Group.Model.Utils
             }
 
             TGCMatrix cameraRotationMatrix = TGCMatrix.RotationX(mousePositionX) * TGCMatrix.RotationY(mousePositionY);
-            player.LookDirection = TGCVector3.TransformNormal(player.LookDirection, cameraRotationMatrix);
+            player.LookDirection = TGCVector3.TransformNormal(player.InitialLookDirection, cameraRotationMatrix);
 
 
 
