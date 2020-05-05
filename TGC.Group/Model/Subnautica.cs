@@ -39,7 +39,7 @@ namespace TGC.Group.Model
             Player = new Player(this, "player");
             InstanceObject(Player); //Tal vez no sea necesario meter al Player dentro de la bolsa de GameObjects
 
-            Camera = new FPSCamera(Player, new TGCVector3(0, 120, -20));
+            Camera = new FPSCamera(Player, new TGCVector3(0, 120, 0));
 
             LoadMainScene();
             UpdateHUD();

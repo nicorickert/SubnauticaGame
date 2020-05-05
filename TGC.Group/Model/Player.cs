@@ -102,7 +102,7 @@ namespace TGC.Group.Model
             TGCVector3 rotationAxis = TGCVector3.Cross(InitialLookDirection, LookDirection);  // Ojo el orden - no es conmutativo
             TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, MathExtended.AngleBetween(InitialLookDirection, LookDirection));
             TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(rotation);
-            nextTransform *= rotationMatrix;
+            nextTransform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
         }
 
         #endregion

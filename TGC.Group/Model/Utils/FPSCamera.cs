@@ -11,7 +11,7 @@ namespace TGC.Group.Model.Utils
         private TGCVector3 eyePosition;
         private float mousePositionX = 0;
         private float mousePositionY = 0;
-        private readonly float mouseSensibility = 0.01f;
+        private readonly float mouseSensibility = 0.015f;
         private readonly float maxUpDownView = FastMath.PI_HALF - 0.01f;
 
         public FPSCamera(GameObject player, TGCVector3 eyePosition) : base()
@@ -28,7 +28,7 @@ namespace TGC.Group.Model.Utils
             // SETEO LA CAMARA
             float normEyePosition = TGCVector3.Length(eyePosition);
             TGCVector3 eyePositionLookingTo = normEyePosition * TGCVector3.Normalize(player.LookDirection);  // Pongo la norma del eyePosition en la direccion del lookDir
-            TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + new TGCVector3(0, eyePosition.Y, 0);
+            TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + player.RelativeUpDirection * eyePosition.Y;
 
             SetCamera(camaraPosition, camaraPosition + player.LookDirection);
         }
