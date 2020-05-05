@@ -87,16 +87,9 @@ namespace TGC.Group.Model
             if (!CollisionDetected())
             {
                 TGCVector3 totalTranslation = movementDirection * movementSpeed * GameInstance.ElapsedTime;
-                //TGCVector3 totalRotation = rotationVector * angularVelocity * GameInstance.ElapsedTime;
-
                 Mesh.Position += totalTranslation;
-                //Mesh.Rotation -= totalRotation;
-
-                //TGCMatrix rotacionRespectoDelMesh = TGCMatrix.RotationYawPitchRoll(totalRotation.Y, totalRotation.X, totalRotation.Z); // Esta rotacion debería ser respecto de el eje Y del mesh.
-                //LookDirection = MathExtended.TransformVector3(rotacionRespectoDelMesh, LookDirection);
 
                 TGCMatrix translationMatrix = TGCMatrix.Translation(Mesh.Position);
-                //TGCMatrix rotationMatrix = TGCMatrix.RotationYawPitchRoll(Mesh.Rotation.Y, Mesh.Rotation.X, Mesh.Rotation.Z);
                 nextTransform = translationMatrix;
             }
         }
