@@ -10,7 +10,6 @@ namespace TGC.Group.Model.Utils
         private GameObject player;
         private TGCVector3 eyePosition;
         private float mousePositionX = 0;
-        private float prevMousePositionX = 0;
         private float mousePositionY = 0;
         private readonly float mouseSensibility = 0.01f;
         private readonly float maxUpDownView = FastMath.PI_HALF - 0.01f;
