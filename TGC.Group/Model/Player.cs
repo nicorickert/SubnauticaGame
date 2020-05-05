@@ -57,27 +57,29 @@ namespace TGC.Group.Model
             {
                 movementDirection += LookDirection;
             }
-            if (input.keyDown(Key.S))  // Atras
+            else if (input.keyDown(Key.S))  // Atras
             {
                 movementDirection -= LookDirection;
             }
+
             if (input.keyDown(Key.A))  // Izquierda
             {
                 TGCQuaternion quat = TGCQuaternion.RotationAxis(RelativeUpDirection, FastMath.PI_HALF);
                 TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(quat);
                 movementDirection += MathExtended.TransformVector3(rotationMatrix, LookDirection);
             }
-            if (input.keyDown(Key.D))  // Derecha
+            else if (input.keyDown(Key.D))  // Derecha
             {
                 TGCQuaternion quat = TGCQuaternion.RotationAxis(RelativeUpDirection, FastMath.PI_HALF * 3);
                 TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(quat);
                 movementDirection += MathExtended.TransformVector3(rotationMatrix, LookDirection);
             }
+
             if (input.keyDown(Key.Space))    // De acá para abajo son solo de prueba para poder moverme en la escena libremente
             {
                 movementDirection += new TGCVector3(0, 1, 0);
             }
-            if (input.keyDown(Key.X))
+            else if (input.keyDown(Key.X))
             {
                 movementDirection += new TGCVector3(0, -1, 0);
             }

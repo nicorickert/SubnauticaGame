@@ -59,7 +59,6 @@ namespace TGC.Group.Model
             GameInstance = gameInstance;
             Name = name;
             LookDirection = InitialLookDirection;
-            //GameInstance.InstanceObject(this);
         }
 
         public abstract void Update();
