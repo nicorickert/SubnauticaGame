@@ -86,7 +86,7 @@ namespace TGC.Group.Model
 
             if (!CollisionDetected())
             {
-                TGCVector3 totalTranslation = movementDirection * movementSpeed * GameInstance.ElapsedTime;
+                TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
                 Mesh.Position += totalTranslation;
 
                 TGCMatrix translationMatrix = TGCMatrix.Translation(Mesh.Position);
