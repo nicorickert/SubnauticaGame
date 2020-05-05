@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using TGC.Core.Example;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
+using Microsoft.DirectX.DirectInput;
 using TGC.Group.Model.Utils;
+using System.Windows.Forms;
+using TGC.Core.Direct3D;
 
 namespace TGC.Group.Model
 {
@@ -17,6 +20,9 @@ namespace TGC.Group.Model
         public TgcScene Ship { get; private set; }
         public float FloorY { get; } = -3000;
         public float WaterY { get; } = 0;
+        public float escapeDelay = 0;
+
+        public bool focusInGame = true; // Variable para saber si estoy jugando o en menu
 
 
         public Subnautica(string mediaDir, string shadersDir) : base(mediaDir, shadersDir)
@@ -24,6 +30,8 @@ namespace TGC.Group.Model
             Category = Game.Default.Category;
             Name = Game.Default.Name;
             Description = Game.Default.Description;
+
+            
         }
 
         #region TGC_EXAMPLE
@@ -35,12 +43,23 @@ namespace TGC.Group.Model
 
             Camera = new FPSCamera(Player, new TGCVector3(0, 120, -20));
 
+            
+
             LoadMainScene();
+            updateHUD();
+
+
         }
 
         public override void Update()
         {
             PreUpdate();
+            escapeDelay += ElapsedTime;
+            if (Input.keyDown(Key.Escape) && escapeDelay > 0.5f) { // uso el delay porque no me funciona el keyUp o keyPressed
+                escapeDelay = 0;
+                focusInGame = !focusInGame;
+                updateHUD();
+            }
 
             // Objetos
             foreach (GameObject o in sceneObjects)
@@ -173,6 +192,20 @@ namespace TGC.Group.Model
             spawnLocation.Z = MathExtended.GetRandomNumberBetween(-5000, 5000);
 
             return spawnLocation;
+        }
+
+        private void updateHUD()
+        {
+            if (focusInGame)
+            {
+                
+                Cursor.Clip = new System.Drawing.Rectangle(Cursor.Position.X, Cursor.Position.Y, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
+                Cursor.Hide();
+            } else
+            {
+                Cursor.Clip = new System.Drawing.Rectangle(); // libero el mouse
+                Cursor.Show();
+            }
         }
 
         #endregion

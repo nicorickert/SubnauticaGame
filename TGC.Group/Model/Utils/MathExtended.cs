@@ -25,6 +25,8 @@ namespace TGC.Group.Model
             return (float)Math.Atan2(sin, cos);
         }
 
+        public static int Sign(float n) => Math.Sign(n);
+
         public static int GetRandomNumberBetween(int min, int max) => random.Next(min, max);
     }
 }
