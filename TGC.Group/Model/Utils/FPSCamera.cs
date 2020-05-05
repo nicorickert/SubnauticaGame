@@ -27,11 +27,6 @@ namespace TGC.Group.Model.Utils
 
             TgcD3dInput input = player.GameInstance.Input;
 
-            //Se busca el vector que es producto del (0,1,0)Up y la direccion de vista.
-            TGCVector3 crossDirection = TGCVector3.Cross(TGCVector3.Up, player.LookDirection);
-            //El vector de Up correcto dependiendo del LookDirection
-            TGCVector3 upVector = TGCVector3.Cross(player.LookDirection, crossDirection);
-
             // MOVER LOOK DIRECTION CON MOVIMIENTO DEL MOUSE
             if (player.GameInstance.focusInGame)
             {

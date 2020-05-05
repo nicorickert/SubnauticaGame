@@ -52,10 +52,6 @@ namespace TGC.Group.Model
             TgcD3dInput input = GameInstance.Input;
             TGCVector3 movementDirection = TGCVector3.Empty;
             TGCVector3 rotationVector = TGCVector3.Empty;
-            //Se busca el vector que es producto del (0,1,0)Up y la direccion de vista.
-            TGCVector3 crossDirection = TGCVector3.Cross(TGCVector3.Up, LookDirection);
-            //El vector de Up correcto dependiendo del LookDirection
-            TGCVector3 upVector = TGCVector3.Cross(LookDirection, crossDirection);
 
             if (input.keyDown(Key.W))  // Adelante
             {
@@ -67,13 +63,13 @@ namespace TGC.Group.Model
             }
             if (input.keyDown(Key.A))  // Izquierda
             {
-                TGCQuaternion quat = TGCQuaternion.RotationAxis(upVector, FastMath.PI_HALF);
+                TGCQuaternion quat = TGCQuaternion.RotationAxis(RelativeUpDirection, FastMath.PI_HALF);
                 TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(quat);
                 movementDirection += MathExtended.TransformVector3(rotationMatrix, LookDirection);
             }
             if (input.keyDown(Key.D))  // Derecha
             {
-                TGCQuaternion quat = TGCQuaternion.RotationAxis(upVector, FastMath.PI_HALF * 3);
+                TGCQuaternion quat = TGCQuaternion.RotationAxis(RelativeUpDirection, FastMath.PI_HALF * 3);
                 TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(quat);
                 movementDirection += MathExtended.TransformVector3(rotationMatrix, LookDirection);
             }

@@ -11,6 +11,16 @@ namespace TGC.Group.Model
         public TgcMesh Mesh { get; protected set; }
         public TGCVector3 InitialLookDirection = new TGCVector3(0, 0, -1);
         public TGCVector3 LookDirection { get; set; }
+        public TGCVector3 RelativeUpDirection
+        {
+            get
+            {
+                //Se busca el vector que es producto del (0,1,0)Up y la direccion de vista.
+                TGCVector3 crossDirection = TGCVector3.Cross(TGCVector3.Up, LookDirection);
+                //El vector de Up correcto dependiendo del LookDirection
+                return TGCVector3.Cross(LookDirection, crossDirection);
+            }
+        }
         public TGCVector3 Position
         {
             get { return Mesh.Position; }
