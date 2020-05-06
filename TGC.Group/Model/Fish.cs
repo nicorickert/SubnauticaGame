@@ -17,10 +17,8 @@ namespace TGC.Group.Model
         private float timeToChangeDirection = 3f;
 
 
-        public Fish(Subnautica gameInstance, string name, TGCVector3 spawnLocation) : base(gameInstance, name)
+        public Fish(Subnautica gameInstance, string name, TgcMesh mesh, TGCVector3 spawnLocation) : base(gameInstance, name, mesh)
         {
-            var loader = new TgcSceneLoader();
-            Mesh = loader.loadSceneFromFile(gameInstance.MediaDir + "Aquatic\\Meshes\\fish-TgcScene.xml").Meshes[0];
             Position = spawnLocation;
             size = MathExtended.GetRandomNumberBetween(3, 20);
             Scale = TGCVector3.One * size;

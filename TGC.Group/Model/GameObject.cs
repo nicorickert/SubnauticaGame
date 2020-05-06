@@ -54,10 +54,11 @@ namespace TGC.Group.Model
             }
         }
 
-        public GameObject(Subnautica gameInstance, string name)
+        public GameObject(Subnautica gameInstance, string name, TgcMesh mesh)
         {
             GameInstance = gameInstance;
             Name = name;
+            Mesh = mesh;
             LookDirection = InitialLookDirection;
         }
 

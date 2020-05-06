@@ -5,11 +5,8 @@ namespace TGC.Group.Model
 {
     class StaticObject : GameObject
     {
-        public StaticObject(Subnautica gameInstance, string name, TGCVector3 position, TGCVector3 scale, TGCVector3 rotation, string meshPath) : base(gameInstance, name)
+        public StaticObject(Subnautica gameInstance, string name, TgcMesh mesh, TGCVector3 position, TGCVector3 scale, TGCVector3 rotation) : base(gameInstance, name, mesh)
         {
-            TgcSceneLoader loader = new TgcSceneLoader();
-            Mesh = loader.loadSceneFromFile(meshPath).Meshes[0];
-
             Mesh.Position = position;
             Mesh.Rotation = rotation;
             Mesh.Scale = scale;
@@ -21,17 +18,17 @@ namespace TGC.Group.Model
             Mesh.Transform = scaleTransform * rotationTransform * translation;
         }
 
-        public StaticObject(Subnautica gameInstance, string name, TGCVector3 position, float scale, TGCVector3 rotation, string meshPath)
-            : this(gameInstance, name, position, TGCVector3.One * scale, rotation, meshPath) { }
+        public StaticObject(Subnautica gameInstance, string name, TgcMesh mesh, TGCVector3 position, float scale, TGCVector3 rotation)
+            : this(gameInstance, name, mesh, position, TGCVector3.One * scale, rotation) { }
 
-        public StaticObject(Subnautica gameInstance, string name, TGCVector3 position, float scale, string meshPath)
-            : this(gameInstance, name, position, TGCVector3.One * scale, TGCVector3.Empty, meshPath) { }
+        public StaticObject(Subnautica gameInstance, string name, TgcMesh mesh, TGCVector3 position, float scale)
+            : this(gameInstance, name, mesh, position, TGCVector3.One * scale, TGCVector3.Empty) { }
 
-        public StaticObject(Subnautica gameInstance, string name, TGCVector3 position, TGCVector3 rotation, string meshPath)
-            : this(gameInstance, name, position, TGCVector3.One, rotation, meshPath) { }
+        public StaticObject(Subnautica gameInstance, string name, TgcMesh mesh, TGCVector3 position, TGCVector3 rotation)
+            : this(gameInstance, name, mesh, position, TGCVector3.One, rotation) { }
 
-        public StaticObject(Subnautica gameInstance, string name, TGCVector3 position, string meshPath)
-            : this(gameInstance, name, position, TGCVector3.One, TGCVector3.Empty, meshPath) { }
+        public StaticObject(Subnautica gameInstance, string name, TgcMesh mesh, TGCVector3 position)
+            : this(gameInstance, name, mesh, position, TGCVector3.One, TGCVector3.Empty) { }
 
         #region GameObject
 

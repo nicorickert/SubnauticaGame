@@ -12,6 +12,12 @@ namespace TGC.Group.Model
 {
     public class Subnautica : TGCExample
     {
+        #region MESHES
+        private TgcMesh playerMesh;
+        private TgcMesh fishMesh;
+        private TgcMesh coralMesh;
+        #endregion
+
         private List<GameObject> sceneObjects = new List<GameObject>();
         private TgcScene island;
         private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
@@ -36,7 +42,9 @@ namespace TGC.Group.Model
 
         public override void Init()
         {
-            Player = new Player(this, "player");
+            InitMeshes();
+
+            Player = new Player(this, "player", playerMesh);
             InstanceObject(Player); //Tal vez no sea necesario meter al Player dentro de la bolsa de GameObjects
 
             Camera = new FPSCamera(Player, new TGCVector3(0, 120, 0));
@@ -129,15 +137,15 @@ namespace TGC.Group.Model
             SpawnFishes();
 
             /* OBJETOS INDIVIDUALES */
-            InstanceObject(new StaticObject(this, "coral", new TGCVector3(500, FloorY + 500, 0), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
-            InstanceObject(new StaticObject(this, "coral", new TGCVector3(1000, FloorY + 500, 300), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+            InstanceObject(new StaticObject(this, "coral1", coralMesh.createMeshInstance("coral1"), new TGCVector3(500, FloorY + 500, 0), 5));
+            InstanceObject(new StaticObject(this, "coral2", coralMesh.createMeshInstance("coral2"), new TGCVector3(1000, FloorY + 500, 300), 5));
 
-            InstanceObject(new StaticObject(this, "coral", new TGCVector3(3000, FloorY + 300, -1000), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
-            InstanceObject(new StaticObject(this, "coral", new TGCVector3(3500, FloorY + 300, -700), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+            InstanceObject(new StaticObject(this, "coral3", coralMesh.createMeshInstance("coral3"), new TGCVector3(3000, FloorY + 300, -1000), 5));
+            InstanceObject(new StaticObject(this, "coral4", coralMesh.createMeshInstance("coral4"), new TGCVector3(3500, FloorY + 300, -700), 5));
 
-            InstanceObject(new StaticObject(this, "coral", new TGCVector3(300, FloorY + 700, 2800), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+            InstanceObject(new StaticObject(this, "coral5", coralMesh.createMeshInstance("coral5"), new TGCVector3(300, FloorY + 700, 2800), 5));
 
-            InstanceObject(new StaticObject(this, "coral", new TGCVector3(1000, FloorY + 300, -3000), 5, MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml"));
+            InstanceObject(new StaticObject(this, "coral6", coralMesh.createMeshInstance("coral6"), new TGCVector3(1000, FloorY + 300, -3000), 5));
         }
 
         private void LoadShip()
@@ -177,7 +185,8 @@ namespace TGC.Group.Model
             {
                 TGCVector3 spawnLocation = RandomSpawnLocation();
                 spawnLocation.Y = MathExtended.GetRandomNumberBetween((int)FloorY + 900, (int)WaterY - 100);
-                InstanceObject(new Fish(this, "fish" + i, spawnLocation));
+                string name = "fish" + i;
+                InstanceObject(new Fish(this, name, fishMesh.createMeshInstance(name), spawnLocation));
             }
         }
 
@@ -207,6 +216,14 @@ namespace TGC.Group.Model
             }
         }
 
+        private void InitMeshes()
+        {
+            var loader = new TgcSceneLoader();
+
+            playerMesh = loader.loadSceneFromFile(MediaDir + "Player\\Player-TgcScene.xml").Meshes[0];
+            fishMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\fish-TgcScene.xml").Meshes[0];
+            coralMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml").Meshes[0]; 
+        }
         #endregion
     }
 }

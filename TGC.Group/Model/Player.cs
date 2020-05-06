@@ -13,11 +13,8 @@ namespace TGC.Group.Model
         /* STATS */
         private readonly float movementSpeed = 1000.0f;
 
-        public Player(Subnautica gameInstance, string name) : base(gameInstance, name)
+        public Player(Subnautica gameInstance, string name, TgcMesh mesh) : base(gameInstance, name, mesh)
         {
-            var loader = new TgcSceneLoader();
-            var playerScene = loader.loadSceneFromFile(GameInstance.MediaDir + "Player\\Player-TgcScene.xml");
-            Mesh = playerScene.Meshes[0];
             Mesh.Position = new TGCVector3(0, 100, 2000);
         }
 
