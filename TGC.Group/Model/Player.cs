@@ -9,9 +9,17 @@ namespace TGC.Group.Model
     public class Player : GameObject
     {
         private TGCMatrix nextTransform = TGCMatrix.Identity;
+        private readonly float timePerHitTick = 0.5f;
+        private float timeSinceLastTick = 0f;
 
         /* STATS */
         private readonly float movementSpeed = 1000.0f;
+        private int maxHealth = 100;
+        private int oxygenCapacity = 100;
+        private int health = 100;
+        private int oxygen = 100;
+        private bool IsAlive { get { return health > 0; } }
+        private bool IsOutOfOxygen { get { return oxygen == 0; } }
 
         public Player(Subnautica gameInstance, string name, TgcMesh mesh) : base(gameInstance, name, mesh)
         {
@@ -24,7 +32,12 @@ namespace TGC.Group.Model
         {
             nextTransform = TGCMatrix.Identity;
             FixRotation();
-            ManageMovement();
+
+            if (IsAlive)
+            {
+                ManageMovement();
+                UpdateVitals();
+            }
         }
 
         public override void Render()
@@ -102,10 +115,45 @@ namespace TGC.Group.Model
             nextTransform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
         }
 
-        #endregion
+        private bool IsSubmerged() => Position.Y < GameInstance.WaterY;
 
-        #region PUBLIC_METHODS
+        private void AddHealth(int quantity)
+        {
+            health = FastMath.Clamp(health + quantity, 0, maxHealth);
+        }
 
+        private void AddOxygen(int quantity)
+        {
+            oxygen = FastMath.Clamp(oxygen + quantity, 0, oxygenCapacity);
+        }
+
+        private void UpdateVitals()
+        {
+            timeSinceLastTick += GameInstance.ElapsedTime;
+
+            if(timeSinceLastTick >= timePerHitTick)
+            {
+                if (IsSubmerged())
+                {
+                    if (IsOutOfOxygen)
+                    {
+                        AddHealth(-10);
+                    }
+                    else
+                    {
+                        AddOxygen(-10);
+                    }
+                }
+                else
+                {
+                    oxygen = oxygenCapacity;
+                }
+
+                System.Console.WriteLine("Player health: " + health + " oxygen: " + oxygen);
+                timeSinceLastTick = 0;
+            }
+
+        }
 
         #endregion
     }
