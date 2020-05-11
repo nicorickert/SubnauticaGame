@@ -34,7 +34,7 @@ namespace TGC.Group.Model.Utils
             //TGCVector3 rotationAxis = TGCVector3.Cross(TGCVector3.Up, player.RelativeUpDirection);
             //TGCVector3 relativeEyePosition = MathExtended.TransformVector3(TGCMatrix.RotationAxis(rotationAxis, spaceRotation), eyePosition);
             //TGCVector3 camaraPosition = player.Position + relativeEyePosition;
-
+            
             SetCamera(camaraPosition, camaraPosition + player.LookDirection);
         }
 

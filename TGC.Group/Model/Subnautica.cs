@@ -7,6 +7,7 @@ using Microsoft.DirectX.DirectInput;
 using TGC.Group.Model.Utils;
 using System.Windows.Forms;
 using TGC.Core.Direct3D;
+using TGC.Core.Terrain;
 
 namespace TGC.Group.Model
 {
@@ -18,9 +19,12 @@ namespace TGC.Group.Model
         private TgcMesh coralMesh;
         #endregion
 
-        private List<GameObject> sceneObjects = new List<GameObject>();
         private TgcScene island;
         private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
+        private TgcSkyBox skyBox;
+        private TGCVector3 skyBoxDimensions = new TGCVector3(20000, 10000, 20000);
+
+        private List<GameObject> sceneObjects = new List<GameObject>();
 
         public Player Player { get; private set; }
         public TgcScene Ship { get; private set; }
@@ -89,6 +93,7 @@ namespace TGC.Group.Model
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Render();
 
+            skyBox.Render();
             island.RenderAll();
             Ship.RenderAll();
 
@@ -104,6 +109,7 @@ namespace TGC.Group.Model
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Dispose();
 
+            skyBox.Dispose();
             island.DisposeAll();
             Ship.DisposeAll();
         }
@@ -125,6 +131,8 @@ namespace TGC.Group.Model
         {
             // Genero el terreno
             LoadTerrain();
+
+            LoadSkybox();
 
             // Isla
             TgcSceneLoader loader = new TgcSceneLoader();
@@ -224,6 +232,23 @@ namespace TGC.Group.Model
             fishMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\fish-TgcScene.xml").Meshes[0];
             coralMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml").Meshes[0]; 
         }
+
+        private void LoadSkybox()
+        {
+            skyBox = new TgcSkyBox();
+            skyBox.Center = TGCVector3.Up * (skyBoxDimensions.Y / 10);
+            skyBox.Size = new TGCVector3(skyBoxDimensions);
+
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, MediaDir + "Skybox\\up.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, MediaDir + "Skybox\\down.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, MediaDir + "Skybox\\left.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, MediaDir + "Skybox\\right.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, MediaDir + "Skybox\\front.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, MediaDir + "Skybox\\back.jpg");
+
+            skyBox.Init();
+        }
+
         #endregion
     }
 }
