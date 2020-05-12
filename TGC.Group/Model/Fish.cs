@@ -25,6 +25,13 @@ namespace TGC.Group.Model
             ManageMovement();
         }
 
+        public override void Interact(Player interactor)
+        {
+            base.Interact(interactor);
+            // Aca entraria la logica de crear el Item "Food" y agregarselo al inventario
+            Destroy();
+        }
+
         #region PRIVATE_METHODS
 
         private void ManageMovement()

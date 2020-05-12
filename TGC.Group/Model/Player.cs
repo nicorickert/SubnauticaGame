@@ -1,5 +1,6 @@
 ﻿using Microsoft.DirectX.DirectInput;
 using System.Collections.Generic;
+using TGC.Core.Collision;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
@@ -17,8 +18,10 @@ namespace TGC.Group.Model
         public int Oxygen { get; private set; } = 100;
 
         private readonly float movementSpeed = 1000.0f;
-        private int maxHealth = 100;
-        private int oxygenCapacity = 100;
+        private readonly int maxHealth = 100;
+        private readonly int oxygenCapacity = 100;
+        private readonly int range = 600;
+
         private bool IsAlive { get { return Health > 0; } }
         private bool IsOutOfOxygen { get { return Oxygen == 0; } }
 
@@ -38,6 +41,7 @@ namespace TGC.Group.Model
             if (IsAlive)
             {
                 ManageMovement();
+                CheckInteraction();
                 UpdateVitals();
             }
         }
@@ -46,9 +50,6 @@ namespace TGC.Group.Model
 
         #region PRIVATE_METHODS
 
-        // <summary>
-        //      Dado un input WASD el Mesh se mueve a la izquierda, derecha, adelante y atras respecto del vector LookDirection.
-        // <summary>
         private void ManageMovement()
         {
             TgcD3dInput input = GameInstance.Input;
@@ -108,16 +109,6 @@ namespace TGC.Group.Model
 
         private bool IsSubmerged() => Position.Y < GameInstance.WaterY;
 
-        private void AddHealth(int quantity)
-        {
-            Health = FastMath.Clamp(Health + quantity, 0, maxHealth);
-        }
-
-        private void AddOxygen(int quantity)
-        {
-            Oxygen = FastMath.Clamp(Oxygen + quantity, 0, oxygenCapacity);
-        }
-
         private void UpdateVitals()
         {
             timeSinceLastTick += GameInstance.ElapsedTime;
@@ -140,10 +131,50 @@ namespace TGC.Group.Model
                     Oxygen = oxygenCapacity;
                 }
 
-                System.Console.WriteLine("Player health: " + Health + " oxygen: " + Oxygen);
                 timeSinceLastTick = 0;
             }
 
+        }
+
+        private void CheckInteraction()
+        {
+            TgcPickingRay pickingRay = new TgcPickingRay(GameInstance.Input);
+            GameObject selectedObject = null;
+
+            if (GameInstance.Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT)) // No funciona el buttonPressed
+            {
+                pickingRay.updateRay();
+
+                foreach (var obj in ReachableObjects())
+                {
+                    if (obj.CheckRayCollision(pickingRay))
+                    {
+                        selectedObject = obj;
+                        break;
+                    }
+                }
+            }
+
+            if (selectedObject != null)
+            {
+                selectedObject.Interact(this);
+            }
+        }
+
+        private List<GameObject> ReachableObjects() => GameInstance.SceneObjects.FindAll(obj => obj != this && TGCVector3.Length(obj.Position - Position) <= range);
+
+        #endregion
+
+        #region INTERFACE
+
+        public void AddHealth(int quantity)
+        {
+            Health = FastMath.Clamp(Health + quantity, 0, maxHealth);
+        }
+
+        public void AddOxygen(int quantity)
+        {
+            Oxygen = FastMath.Clamp(Oxygen + quantity, 0, oxygenCapacity);
         }
 
         #endregion
