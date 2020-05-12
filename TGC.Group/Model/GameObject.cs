@@ -35,7 +35,20 @@ namespace TGC.Group.Model
         }
 
         public abstract void Update();
-        public abstract void Render();
-        public abstract void Dispose();
+
+        public virtual void Render()
+        {
+            foreach (TgcMesh mesh in Meshes)
+            {
+                mesh.Transform = Transform;
+                mesh.Render();
+            }
+        }
+
+        public virtual void Dispose()
+        {
+            foreach (TgcMesh mesh in Meshes)
+                mesh.Dispose();
+        }
     }
 }

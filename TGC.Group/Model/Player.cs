@@ -41,21 +41,6 @@ namespace TGC.Group.Model
             }
         }
 
-        public override void Render()
-        {
-            foreach (TgcMesh mesh in Meshes)
-            {
-                mesh.Transform = Transform;
-                mesh.Render();
-            }
-        }
-
-        public override void Dispose()
-        {
-            foreach (TgcMesh mesh in Meshes)
-                mesh.Dispose();
-        }
-
         #endregion
 
         #region PRIVATE_METHODS

@@ -19,6 +19,8 @@ namespace TGC.Group.Model
             Transform = scaleTransform * rotationTransform * translation;
         }
 
+        #region CONSTRUCTORES
+
         public StaticObject(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 position, float scale, TGCVector3 rotation)
             : this(gameInstance, name, meshes, position, TGCVector3.One * scale, rotation) { }
 
@@ -31,24 +33,11 @@ namespace TGC.Group.Model
         public StaticObject(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 position)
             : this(gameInstance, name, meshes, position, TGCVector3.One, TGCVector3.Empty) { }
 
+        #endregion
+
         #region GameObject
 
         public override void Update() { /* No tienen logica */ }
-
-        public override void Render()
-        {
-            foreach (TgcMesh mesh in Meshes)
-            {
-                mesh.Transform = Transform;
-                mesh.Render();
-            }
-        }
-
-        public override void Dispose()
-        {
-            foreach (TgcMesh mesh in Meshes)
-                mesh.Dispose();
-        }
 
         #endregion
     }

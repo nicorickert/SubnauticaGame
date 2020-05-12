@@ -9,11 +9,9 @@ namespace TGC.Group.Model
         private float movementSpeed = 100f;
         private float size;
 
-
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private float timeSinceLastDirection = 0f;
         private float timeToChangeDirection = 3f;
-
 
         public Fish(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 spawnLocation) : base(gameInstance, name, meshes)
         {
@@ -27,22 +25,7 @@ namespace TGC.Group.Model
             ManageMovement();
         }
 
-        public override void Render()
-        {
-            foreach (TgcMesh mesh in Meshes)
-            {
-                mesh.Transform = Transform;
-                mesh.Render();
-            }
-                
-        }
-
-        public override void Dispose()
-        {
-            foreach (TgcMesh mesh in Meshes)
-                mesh.Dispose();
-        }
-
+        #region PRIVATE_METHODS
 
         private void ManageMovement()
         {
@@ -75,5 +58,7 @@ namespace TGC.Group.Model
 
             Transform = scaling *  rotation * translation;
         }
+
+        #endregion
     }
 }
