@@ -54,8 +54,7 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 //Pixel Shader
 float4 psDefault(VS_OUTPUT input) : COLOR0
 {
-    float4 textureColor = tex2D(textureSampler, input.Texcoord + float4(0.01,0.01,0.01,0) * time);
-	textureColor = textureColor;
+    float4 textureColor = tex2D(textureSampler, input.Texcoord + float2(0.01, 0.01) * time);
 	
 	return float4(textureColor.xyz, 0.9f);
 }
