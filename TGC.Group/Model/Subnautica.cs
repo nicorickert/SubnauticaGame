@@ -22,7 +22,7 @@ namespace TGC.Group.Model
         private TgcScene island;
         private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
-        private TGCVector3 skyBoxDimensions = new TGCVector3(20000, 10000, 20000);
+        private TGCVector3 skyBoxDimensions = new TGCVector3(40000, 10000, 40000);
 
         private List<GameObject> sceneObjects = new List<GameObject>();
 
@@ -55,7 +55,7 @@ namespace TGC.Group.Model
 
             // Cambio el farPlane
             D3DDevice.Instance.Device.Transform.Projection = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio,
-                    D3DDevice.Instance.ZNearPlaneDistance, D3DDevice.Instance.ZFarPlaneDistance * 2f).ToMatrix();
+                    D3DDevice.Instance.ZNearPlaneDistance, D3DDevice.Instance.ZFarPlaneDistance * 3f).ToMatrix();
 
            
 
@@ -87,7 +87,7 @@ namespace TGC.Group.Model
                     hm.Update();
 
                 // Muevo el centro del skybox para que sea inalcanzable
-                skyBox.Center = Camera.Position;
+                skyBox.Center = new TGCVector3(Camera.Position.X, 0, Camera.Position.Z);
 
             }
             PostUpdate();
