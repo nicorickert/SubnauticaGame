@@ -53,6 +53,12 @@ namespace TGC.Group.Model
 
             Camera = new FPSCamera(Player, new TGCVector3(0, 120, 30));
 
+            // Cambio el farPlane
+            D3DDevice.Instance.Device.Transform.Projection = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio,
+                    D3DDevice.Instance.ZNearPlaneDistance, D3DDevice.Instance.ZFarPlaneDistance * 2f).ToMatrix();
+
+           
+
             LoadMainScene();
             UpdateHUD();
         }
@@ -70,6 +76,8 @@ namespace TGC.Group.Model
             if (focusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
             {
 
+                
+
                 // Objetos
                 foreach (GameObject o in sceneObjects)
                     o.Update();
@@ -77,6 +85,9 @@ namespace TGC.Group.Model
                 // HeightMaps
                 foreach (HeightMapTextured hm in heightMaps)
                     hm.Update();
+
+                // Muevo el centro del skybox para que sea inalcanzable
+                skyBox.Center = Camera.Position;
 
             }
             PostUpdate();
