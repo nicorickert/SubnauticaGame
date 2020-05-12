@@ -1,6 +1,7 @@
 ﻿using TGC.Core.SceneLoader;
 using TGC.Core.Mathematica;
 using System.Collections.Generic;
+using TGC.Group.Model.Items;
 
 namespace TGC.Group.Model
 {
@@ -27,8 +28,7 @@ namespace TGC.Group.Model
 
         public override void Interact(Player interactor)
         {
-            base.Interact(interactor);
-            // Aca entraria la logica de crear el Item "Food" y agregarselo al inventario
+            interactor.CollectItem(new Food("raw_fish", "un spritepath", 20)); // ojo, arreglar lo del sprite path
             Destroy();
         }
 

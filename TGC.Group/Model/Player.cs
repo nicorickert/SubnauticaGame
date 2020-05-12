@@ -5,6 +5,7 @@ using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Group.Model.Utils;
+using TGC.Group.Model.Items;
 
 namespace TGC.Group.Model
 {
@@ -24,6 +25,9 @@ namespace TGC.Group.Model
 
         private bool IsAlive { get { return Health > 0; } }
         private bool IsOutOfOxygen { get { return Oxygen == 0; } }
+
+        /* EQUIPO */
+        public List<Item> Inventory { get; private set; } = new List<Item>();
 
         public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
@@ -175,6 +179,11 @@ namespace TGC.Group.Model
         public void AddOxygen(int quantity)
         {
             Oxygen = FastMath.Clamp(Oxygen + quantity, 0, oxygenCapacity);
+        }
+
+        public void CollectItem(Item item)
+        {
+            Inventory.Add(item);
         }
 
         #endregion
