@@ -2,6 +2,8 @@
 using TGC.Core.SceneLoader;
 using TGC.Core.Example;
 using Effect = Microsoft.DirectX.Direct3D.Effect;
+using System.Collections.Generic;
+
 
 namespace TGC.Group.Model
 {
@@ -9,7 +11,7 @@ namespace TGC.Group.Model
     {
         public Subnautica GameInstance { get; private set; }
         public string Name { get; private set; }
-        public TgcMesh Mesh { get; protected set; }
+        public List<TgcMesh> Meshes { get; protected set; }
         public TGCVector3 InitialLookDirection = new TGCVector3(0, 0, -1);
         public TGCVector3 LookDirection { get; set; }
         public TGCVector3 RelativeUpDirection
@@ -22,49 +24,34 @@ namespace TGC.Group.Model
                 return TGCVector3.Cross(LookDirection, relativeXDirection);  // LookDirection sería como el relativeZDirection
             }
         }
-        public TGCVector3 Position
-        {
-            get { return Mesh.Position; }
-            protected set
-            {
-                Mesh.Position = value;
-            }
-        }
-        public TGCVector3 Scale
-        {
-            get { return Mesh.Scale; }
-            protected set
-            {
-                Mesh.Scale = value;
-            }
-        }
-        public TGCVector3 Rotation
-        {
-            get { return Mesh.Rotation; }
-            protected set
-            {
-                Mesh.Rotation = value;
-            }
-        }
-        public TGCMatrix Transform
-        {
-            get { return Mesh.Transform; }
-            protected set
-            {
-                Mesh.Transform = value;
-            }
-        }
+        public TGCVector3 Position { get; set; } = TGCVector3.Empty;
+        public TGCVector3 Scale { get; set; } = TGCVector3.One;
+        public TGCVector3 Rotation { get; set; } = TGCVector3.Empty;
+        public TGCMatrix Transform { get; set; } = TGCMatrix.Identity;
 
-        public GameObject(Subnautica gameInstance, string name, TgcMesh mesh)
+        public GameObject(Subnautica gameInstance, string name, List<TgcMesh> meshes)
         {
             GameInstance = gameInstance;
             Name = name;
-            Mesh = mesh;
+            Meshes = meshes;
             LookDirection = InitialLookDirection;
         }
 
         public abstract void Update();
-        public abstract void Render();
-        public abstract void Dispose();
+
+        public virtual void Render()
+        {
+            foreach (TgcMesh mesh in Meshes)
+            {
+                mesh.Transform = Transform;
+                mesh.Render();
+            }
+        }
+
+        public virtual void Dispose()
+        {
+            foreach (TgcMesh mesh in Meshes)
+                mesh.Dispose();
+        }
     }
 }

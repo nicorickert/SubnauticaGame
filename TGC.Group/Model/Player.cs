@@ -1,4 +1,5 @@
 ﻿using Microsoft.DirectX.DirectInput;
+using System.Collections.Generic;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
@@ -8,34 +9,36 @@ namespace TGC.Group.Model
 {
     public class Player : GameObject
     {
-        private TGCMatrix nextTransform = TGCMatrix.Identity;
+        private readonly float timePerHitTick = 0.5f;
+        private float timeSinceLastTick = 0f;
 
         /* STATS */
         private readonly float movementSpeed = 1000.0f;
+        private int maxHealth = 100;
+        private int oxygenCapacity = 100;
+        private int health = 100;
+        private int oxygen = 100;
+        private bool IsAlive { get { return health > 0; } }
+        private bool IsOutOfOxygen { get { return oxygen == 0; } }
 
-        public Player(Subnautica gameInstance, string name, TgcMesh mesh) : base(gameInstance, name, mesh)
+        public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
-            Mesh.Position = new TGCVector3(0, 100, 2000);
+            Position = new TGCVector3(0, 100, 2000);
         }
 
         #region GameObject
 
         public override void Update()
         {
-            nextTransform = TGCMatrix.Identity;
+            Transform = TGCMatrix.Identity;
+
             FixRotation();
-            ManageMovement();
-        }
 
-        public override void Render()
-        {
-            Mesh.Transform = nextTransform;
-            Mesh.Render();
-        }
-
-        public override void Dispose()
-        {
-            Mesh.Dispose();
+            if (IsAlive)
+            {
+                ManageMovement();
+                UpdateVitals();
+            }
         }
 
         #endregion
@@ -85,10 +88,10 @@ namespace TGC.Group.Model
             if (!CollisionDetected())
             {
                 TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
-                Mesh.Position += totalTranslation;
+                Position += totalTranslation;
 
-                TGCMatrix translationMatrix = TGCMatrix.Translation(Mesh.Position);
-                nextTransform *= translationMatrix;
+                TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
+                Transform *= translationMatrix;
             }
         }
 
@@ -99,13 +102,48 @@ namespace TGC.Group.Model
             TGCVector3 rotationAxis = TGCVector3.Cross(InitialLookDirection, LookDirection);  // Ojo el orden - no es conmutativo
             TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, MathExtended.AngleBetween(InitialLookDirection, LookDirection));
             TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(rotation);
-            nextTransform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
+            Transform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
         }
 
-        #endregion
+        private bool IsSubmerged() => Position.Y < GameInstance.WaterY;
 
-        #region PUBLIC_METHODS
+        private void AddHealth(int quantity)
+        {
+            health = FastMath.Clamp(health + quantity, 0, maxHealth);
+        }
 
+        private void AddOxygen(int quantity)
+        {
+            oxygen = FastMath.Clamp(oxygen + quantity, 0, oxygenCapacity);
+        }
+
+        private void UpdateVitals()
+        {
+            timeSinceLastTick += GameInstance.ElapsedTime;
+
+            if(timeSinceLastTick >= timePerHitTick)
+            {
+                if (IsSubmerged())
+                {
+                    if (IsOutOfOxygen)
+                    {
+                        AddHealth(-10);
+                    }
+                    else
+                    {
+                        AddOxygen(-10);
+                    }
+                }
+                else
+                {
+                    oxygen = oxygenCapacity;
+                }
+
+                System.Console.WriteLine("Player health: " + health + " oxygen: " + oxygen);
+                timeSinceLastTick = 0;
+            }
+
+        }
 
         #endregion
     }
