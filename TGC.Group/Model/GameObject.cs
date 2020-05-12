@@ -1,6 +1,7 @@
 ﻿using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Example;
+using Effect = Microsoft.DirectX.Direct3D.Effect;
 
 namespace TGC.Group.Model
 {

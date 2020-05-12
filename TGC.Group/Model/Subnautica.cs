@@ -141,7 +141,6 @@ namespace TGC.Group.Model
         private void LoadMainScene()
         {
             // Genero el terreno
-            LoadTerrain();
 
             LoadSkybox();
 
@@ -154,6 +153,8 @@ namespace TGC.Group.Model
 
             /* 20 peces */ 
             SpawnFishes();
+
+            LoadTerrain();
 
             /* OBJETOS INDIVIDUALES */
             InstanceObject(new StaticObject(this, "coral1", coralMesh.createMeshInstance("coral1"), new TGCVector3(500, FloorY + 500, 0), 5));
@@ -188,8 +189,8 @@ namespace TGC.Group.Model
 
         private void LoadTerrain()
         {
-            heightMaps.Add(new HeightMapTextured(this, "SeaFloor", new TGCVector3(0, FloorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "image.png"));
-            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, WaterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Terrain\\" + "blueTransparent.png"));
+            heightMaps.Add(new HeightMapTextured(this, "SeaFloor", new TGCVector3(0, FloorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "image.png", null));
+            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, WaterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
 
             foreach (HeightMapTextured hm in heightMaps)
             {

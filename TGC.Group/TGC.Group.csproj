@@ -181,6 +181,7 @@
   <ItemGroup>
     <Content Include="Media\cajaMadera4.jpg" />
     <Content Include="Media\LogoTGC-TgcScene.xml" />
+    <Content Include="Shaders\WaterShader.fx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

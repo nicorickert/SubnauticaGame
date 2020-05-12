@@ -3,6 +3,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using TGC.Core.Direct3D;
 using TGC.Core.Mathematica;
+using Effect = Microsoft.DirectX.Direct3D.Effect;
+using TGC.Core.Shaders;
+using TGC.Core.Textures;
 
 namespace TGC.Group.Model
 {
@@ -20,32 +23,37 @@ namespace TGC.Group.Model
     /// </summary>
     public class HeightMapTextured
     {
-
+        private Effect effect;
+        private string currentEffect;
         private string currentHeightmap;
         private float currentScaleXZ;
         private float currentScaleY;
         private string currentTexture;
-        private Texture terrainTexture;
+        private TgcTexture terrainTexture;
         private int totalVertices;
         private VertexBuffer vbTerrain;
         private TGCVector3 centre;
         public string name;
+        public float time;
 
         public Subnautica GameInstance { get; private set; }
 
-        public HeightMapTextured(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture)
+        public HeightMapTextured(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect)
         {
             GameInstance = gameInstance;
             centre = centreP;
             currentHeightmap = heightMap;
             currentTexture = texture;
+            currentEffect = effect;
         }
 
-        public HeightMapTextured(Subnautica gameInstance, string name, string heightMap, string texture)
-            :this(gameInstance, name, TGCVector3.Empty, heightMap, texture) { }
+        public HeightMapTextured(Subnautica gameInstance, string name, string heightMap, string texture, string effect)
+            :this(gameInstance, name, TGCVector3.Empty, heightMap, texture, effect) { }
 
         public void Init()
         {
+
+            time = 0;
             //Modifiers para variar escala del mapa
             currentScaleXZ = 300f;
             currentScaleY = 10f;
@@ -53,11 +61,23 @@ namespace TGC.Group.Model
 
             loadTerrainTexture(D3DDevice.Instance.Device, currentTexture);
 
-            //UserVars para cantidad de vertices
+
+            if (currentEffect != null)
+            {
+                effect = TGCShaders.Instance.LoadEffect(currentEffect);
+                effect.Technique = "Default";
+                effect.SetValue("textureExample", terrainTexture.D3dTexture);
+            }
+
         }
 
         public void Update()
         {
+            if (effect != null)
+            {
+                time += GameInstance.ElapsedTime;
+                effect.SetValue("time", time);
+            }
         }
 
         /// <summary>
@@ -123,10 +143,13 @@ namespace TGC.Group.Model
         /// </summary>
         private void loadTerrainTexture(Device d3dDevice, string path)
         {
+            terrainTexture = TgcTexture.createTexture(path);
+            
+            
             //Rotar e invertir textura
-            var b = (Bitmap)Image.FromFile(path);
-            b.RotateFlip(RotateFlipType.Rotate90FlipX);
-            terrainTexture = Texture.FromBitmap(d3dDevice, b, Usage.None, Pool.Managed);
+            //var b = (Bitmap)Image.FromFile(path);
+            //b.RotateFlip(RotateFlipType.Rotate90FlipX);
+            //terrainTexture = Texture.FromBitmap(d3dDevice, b, Usage.None, Pool.Managed);
         }
 
         /// <summary>
@@ -185,30 +208,44 @@ namespace TGC.Group.Model
 
         public void Render()
         {
-            //PreRender();
-            //DrawText.drawText("Camera pos: " + TGCVector3.PrintTGCVector3(Camara.Position), 5, 20, Color.Red);
-            //DrawText.drawText("Camera LookAt: " + TGCVector3.PrintTGCVector3(Camara.LookAt), 5, 40, Color.Red);
-
-            // CrearHeightMap
+            var device = D3DDevice.Instance.Device;
             
-            //createHeightMapMesh(D3DDevice.Instance.Device, currentHeightmap, currentScaleXZ, currentScaleY);
-
-            // Cargo textura del terreno
-            //loadTerrainTexture(D3DDevice.Instance.Device, currentTexture);
-
+            device.VertexFormat = CustomVertex.PositionTextured.Format;
+            device.SetStreamSource(0, vbTerrain, 0);
             //Render terrain
-            D3DDevice.Instance.Device.SetTexture(0, terrainTexture);
-            D3DDevice.Instance.Device.VertexFormat = CustomVertex.PositionTextured.Format;
-            D3DDevice.Instance.Device.SetStreamSource(0, vbTerrain, 0);
-            D3DDevice.Instance.Device.DrawPrimitives(PrimitiveType.TriangleList, 0, totalVertices / 3);
 
-            //PostRender();
+            if (effect != null && !effect.Disposed)
+            {
+                // Habilito el canal alpha
+                device.RenderState.AlphaTestEnable = true;
+                device.RenderState.AlphaBlendEnable = true;
+
+                TGCShaders.Instance.SetShaderMatrixIdentity(effect);
+                var numPasses = effect.Begin(0);
+                for (var n = 0; n < numPasses; n++)
+                {
+                    effect.BeginPass(n);
+                    D3DDevice.Instance.Device.DrawPrimitives(PrimitiveType.TriangleList, 0, totalVertices / 3);
+                    effect.EndPass();
+                }
+                effect.End();
+
+                device.RenderState.AlphaTestEnable = false;
+                device.RenderState.AlphaBlendEnable = false;
+
+            } else
+            {
+                device.SetTexture(0, terrainTexture.D3dTexture);
+                device.DrawPrimitives(PrimitiveType.TriangleList, 0, totalVertices / 3);
+            }
         }
 
         public void Dispose()
         {
             vbTerrain.Dispose();
-            terrainTexture.Dispose();
+            terrainTexture.D3dTexture.Dispose();
+            if (effect != null)
+                effect.Dispose();
         }
     }
 }
