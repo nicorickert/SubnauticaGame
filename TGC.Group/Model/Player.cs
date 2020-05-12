@@ -1,4 +1,5 @@
 ﻿using Microsoft.DirectX.DirectInput;
+using System.Collections.Generic;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
@@ -8,7 +9,6 @@ namespace TGC.Group.Model
 {
     public class Player : GameObject
     {
-        private TGCMatrix nextTransform = TGCMatrix.Identity;
         private readonly float timePerHitTick = 0.5f;
         private float timeSinceLastTick = 0f;
 
@@ -21,16 +21,17 @@ namespace TGC.Group.Model
         private bool IsAlive { get { return health > 0; } }
         private bool IsOutOfOxygen { get { return oxygen == 0; } }
 
-        public Player(Subnautica gameInstance, string name, TgcMesh mesh) : base(gameInstance, name, mesh)
+        public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
-            Mesh.Position = new TGCVector3(0, 100, 2000);
+            Position = new TGCVector3(0, 100, 2000);
         }
 
         #region GameObject
 
         public override void Update()
         {
-            nextTransform = TGCMatrix.Identity;
+            Transform = TGCMatrix.Identity;
+
             FixRotation();
 
             if (IsAlive)
@@ -42,13 +43,17 @@ namespace TGC.Group.Model
 
         public override void Render()
         {
-            Mesh.Transform = nextTransform;
-            Mesh.Render();
+            foreach (TgcMesh mesh in Meshes)
+            {
+                mesh.Transform = Transform;
+                mesh.Render();
+            }
         }
 
         public override void Dispose()
         {
-            Mesh.Dispose();
+            foreach (TgcMesh mesh in Meshes)
+                mesh.Dispose();
         }
 
         #endregion
@@ -98,10 +103,10 @@ namespace TGC.Group.Model
             if (!CollisionDetected())
             {
                 TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
-                Mesh.Position += totalTranslation;
+                Position += totalTranslation;
 
-                TGCMatrix translationMatrix = TGCMatrix.Translation(Mesh.Position);
-                nextTransform *= translationMatrix;
+                TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
+                Transform *= translationMatrix;
             }
         }
 
@@ -112,7 +117,7 @@ namespace TGC.Group.Model
             TGCVector3 rotationAxis = TGCVector3.Cross(InitialLookDirection, LookDirection);  // Ojo el orden - no es conmutativo
             TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, MathExtended.AngleBetween(InitialLookDirection, LookDirection));
             TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(rotation);
-            nextTransform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
+            Transform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
         }
 
         private bool IsSubmerged() => Position.Y < GameInstance.WaterY;

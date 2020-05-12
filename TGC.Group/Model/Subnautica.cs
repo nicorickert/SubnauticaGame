@@ -6,7 +6,6 @@ using TGC.Core.SceneLoader;
 using Microsoft.DirectX.DirectInput;
 using TGC.Group.Model.Utils;
 using System.Windows.Forms;
-using TGC.Core.Direct3D;
 
 namespace TGC.Group.Model
 {
@@ -16,6 +15,7 @@ namespace TGC.Group.Model
         private TgcMesh playerMesh;
         private TgcMesh fishMesh;
         private TgcMesh coralMesh;
+        private TgcScene shipScene;
         #endregion
 
         private List<GameObject> sceneObjects = new List<GameObject>();
@@ -23,14 +23,14 @@ namespace TGC.Group.Model
         private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
 
         public Player Player { get; private set; }
-        public TgcScene Ship { get; private set; }
+        public Ship Ship { get; private set; }
         public float FloorY { get; } = -3000;
         public float WaterY { get; } = 0;
         public float escapeDelay = 0;
 
         public bool focusInGame = true; // Variable para saber si estoy jugando o en menu
 
-
+       
         public Subnautica(string mediaDir, string shadersDir) : base(mediaDir, shadersDir)
         {
             Category = Game.Default.Category;
@@ -42,21 +42,18 @@ namespace TGC.Group.Model
 
         public override void Init()
         {
-            InitMeshes();
-
-            Player = new Player(this, "player", playerMesh);
-            InstanceObject(Player); //Tal vez no sea necesario meter al Player dentro de la bolsa de GameObjects
-
-            Camera = new FPSCamera(Player, new TGCVector3(0, 120, 30));
-
+            InitBaseMeshes();
             LoadMainScene();
             UpdateHUD();
+
+            Camera = new FPSCamera(Player, new TGCVector3(0, 120, 30));
         }
 
         public override void Update()
         {
             PreUpdate();
             escapeDelay += ElapsedTime;
+
             if (Input.keyDown(Key.Escape) && escapeDelay > 0.5f) { // uso el delay porque no me funciona el keyUp o keyPressed
                 escapeDelay = 0;
                 focusInGame = !focusInGame;
@@ -65,7 +62,6 @@ namespace TGC.Group.Model
 
             if (focusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
             {
-
                 // Objetos
                 foreach (GameObject o in sceneObjects)
                     o.Update();
@@ -73,7 +69,6 @@ namespace TGC.Group.Model
                 // HeightMaps
                 foreach (HeightMapTextured hm in heightMaps)
                     hm.Update();
-
             }
             PostUpdate();
         }
@@ -90,7 +85,6 @@ namespace TGC.Group.Model
                 hm.Render();
 
             island.RenderAll();
-            Ship.RenderAll();
 
             PostRender();
         }
@@ -105,7 +99,6 @@ namespace TGC.Group.Model
                 hm.Dispose();
 
             island.DisposeAll();
-            Ship.DisposeAll();
         }
 
         #endregion
@@ -126,45 +119,29 @@ namespace TGC.Group.Model
             // Genero el terreno
             LoadTerrain();
 
+            Player = new Player(this, "player", new List<TgcMesh>(new TgcMesh[] { playerMesh }));
+            InstanceObject(Player); //Tal vez no sea necesario meter al Player dentro de la bolsa de GameObjects
+
+            Ship = new Ship(this, "main_ship", shipScene.Meshes);
+            InstanceObject(Ship);
+
+            /* 20 peces */
+            SpawnFishes();
+
             // Isla
             TgcSceneLoader loader = new TgcSceneLoader();
             island = loader.loadSceneFromFile(MediaDir + "Scene\\Isla-TgcScene.xml");
 
-            /* Cargo el barco, probablemente sea una clase individual en el futuro como "Player" */
-            LoadShip();
-
-            /* 20 peces */ 
-            SpawnFishes();
-
             /* OBJETOS INDIVIDUALES */
-            InstanceObject(new StaticObject(this, "coral1", coralMesh.createMeshInstance("coral1"), new TGCVector3(500, FloorY + 500, 0), 5));
-            InstanceObject(new StaticObject(this, "coral2", coralMesh.createMeshInstance("coral2"), new TGCVector3(1000, FloorY + 500, 300), 5));
+            InstanceObject(new StaticObject(this, "coral1", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(500, FloorY + 500, 0), 5));
+            InstanceObject(new StaticObject(this, "coral2", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(1000, FloorY + 500, 300), 5));
 
-            InstanceObject(new StaticObject(this, "coral3", coralMesh.createMeshInstance("coral3"), new TGCVector3(3000, FloorY + 300, -1000), 5));
-            InstanceObject(new StaticObject(this, "coral4", coralMesh.createMeshInstance("coral4"), new TGCVector3(3500, FloorY + 300, -700), 5));
+            InstanceObject(new StaticObject(this, "coral3", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(3000, FloorY + 300, -1000), 5));
+            InstanceObject(new StaticObject(this, "coral4", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(3500, FloorY + 300, -700), 5));
 
-            InstanceObject(new StaticObject(this, "coral5", coralMesh.createMeshInstance("coral5"), new TGCVector3(300, FloorY + 700, 2800), 5));
+            InstanceObject(new StaticObject(this, "coral5", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(300, FloorY + 700, 2800), 5));
 
-            InstanceObject(new StaticObject(this, "coral6", coralMesh.createMeshInstance("coral6"), new TGCVector3(1000, FloorY + 300, -3000), 5));
-        }
-
-        private void LoadShip()
-        {
-            TgcSceneLoader loader = new TgcSceneLoader();
-
-            Ship = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\ship-TgcScene.xml");
-            foreach (TgcMesh mesh in Ship.Meshes)
-            {
-                mesh.Position += new TGCVector3(3500, 60, 0);   // seteo la posicion del barco
-                mesh.Scale *= 3;
-                mesh.Rotation += new TGCVector3(0, FastMath.PI_HALF, 0);
-
-                TGCMatrix translation = TGCMatrix.Translation(mesh.Position);
-                TGCMatrix scaling = TGCMatrix.Scaling(mesh.Scale);
-                TGCMatrix rotation = TGCMatrix.RotationYawPitchRoll(mesh.Rotation.Y, mesh.Rotation.X, mesh.Rotation.Z);
-
-                mesh.Transform = rotation * scaling * translation;
-            }
+            InstanceObject(new StaticObject(this, "coral6", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(1000, FloorY + 300, -3000), 5));
         }
 
         private void LoadTerrain()
@@ -186,7 +163,7 @@ namespace TGC.Group.Model
                 TGCVector3 spawnLocation = RandomSpawnLocation();
                 spawnLocation.Y = MathExtended.GetRandomNumberBetween((int)FloorY + 900, (int)WaterY - 100);
                 string name = "fish" + i;
-                InstanceObject(new Fish(this, name, fishMesh.createMeshInstance(name), spawnLocation));
+                InstanceObject(new Fish(this, name, new List<TgcMesh>(new TgcMesh[] { fishMesh.createMeshInstance(name) }), spawnLocation));
             }
         }
 
@@ -216,13 +193,14 @@ namespace TGC.Group.Model
             }
         }
 
-        private void InitMeshes()
+        private void InitBaseMeshes()
         {
             var loader = new TgcSceneLoader();
 
             playerMesh = loader.loadSceneFromFile(MediaDir + "Player\\Player-TgcScene.xml").Meshes[0];
             fishMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\fish-TgcScene.xml").Meshes[0];
-            coralMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml").Meshes[0]; 
+            coralMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml").Meshes[0];
+            shipScene = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\ship-TgcScene.xml");
         }
         #endregion
     }
