@@ -21,6 +21,7 @@ namespace TGC.Group.Model
         private int oxygenCapacity = 100;
         private bool IsAlive { get { return Health > 0; } }
         private bool IsOutOfOxygen { get { return Oxygen == 0; } }
+        private bool GodMode = true;
 
         public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
@@ -120,6 +121,9 @@ namespace TGC.Group.Model
 
         private void UpdateVitals()
         {
+            if (GodMode) // Para no morirme y poder explorar tranquilo
+                return;
+
             timeSinceLastTick += GameInstance.ElapsedTime;
 
             if(timeSinceLastTick >= timePerHitTick)
