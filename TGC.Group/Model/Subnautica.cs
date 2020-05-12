@@ -8,6 +8,8 @@ using TGC.Group.Model.Utils;
 using System.Windows.Forms;
 using TGC.Core.Direct3D;
 using TGC.Core.Terrain;
+using TGC.Core.Text;
+using System.Drawing;
 
 namespace TGC.Group.Model
 {
@@ -35,7 +37,14 @@ namespace TGC.Group.Model
 
         public bool focusInGame = true; // Variable para saber si estoy jugando o en menu
 
-       
+        #region HUD
+
+        private TgcText2D healthTextBox = new TgcText2D();
+        private TgcText2D oxygenTextBox = new TgcText2D();
+
+        #endregion
+
+
         public Subnautica(string mediaDir, string shadersDir) : base(mediaDir, shadersDir)
         {
             Category = Game.Default.Category;
@@ -48,8 +57,9 @@ namespace TGC.Group.Model
         public override void Init()
         {
             InitBaseMeshes();
+            InitHUD();
             LoadMainScene();
-            UpdateHUD();
+            ManageFocus();
 
             // Cambio el farPlane
             D3DDevice.Instance.Device.Transform.Projection = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio,
@@ -66,7 +76,7 @@ namespace TGC.Group.Model
             if (Input.keyDown(Key.Escape) && escapeDelay > 0.5f) { // uso el delay porque no me funciona el keyUp o keyPressed
                 escapeDelay = 0;
                 focusInGame = !focusInGame;
-                UpdateHUD();
+                ManageFocus();
             }
 
             if (focusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
@@ -83,12 +93,16 @@ namespace TGC.Group.Model
                 skyBox.Center = new TGCVector3(Camera.Position.X, 0, Camera.Position.Z);
             }
 
+            UpdateHUD();
+
             PostUpdate();
         }
 
         public override void Render()
         {
             PreRender();
+
+            RenderHUD();
 
             foreach (GameObject o in sceneObjects)
                 o.Render();
@@ -105,6 +119,8 @@ namespace TGC.Group.Model
 
         public override void Dispose()
         {
+            DisposeHUD();
+
             foreach (GameObject o in sceneObjects)
                 o.Dispose();
 
@@ -196,11 +212,10 @@ namespace TGC.Group.Model
             return spawnLocation;
         }
 
-        private void UpdateHUD()
+        private void ManageFocus()
         {
             if (focusInGame)
             {
-                
                 Cursor.Clip = new System.Drawing.Rectangle(Cursor.Position.X, Cursor.Position.Y, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
                 Cursor.Hide();
             }
@@ -209,6 +224,42 @@ namespace TGC.Group.Model
                 Cursor.Clip = new System.Drawing.Rectangle(); // libero el mouse
                 Cursor.Show();
             }
+        }
+
+        private void InitHUD()
+        {
+            int deviceWidth = D3DDevice.Instance.Width;
+            int deviceHeight = D3DDevice.Instance.Height;
+
+            healthTextBox.Text = "✚ 100";
+            healthTextBox.Color = Color.Gold;
+            healthTextBox.Position = new Point((int)FastMath.Floor(0.01f * deviceWidth), (int)FastMath.Floor(0.9f * deviceHeight));
+            healthTextBox.Size = new Size(600, 200);
+            healthTextBox.changeFont(new Font("TimesNewRoman", 25, FontStyle.Bold));
+
+            oxygenTextBox.Text = "◴ 100";
+            oxygenTextBox.Color = Color.Gold;
+            oxygenTextBox.Position = new Point((int)FastMath.Floor(0.1f * deviceWidth), (int)FastMath.Floor(0.9f * deviceHeight));
+            oxygenTextBox.Size = new Size(600, 200);
+            oxygenTextBox.changeFont(new Font("TimesNewRoman", 25, FontStyle.Bold));
+        }
+
+        private void UpdateHUD()
+        {
+            healthTextBox.Text = "✚ " + Player.Health;
+            oxygenTextBox.Text = "◴ " + Player.Oxygen;
+        }
+
+        private void RenderHUD()
+        {
+            healthTextBox.render();
+            oxygenTextBox.render();
+        }
+
+        private void DisposeHUD()
+        {
+            healthTextBox.Dispose();
+            oxygenTextBox.Dispose();
         }
 
         private void InitBaseMeshes()

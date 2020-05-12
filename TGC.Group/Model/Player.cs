@@ -13,13 +13,14 @@ namespace TGC.Group.Model
         private float timeSinceLastTick = 0f;
 
         /* STATS */
+        public int Health { get; private set; } = 100;
+        public int Oxygen { get; private set; } = 100;
+
         private readonly float movementSpeed = 1000.0f;
         private int maxHealth = 100;
         private int oxygenCapacity = 100;
-        private int health = 100;
-        private int oxygen = 100;
-        private bool IsAlive { get { return health > 0; } }
-        private bool IsOutOfOxygen { get { return oxygen == 0; } }
+        private bool IsAlive { get { return Health > 0; } }
+        private bool IsOutOfOxygen { get { return Oxygen == 0; } }
 
         public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
@@ -109,12 +110,12 @@ namespace TGC.Group.Model
 
         private void AddHealth(int quantity)
         {
-            health = FastMath.Clamp(health + quantity, 0, maxHealth);
+            Health = FastMath.Clamp(Health + quantity, 0, maxHealth);
         }
 
         private void AddOxygen(int quantity)
         {
-            oxygen = FastMath.Clamp(oxygen + quantity, 0, oxygenCapacity);
+            Oxygen = FastMath.Clamp(Oxygen + quantity, 0, oxygenCapacity);
         }
 
         private void UpdateVitals()
@@ -136,10 +137,10 @@ namespace TGC.Group.Model
                 }
                 else
                 {
-                    oxygen = oxygenCapacity;
+                    Oxygen = oxygenCapacity;
                 }
 
-                System.Console.WriteLine("Player health: " + health + " oxygen: " + oxygen);
+                System.Console.WriteLine("Player health: " + Health + " oxygen: " + Oxygen);
                 timeSinceLastTick = 0;
             }
 
