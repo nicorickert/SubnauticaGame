@@ -225,12 +225,14 @@ namespace TGC.Group.Model
         {
             if (focusInGame)
             {
-                Cursor.Clip = new System.Drawing.Rectangle(Cursor.Position.X, Cursor.Position.Y, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
+                int deviceWidth = D3DDevice.Instance.Width;
+                int deviceHeight = D3DDevice.Instance.Height;
+                Cursor.Clip = new Rectangle(deviceWidth/2, deviceHeight/2, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
                 Cursor.Hide();
             }
             else
             {
-                Cursor.Clip = new System.Drawing.Rectangle(); // libero el mouse
+                Cursor.Clip = new Rectangle(); // libero el mouse
                 Cursor.Show();
             }
         }
@@ -256,7 +258,7 @@ namespace TGC.Group.Model
 
             screenCenter.Text = "+";
             screenCenter.Color = Color.White;
-            screenCenter.Position = new Point(deviceWidth/2, deviceHeight/2);
+            screenCenter.Position = new Point(deviceWidth/2 - 8, deviceHeight/2 - 40);
             screenCenter.Size = new Size(600, 200);
             screenCenter.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
             screenCenter.Align = TgcText2D.TextAlign.LEFT;
