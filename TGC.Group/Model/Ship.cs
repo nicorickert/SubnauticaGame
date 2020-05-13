@@ -20,6 +20,8 @@ namespace TGC.Group.Model
             Transform = rotation * scaling * translation;
         }
 
+        #region TGC
         public override void Update() { /* Sin logica por ahora*/ }
+        #endregion
     }
 }

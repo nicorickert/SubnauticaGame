@@ -11,12 +11,16 @@ namespace TGC.Group.Model
 {
     public class Player : GameObject
     {
+        #region UTILS
         private readonly float timePerHitTick = 1f;
         private float timeSinceLastTick = 0f;
+        private bool godMode = true;
+        #endregion
 
-        /* STATS */
+        #region STATS
         public int Health { get; private set; } = 100;
         public int Oxygen { get; private set; } = 100;
+        public List<Item> Inventory { get; private set; } = new List<Item>();
 
         private readonly float movementSpeed = 1000.0f;
         private readonly int maxHealth = 100;
@@ -24,17 +28,14 @@ namespace TGC.Group.Model
 
         private bool IsAlive { get { return Health > 0; } }
         private bool IsOutOfOxygen { get { return Oxygen == 0; } }
-        private bool GodMode = true;
-
-        /* EQUIPO */
-        public List<Item> Inventory { get; private set; } = new List<Item>();
+        #endregion
 
         public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
             Position = new TGCVector3(0, 100, 2000);
         }
 
-        #region GameObject
+        #region TGC
 
         public override void Update()
         {
@@ -120,7 +121,7 @@ namespace TGC.Group.Model
 
         private void UpdateVitals()
         {
-            if (GodMode) // Para no morirme y poder explorar tranquilo
+            if (godMode) // Para no morirme y poder explorar tranquilo
                 return;
 
             timeSinceLastTick += GameInstance.ElapsedTime;
@@ -156,21 +157,11 @@ namespace TGC.Group.Model
             if (GameInstance.Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT)) // No funciona el buttonPressed
             {
                 pickingRay.updateRay();
-
-                foreach (var obj in ReachableObjects())
-                {
-                    if (obj.CheckRayCollision(pickingRay))
-                    {
-                        selectedObject = obj;
-                        break;
-                    }
-                }
+                selectedObject = ReachableObjects().Find(obj => obj.CheckRayCollision(pickingRay));
             }
 
             if (selectedObject != null)
-            {
                 selectedObject.Interact(this);
-            }
         }
 
         #endregion

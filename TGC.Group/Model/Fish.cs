@@ -7,12 +7,16 @@ namespace TGC.Group.Model
 {
     class Fish : GameObject
     {
+        #region STATS
         private float movementSpeed = 100f;
         private float size;
+        #endregion
 
+        #region UTILS
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private float timeSinceLastDirection = 0f;
         private float timeToChangeDirection = 3f;
+        #endregion
 
         public Fish(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 spawnLocation) : base(gameInstance, name, meshes)
         {
@@ -21,16 +25,20 @@ namespace TGC.Group.Model
             Scale = TGCVector3.One * size;
         }
 
+        #region TGC
         public override void Update()
         {
             ManageMovement();
         }
+        #endregion
 
+        #region INTERFACE
         public override void Interact(Player interactor)
         {
             interactor.CollectItem(new Food("raw_fish", "un spritepath", 20)); // ojo, arreglar lo del sprite path
             Destroy();
         }
+        #endregion
 
         #region PRIVATE_METHODS
 

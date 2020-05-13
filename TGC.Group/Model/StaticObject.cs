@@ -35,7 +35,7 @@ namespace TGC.Group.Model
 
         #endregion
 
-        #region GameObject
+        #region TGC
 
         public override void Update() { /* No tienen logica */ }
 

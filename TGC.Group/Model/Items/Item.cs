@@ -17,11 +17,13 @@ namespace TGC.Group.Model.Items
             Sprite = spritePath; // new Image(spritePath); Inicializo el sprite correspondiente
         }
 
-        public abstract void Use(Player user);
-
         public void Render(Point position)
         {
             // Renderizar el sprite en la posicion dada
         }
+
+        #region INTERFACE
+        public abstract void Use(Player user);
+        #endregion
     }
 }

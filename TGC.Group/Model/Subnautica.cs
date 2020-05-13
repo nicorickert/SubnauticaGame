@@ -24,20 +24,30 @@ namespace TGC.Group.Model
         private TgcScene shipScene;
         #endregion
 
+        #region SETTINGS
+
+        #region PRIVATE
+        private TGCVector3 skyBoxDimensions = new TGCVector3(40000, 10000, 40000);
         private TgcScene island;
         private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
-        private TGCVector3 skyBoxDimensions = new TGCVector3(40000, 10000, 40000);
         private List<GameObject> removedObjects = new List<GameObject>();
+        #endregion
 
-        public List<GameObject> SceneObjects { get; private set; } = new List<GameObject>();
-        public Player Player { get; private set; }
-        public Ship Ship { get; private set; }
+        #region PUBLIC
         public float FloorY { get; } = -3000;
         public float WaterY { get; } = 0;
         public float escapeDelay = 0;
-
         public bool focusInGame = true; // Variable para saber si estoy jugando o en menu
+        #endregion
+
+        #endregion
+
+        #region OBJECTS
+        public List<GameObject> SceneObjects { get; private set; } = new List<GameObject>();
+        public Player Player { get; private set; }
+        public Ship Ship { get; private set; }
+        #endregion
 
         #region HUD
 
@@ -54,6 +64,7 @@ namespace TGC.Group.Model
             Name = Game.Default.Name;
             Description = Game.Default.Description;
         }
+
 
         #region TGC_EXAMPLE
 

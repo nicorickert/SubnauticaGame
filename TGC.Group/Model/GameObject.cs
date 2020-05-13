@@ -4,6 +4,7 @@ using TGC.Core.Example;
 using Effect = Microsoft.DirectX.Direct3D.Effect;
 using System.Collections.Generic;
 using TGC.Core.Collision;
+using TGC.Core;
 using System.Linq;
 using System.Drawing;
 
@@ -13,6 +14,9 @@ namespace TGC.Group.Model
     {
         private TGCMatrix transform = TGCMatrix.Identity;
 
+        protected readonly int range = 600;
+
+        #region PROPERTIES
         public Subnautica GameInstance { get; protected set; }
         public string Name { get; protected set; }
         public List<TgcMesh> Meshes { get; protected set; }
@@ -44,8 +48,7 @@ namespace TGC.Group.Model
                 }
             }
         }
-
-        protected readonly int range = 600;
+        #endregion
 
         public GameObject(Subnautica gameInstance, string name, List<TgcMesh> meshes)
         {
@@ -55,6 +58,7 @@ namespace TGC.Group.Model
             LookDirection = InitialLookDirection;
         }
 
+        #region TGC
 
         public abstract void Update();
 
@@ -73,7 +77,9 @@ namespace TGC.Group.Model
                 mesh.Dispose();
         }
 
+        #endregion
 
+        #region INTERFACE
         public virtual void Interact(Player interactor) { System.Console.WriteLine(Name + " interacted with " + interactor.Name); }
 
         public void Destroy()
@@ -82,6 +88,7 @@ namespace TGC.Group.Model
             GameInstance.DestroyObject(this);
         }
 
+        #region COLLISIONS
         public bool CheckRayCollision(TgcPickingRay pickingRay)
         {
             return Meshes.Any(mesh => TgcCollisionUtils.intersectRayAABB(pickingRay.Ray, mesh.BoundingBox, out TGCVector3 collisionPoint));
@@ -91,13 +98,16 @@ namespace TGC.Group.Model
         {
             return Meshes.Any(mesh => TgcCollisionUtils.classifyBoxBox(mesh.BoundingBox, foreignMesh.BoundingBox) != TgcCollisionUtils.BoxBoxResult.Afuera);
         }
+        #endregion
+        #endregion
 
-
+        #region PROTECTED
         protected List<GameObject> ReachableObjects() => GameInstance.SceneObjects.FindAll(obj => obj != this && TGCVector3.Length(obj.Position - Position) <= range);
 
         protected bool CollisionDetected()
         {
             return Meshes.Any(mesh => ReachableObjects().Any(obj => obj.CollidesWith(mesh)));
         }
+        #endregion
     }
 }
