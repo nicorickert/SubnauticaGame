@@ -59,11 +59,25 @@ namespace TGC.Group.Model
             Rotation += rotationVector;
             Position += LookDirection * movementSpeed * GameInstance.ElapsedTime;
 
+            /* Simulo transformacion */
+            TGCMatrix oldTransform = Transform;
+            TGCVector3 oldRotation = Rotation;
+            TGCVector3 oldPosition = Position;
+            TGCVector3 oldScale = Scale;
+
             TGCMatrix rotation = TGCMatrix.RotationY(Rotation.Y);
             TGCMatrix translation = TGCMatrix.Translation(Position);
             TGCMatrix scaling = TGCMatrix.Scaling(Scale);
 
             Transform = scaling *  rotation * translation;
+
+            if (CollisionDetected())
+            {
+                Rotation = oldRotation;
+                Position = oldPosition;
+                Scale = oldScale;
+                Transform = oldTransform;
+            }
         }
 
         #endregion
