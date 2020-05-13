@@ -11,7 +11,7 @@ namespace TGC.Group.Model
 {
     public class Player : GameObject
     {
-        private readonly float timePerHitTick = 0.5f;
+        private readonly float timePerHitTick = 1f;
         private float timeSinceLastTick = 0f;
 
         /* STATS */
@@ -21,7 +21,6 @@ namespace TGC.Group.Model
         private readonly float movementSpeed = 1000.0f;
         private readonly int maxHealth = 100;
         private readonly int oxygenCapacity = 100;
-        private readonly int range = 600;
 
         private bool IsAlive { get { return Health > 0; } }
         private bool IsOutOfOxygen { get { return Oxygen == 0; } }
@@ -92,17 +91,22 @@ namespace TGC.Group.Model
                 movementDirection += new TGCVector3(0, -1, 0);
             }
 
-            if (!CollisionDetected())
-            {
-                TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
-                Position += totalTranslation;
+            /* Simulate transform */
+            TGCMatrix oldTransform = Transform;
+            TGCVector3 oldPosition = Position;
 
-                TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
-                Transform *= translationMatrix;
+            TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
+            Position += totalTranslation;
+
+            TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
+            Transform *= translationMatrix;
+
+            if (CollisionDetected()) // Si colisiona revierto todo
+            {
+                Position = oldPosition;
+                Transform = oldTransform;
             }
         }
-
-        private bool CollisionDetected() => false;  // TODO Tal vez podria ir en la clase GameObject
 
         private void FixRotation()
         {
@@ -168,8 +172,6 @@ namespace TGC.Group.Model
                 selectedObject.Interact(this);
             }
         }
-
-        private List<GameObject> ReachableObjects() => GameInstance.SceneObjects.FindAll(obj => obj != this && TGCVector3.Length(obj.Position - Position) <= range);
 
         #endregion
 

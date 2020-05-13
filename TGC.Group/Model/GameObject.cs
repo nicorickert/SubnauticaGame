@@ -11,6 +11,8 @@ namespace TGC.Group.Model
 {
     public abstract class GameObject
     {
+        private TGCMatrix transform = TGCMatrix.Identity;
+
         public Subnautica GameInstance { get; protected set; }
         public string Name { get; protected set; }
         public List<TgcMesh> Meshes { get; protected set; }
@@ -29,7 +31,21 @@ namespace TGC.Group.Model
         public TGCVector3 Position { get; set; } = TGCVector3.Empty;
         public TGCVector3 Scale { get; set; } = TGCVector3.One;
         public TGCVector3 Rotation { get; set; } = TGCVector3.Empty;
-        public TGCMatrix Transform { get; set; } = TGCMatrix.Identity;
+        public TGCMatrix Transform
+        {
+            get { return transform; }
+            set
+            {
+                foreach (var mesh in Meshes)
+                {
+                    mesh.Transform = value;
+                    mesh.BoundingBox.transform(value);
+                    transform = value;
+                }
+            }
+        }
+
+        protected readonly int range = 600;
 
         public GameObject(Subnautica gameInstance, string name, List<TgcMesh> meshes)
         {
@@ -39,16 +55,15 @@ namespace TGC.Group.Model
             LookDirection = InitialLookDirection;
         }
 
+
         public abstract void Update();
 
         public virtual void Render()
         {
             foreach (TgcMesh mesh in Meshes)
             {
-                mesh.Transform = Transform;
-                mesh.BoundingBox.transform(Transform);
                 mesh.Render();
-                mesh.BoundingBox.Render(); // Borrar antes del merge a master
+                mesh.BoundingBox.Render(); // Borrar para no mostrar los bounding box
             }
         }
 
@@ -57,6 +72,7 @@ namespace TGC.Group.Model
             foreach (TgcMesh mesh in Meshes)
                 mesh.Dispose();
         }
+
 
         public virtual void Interact(Player interactor) { System.Console.WriteLine(Name + " interacted with " + interactor.Name); }
 
@@ -69,6 +85,19 @@ namespace TGC.Group.Model
         public bool CheckRayCollision(TgcPickingRay pickingRay)
         {
             return Meshes.Any(mesh => TgcCollisionUtils.intersectRayAABB(pickingRay.Ray, mesh.BoundingBox, out TGCVector3 collisionPoint));
+        }
+
+        public bool CollidesWith(TgcMesh foreignMesh)
+        {
+            return Meshes.Any(mesh => TgcCollisionUtils.classifyBoxBox(mesh.BoundingBox, foreignMesh.BoundingBox) != TgcCollisionUtils.BoxBoxResult.Afuera);
+        }
+
+
+        protected List<GameObject> ReachableObjects() => GameInstance.SceneObjects.FindAll(obj => obj != this && TGCVector3.Length(obj.Position - Position) <= range);
+
+        protected bool CollisionDetected()
+        {
+            return Meshes.Any(mesh => ReachableObjects().Any(obj => obj.CollidesWith(mesh)));
         }
     }
 }
