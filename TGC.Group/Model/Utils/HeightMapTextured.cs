@@ -90,11 +90,11 @@ namespace TGC.Group.Model
 
             //Crear vertexBuffer
             totalVertices = 2 * 3 * (heightmap.GetLength(0) - 1) * (heightmap.GetLength(1) - 1);
-            vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionTextured.Format, Pool.Default);
+            vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
 
             //Crear array temporal de vertices
             var dataIdx = 0;
-            var data = new CustomVertex.PositionTextured[totalVertices];
+            var data = new CustomVertex.PositionNormalTextured[totalVertices];
 
             // Ancho (x) y alto (z) total del heightmap (imagen)
             var width = heightmap.GetLength(0);
@@ -120,15 +120,21 @@ namespace TGC.Group.Model
                     var t3 = new TGCVector2((i + 1) / (float)heightmap.GetLength(0), j / (float)heightmap.GetLength(1));
                     var t4 = new TGCVector2((i + 1) / (float)heightmap.GetLength(0), (j + 1) / (float)heightmap.GetLength(1));
 
+                    // ACA METO LAS NORMALES
+
                     //Cargar triangulo 1
-                    data[dataIdx] = new CustomVertex.PositionTextured(v1, t1.X, t1.Y);
-                    data[dataIdx + 1] = new CustomVertex.PositionTextured(v2, t2.X, t2.Y);
-                    data[dataIdx + 2] = new CustomVertex.PositionTextured(v4, t4.X, t4.Y);
+                    TGCVector3 n1 = TGCVector3.Cross(v2 - v1, v3 - v1);
+                    n1.Normalize();
+                    data[dataIdx] = new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y);
+                    data[dataIdx + 1] = new CustomVertex.PositionNormalTextured(v2, n1, t2.X, t2.Y);
+                    data[dataIdx + 2] = new CustomVertex.PositionNormalTextured(v4, n1, t4.X, t4.Y);
 
                     //Cargar triangulo 2
-                    data[dataIdx + 3] = new CustomVertex.PositionTextured(v1, t1.X, t1.Y);
-                    data[dataIdx + 4] = new CustomVertex.PositionTextured(v4, t4.X, t4.Y);
-                    data[dataIdx + 5] = new CustomVertex.PositionTextured(v3, t3.X, t3.Y);
+                    TGCVector3 n2 = TGCVector3.Cross(v4 - v1, v3 - v1);
+                    n2.Normalize();
+                    data[dataIdx + 3] = new CustomVertex.PositionNormalTextured(v1, n2, t1.X, t1.Y);
+                    data[dataIdx + 4] = new CustomVertex.PositionNormalTextured(v4, n2, t4.X, t4.Y);
+                    data[dataIdx + 5] = new CustomVertex.PositionNormalTextured(v3, n2, t3.X, t3.Y);
 
                     dataIdx += 6;
                 }
@@ -183,7 +189,7 @@ namespace TGC.Group.Model
         }
 
         /* TODO: PARA PODER GENERAR "ALEATORIO"
-         * float[,] GenerateHeights()
+         * float[,] loadHeightMap()
             {
                 float[,] heights = new float[width, height];
                 for (int x = 0; x < width; x++)
@@ -210,7 +216,7 @@ namespace TGC.Group.Model
         {
             var device = D3DDevice.Instance.Device;
             
-            device.VertexFormat = CustomVertex.PositionTextured.Format;
+            device.VertexFormat = CustomVertex.PositionNormalTextured.Format; // PositionNormalTextured
             device.SetStreamSource(0, vbTerrain, 0);
             //Render terrain
 

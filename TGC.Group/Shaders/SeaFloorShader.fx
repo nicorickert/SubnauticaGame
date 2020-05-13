@@ -29,6 +29,7 @@ struct VS_INPUT
 {
 	float4 Position : POSITION0;
 	float2 Texcoord : TEXCOORD0;
+	float3 Normal : NORMAL0;
 };
 
 //Output del Vertex Shader
@@ -37,6 +38,8 @@ struct VS_OUTPUT
 	float4 Position : POSITION0;
 	float2 Texcoord : TEXCOORD0;
 	float3 MeshPosition : TEXCOORD1;
+	float3 WorldPosition : TEXCOORD2;
+    float3 WorldNormal : TEXCOORD3;
 };
 
 //Vertex Shader
@@ -45,8 +48,11 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 	VS_OUTPUT output;
 
     output.Position = mul(input.Position, matWorldViewProj);
+
 	output.Texcoord = input.Texcoord;
 	output.MeshPosition = input.Position;
+	output.WorldPosition = mul(input.Position, matWorld);
+	output.WorldNormal = mul(float4(input.Normal, 1.0), matInverseTransposeWorld);
 
 	return output;
 }
@@ -54,11 +60,19 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 //Pixel Shader
 float4 psDefault(VS_OUTPUT input) : COLOR0
 {
-	float textureScale = 20;
-	float2 waterDirection = float2(0.03, 0.03) * time;
-    float4 textureColor = tex2D(textureSampler, textureScale * input.Texcoord + waterDirection);
+	float3 Nn = normalize(input.WorldNormal);
+	float3 Ln = normalize(float3(1,-1,1));
+
+	float n_dot_l = abs(dot(Nn, Ln));
+
+	float textureScale = 10;
+    float4 textureColor = tex2D(textureSampler, input.Texcoord * textureScale);
 	
-	return float4(textureColor.xyz, 0.9f);
+	// Diffuse color
+	float3 diffuseColor = 0.3 * float3(0.5,0.5,0.5) * n_dot_l;
+	textureColor += float4(diffuseColor, 1);
+	
+	return textureColor;
 }
 
 
