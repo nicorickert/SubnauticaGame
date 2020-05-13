@@ -22,7 +22,7 @@ namespace TGC.Group.Model
         public int Oxygen { get; private set; } = 100;
         public List<Item> Inventory { get; private set; } = new List<Item>();
 
-        private readonly float movementSpeed = 1000.0f;
+        private readonly float movementSpeed = 800f;
         private readonly int maxHealth = 100;
         private readonly int oxygenCapacity = 100;
 
@@ -93,20 +93,22 @@ namespace TGC.Group.Model
             }
 
             /* Simulate transform */
-            TGCMatrix oldTransform = Transform;
-            TGCVector3 oldPosition = Position;
-
             TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
-            Position += totalTranslation;
-
             TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
-            Transform *= translationMatrix;
 
-            if (CollisionDetected()) // Si colisiona revierto todo
-            {
-                Position = oldPosition;
-                Transform = oldTransform;
-            }
+            //TGCMatrix oldTransform = Transform;
+            //TGCVector3 oldPosition = Position;
+
+            //Position += totalTranslation;
+            //Transform *= translationMatrix;
+
+            //if (CollisionDetected()) // Si colisiona revierto todo
+            //{
+            //    Position = oldPosition;
+            //    Transform = oldTransform;
+            //}
+
+            SimulateTransformation(Position + totalTranslation, Rotation, Scale, Transform * translationMatrix); // OTRA OPCION, PERO NINGUNA ANDA MUY BIEN. SE TRABA
         }
 
         private void FixRotation()

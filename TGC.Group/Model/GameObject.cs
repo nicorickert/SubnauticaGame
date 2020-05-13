@@ -108,6 +108,27 @@ namespace TGC.Group.Model
         {
             return Meshes.Any(mesh => ReachableObjects().Any(obj => obj.CollidesWith(mesh)));
         }
+
+        protected void SimulateTransformation(TGCVector3 newPosition, TGCVector3 newRotation, TGCVector3 newScale, TGCMatrix newTransform)
+        {
+            TGCVector3 oldPosition = Position;
+            TGCVector3 oldRotation = Rotation;
+            TGCVector3 oldScale = Scale;
+            TGCMatrix oldTransform = Transform;
+
+            Position = newPosition;
+            Rotation = newRotation;
+            Scale = newScale;
+            Transform = newTransform;
+
+            if (CollisionDetected())
+            {
+                Position = oldPosition;
+                Rotation = oldRotation;
+                Scale = oldScale;
+                Transform = oldTransform;
+            }
+        }
         #endregion
     }
 }
