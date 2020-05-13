@@ -10,6 +10,8 @@ using TGC.Core.Direct3D;
 using TGC.Core.Terrain;
 using TGC.Core.Text;
 using System.Drawing;
+using TGC.Core.Collision;
+using TGC.Core.Input;
 
 namespace TGC.Group.Model
 {
@@ -26,9 +28,9 @@ namespace TGC.Group.Model
         private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
         private TGCVector3 skyBoxDimensions = new TGCVector3(40000, 10000, 40000);
+        private List<GameObject> removedObjects = new List<GameObject>();
 
-        private List<GameObject> sceneObjects = new List<GameObject>();
-
+        public List<GameObject> SceneObjects { get; private set; } = new List<GameObject>();
         public Player Player { get; private set; }
         public Ship Ship { get; private set; }
         public float FloorY { get; } = -3000;
@@ -41,6 +43,7 @@ namespace TGC.Group.Model
 
         private TgcText2D healthTextBox = new TgcText2D();
         private TgcText2D oxygenTextBox = new TgcText2D();
+        private TgcText2D screenCenter = new TgcText2D();
 
         #endregion
 
@@ -81,8 +84,10 @@ namespace TGC.Group.Model
 
             if (focusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
             {
+                UpdateSceneObjects();
+
                 // Objetos
-                foreach (GameObject o in sceneObjects)
+                foreach (GameObject o in SceneObjects)
                     o.Update();
 
                 // HeightMaps
@@ -104,7 +109,7 @@ namespace TGC.Group.Model
 
             RenderHUD();
 
-            foreach (GameObject o in sceneObjects)
+            foreach (GameObject o in SceneObjects)
                 o.Render();
 
             // HeightMaps
@@ -121,7 +126,7 @@ namespace TGC.Group.Model
         {
             DisposeHUD();
 
-            foreach (GameObject o in sceneObjects)
+            foreach (GameObject o in SceneObjects)
                 o.Dispose();
 
             // HeightMaps
@@ -138,7 +143,12 @@ namespace TGC.Group.Model
 
         public void InstanceObject(GameObject obj)
         {
-            sceneObjects.Add(obj);
+            SceneObjects.Add(obj);
+        }
+
+        public void DestroyObject(GameObject obj)
+        {
+            removedObjects.Add(obj);
         }
 
         #endregion
@@ -176,7 +186,6 @@ namespace TGC.Group.Model
 
             InstanceObject(new StaticObject(this, "coral6", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(1000, FloorY + 300, -3000), 5));
         }
-
 
         private void LoadTerrain()
         {
@@ -233,15 +242,24 @@ namespace TGC.Group.Model
 
             healthTextBox.Text = "✚ 100";
             healthTextBox.Color = Color.Gold;
-            healthTextBox.Position = new Point((int)FastMath.Floor(0.01f * deviceWidth), (int)FastMath.Floor(0.9f * deviceHeight));
+            healthTextBox.Position = new Point((int)FastMath.Floor(0.05f * deviceWidth), (int)FastMath.Floor(0.9f * deviceHeight));
             healthTextBox.Size = new Size(600, 200);
             healthTextBox.changeFont(new Font("TimesNewRoman", 25, FontStyle.Bold));
+            healthTextBox.Align = TgcText2D.TextAlign.LEFT;
 
             oxygenTextBox.Text = "◴ 100";
             oxygenTextBox.Color = Color.Gold;
-            oxygenTextBox.Position = new Point((int)FastMath.Floor(0.1f * deviceWidth), (int)FastMath.Floor(0.9f * deviceHeight));
+            oxygenTextBox.Position = new Point((int)FastMath.Floor(0.12f * deviceWidth), (int)FastMath.Floor(0.9f * deviceHeight));
             oxygenTextBox.Size = new Size(600, 200);
             oxygenTextBox.changeFont(new Font("TimesNewRoman", 25, FontStyle.Bold));
+            oxygenTextBox.Align = TgcText2D.TextAlign.LEFT;
+
+            screenCenter.Text = "+";
+            screenCenter.Color = Color.White;
+            screenCenter.Position = new Point(deviceWidth/2, deviceHeight/2);
+            screenCenter.Size = new Size(600, 200);
+            screenCenter.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
+            screenCenter.Align = TgcText2D.TextAlign.LEFT;
         }
 
         private void UpdateHUD()
@@ -254,6 +272,7 @@ namespace TGC.Group.Model
         {
             healthTextBox.render();
             oxygenTextBox.render();
+            screenCenter.render();
         }
 
         private void DisposeHUD()
@@ -286,6 +305,12 @@ namespace TGC.Group.Model
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, MediaDir + "Skybox\\back.jpg");
 
             skyBox.Init();
+        }
+
+        private void UpdateSceneObjects()
+        {
+            SceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
+            removedObjects.Clear();
         }
 
         #endregion

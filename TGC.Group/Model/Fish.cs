@@ -1,6 +1,7 @@
 ﻿using TGC.Core.SceneLoader;
 using TGC.Core.Mathematica;
 using System.Collections.Generic;
+using TGC.Group.Model.Items;
 
 namespace TGC.Group.Model
 {
@@ -23,6 +24,12 @@ namespace TGC.Group.Model
         public override void Update()
         {
             ManageMovement();
+        }
+
+        public override void Interact(Player interactor)
+        {
+            interactor.CollectItem(new Food("raw_fish", "un spritepath", 20)); // ojo, arreglar lo del sprite path
+            Destroy();
         }
 
         #region PRIVATE_METHODS

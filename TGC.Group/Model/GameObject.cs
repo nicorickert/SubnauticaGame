@@ -3,14 +3,16 @@ using TGC.Core.SceneLoader;
 using TGC.Core.Example;
 using Effect = Microsoft.DirectX.Direct3D.Effect;
 using System.Collections.Generic;
-
+using TGC.Core.Collision;
+using System.Linq;
+using System.Drawing;
 
 namespace TGC.Group.Model
 {
     public abstract class GameObject
     {
-        public Subnautica GameInstance { get; private set; }
-        public string Name { get; private set; }
+        public Subnautica GameInstance { get; protected set; }
+        public string Name { get; protected set; }
         public List<TgcMesh> Meshes { get; protected set; }
         public TGCVector3 InitialLookDirection = new TGCVector3(0, 0, -1);
         public TGCVector3 LookDirection { get; set; }
@@ -44,7 +46,9 @@ namespace TGC.Group.Model
             foreach (TgcMesh mesh in Meshes)
             {
                 mesh.Transform = Transform;
+                mesh.BoundingBox.transform(Transform);
                 mesh.Render();
+                mesh.BoundingBox.Render(); // Borrar antes del merge a master
             }
         }
 
@@ -52,6 +56,19 @@ namespace TGC.Group.Model
         {
             foreach (TgcMesh mesh in Meshes)
                 mesh.Dispose();
+        }
+
+        public virtual void Interact(Player interactor) { System.Console.WriteLine(Name + " interacted with " + interactor.Name); }
+
+        public void Destroy()
+        {
+            Dispose();
+            GameInstance.DestroyObject(this);
+        }
+
+        public bool CheckRayCollision(TgcPickingRay pickingRay)
+        {
+            return Meshes.Any(mesh => TgcCollisionUtils.intersectRayAABB(pickingRay.Ray, mesh.BoundingBox, out TGCVector3 collisionPoint));
         }
     }
 }
