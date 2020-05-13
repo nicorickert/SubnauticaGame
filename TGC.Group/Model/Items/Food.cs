@@ -20,6 +20,7 @@ namespace TGC.Group.Model.Items
         public override void Use(Player user)
         {
             user.AddHealth(healingFactor);
+            user.Inventory.Remove(this);
         }
     }
 }

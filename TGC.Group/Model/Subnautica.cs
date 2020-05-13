@@ -258,7 +258,7 @@ namespace TGC.Group.Model
             screenCenter.Color = Color.White;
             screenCenter.Position = new Point(deviceWidth/2, deviceHeight/2);
             screenCenter.Size = new Size(600, 200);
-            screenCenter.changeFont(new Font("TimesNewRoman", 25, FontStyle.Bold));
+            screenCenter.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
             screenCenter.Align = TgcText2D.TextAlign.LEFT;
         }
 
