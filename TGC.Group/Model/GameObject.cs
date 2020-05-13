@@ -14,7 +14,7 @@ namespace TGC.Group.Model
     {
         private TGCMatrix transform = TGCMatrix.Identity;
 
-        protected readonly int range = 600;
+        private readonly int  nearObjectsRange = 2000;
 
         #region PROPERTIES
         public Subnautica GameInstance { get; protected set; }
@@ -102,12 +102,11 @@ namespace TGC.Group.Model
         #endregion
 
         #region PROTECTED
-        protected List<GameObject> ReachableObjects() => GameInstance.SceneObjects.FindAll(obj => obj != this && TGCVector3.Length(obj.Position - Position) <= range);
+        protected List<GameObject> NearObjects() => ObjectsWithinRange(nearObjectsRange);
 
-        protected bool CollisionDetected()
-        {
-            return Meshes.Any(mesh => ReachableObjects().Any(obj => obj.CollidesWith(mesh)));
-        }
+        protected List<GameObject> ObjectsWithinRange(int range) => GameInstance.SceneObjects.FindAll(obj => obj != this && TGCVector3.Length(obj.Position - Position) <= range);
+
+        protected bool CollisionDetected() => Meshes.Any(mesh => NearObjects().Any(obj => obj.CollidesWith(mesh)));
 
         protected void SimulateTransformation(TGCVector3 newPosition, TGCVector3 newRotation, TGCVector3 newScale, TGCMatrix newTransform)
         {

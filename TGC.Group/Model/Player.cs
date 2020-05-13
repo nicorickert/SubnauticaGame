@@ -25,6 +25,7 @@ namespace TGC.Group.Model
         private readonly float movementSpeed = 800f;
         private readonly int maxHealth = 100;
         private readonly int oxygenCapacity = 100;
+        private readonly int interactionRange = 700;
 
         private bool IsAlive { get { return Health > 0; } }
         private bool IsOutOfOxygen { get { return Oxygen == 0; } }
@@ -165,6 +166,8 @@ namespace TGC.Group.Model
             if (selectedObject != null)
                 selectedObject.Interact(this);
         }
+
+        protected List<GameObject> ReachableObjects() => ObjectsWithinRange(interactionRange);
 
         #endregion
 
