@@ -94,9 +94,9 @@ namespace TGC.Group.Model
             return Meshes.Any(mesh => TgcCollisionUtils.intersectRayAABB(pickingRay.Ray, mesh.BoundingBox, out TGCVector3 collisionPoint));
         }
 
-        public bool CollidesWith(TgcMesh foreignMesh)
+        public bool CollidesWith(GameObject foreign)
         {
-            return Meshes.Any(mesh => TgcCollisionUtils.classifyBoxBox(mesh.BoundingBox, foreignMesh.BoundingBox) != TgcCollisionUtils.BoxBoxResult.Afuera);
+            return Meshes.Any(mesh => foreign.Meshes.Any(foreignMesh => TgcCollisionUtils.classifyBoxBox(mesh.BoundingBox, foreignMesh.BoundingBox) != TgcCollisionUtils.BoxBoxResult.Afuera));
         }
         #endregion
         #endregion
@@ -106,7 +106,7 @@ namespace TGC.Group.Model
 
         protected List<GameObject> ObjectsWithinRange(int range) => GameInstance.SceneObjects.FindAll(obj => obj != this && TGCVector3.Length(obj.Position - Position) <= range);
 
-        protected bool CollisionDetected() => Meshes.Any(mesh => NearObjects().Any(obj => obj.CollidesWith(mesh)));
+        protected bool CollisionDetected() => Meshes.Any(mesh => NearObjects().Any(obj => CollidesWith(obj)));
 
         protected void SimulateAndSetTransformation(TGCVector3 newPosition, TGCMatrix newTransform)
         {
@@ -119,6 +119,27 @@ namespace TGC.Group.Model
             if (CollisionDetected())
             {
                 Position = oldPosition;
+                Transform = oldTransform;
+            }
+        }
+
+        protected void SimulateAndSetTransformation(TGCVector3 newPosition, TGCVector3 newRotation, TGCVector3 newScale, TGCMatrix newTransform)
+        {
+            TGCVector3 oldPosition = Position;
+            TGCVector3 oldRotation = rotation;
+            TGCVector3 oldScale = scale;
+            TGCMatrix oldTransform = newTransform;
+
+            Position = newPosition;
+            rotation = newRotation;
+            scale = newScale;
+            Transform = newTransform;
+
+            if (CollisionDetected())
+            {
+                Position = oldPosition;
+                rotation = oldRotation;
+                scale = oldScale;
                 Transform = oldTransform;
             }
         }

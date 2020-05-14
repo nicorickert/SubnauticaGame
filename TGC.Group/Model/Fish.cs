@@ -13,7 +13,6 @@ namespace TGC.Group.Model
         #endregion
 
         #region UTILS
-
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private float timeSinceLastDirection = 0f;
         private float timeToChangeDirection = 3f;
@@ -69,25 +68,11 @@ namespace TGC.Group.Model
             rotation += rotationVector;
             Position += LookDirection * movementSpeed * GameInstance.ElapsedTime;
 
-            /* Simulo transformacion */
-            TGCMatrix oldTransform = Transform;
-            TGCVector3 oldRotation = rotation;
-            TGCVector3 oldPosition = Position;
-            TGCVector3 oldScale = scale;
-
             TGCMatrix rot = TGCMatrix.RotationY(rotation.Y);
             TGCMatrix trans = TGCMatrix.Translation(Position);
             TGCMatrix scal = TGCMatrix.Scaling(scale);
 
             Transform = scal * rot * trans;
-
-            if (CollisionDetected())
-            {
-                rotation = oldRotation;
-                Position = oldPosition;
-                scale = oldScale;
-                Transform = oldTransform;
-            }
         }
 
         #endregion
