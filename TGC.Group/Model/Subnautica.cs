@@ -22,6 +22,7 @@ namespace TGC.Group.Model
         private TgcMesh fishMesh;
         private TgcMesh coralMesh;
         private TgcScene shipScene;
+        private TgcScene sharkScene;
         #endregion
 
         #region SETTINGS
@@ -179,6 +180,8 @@ namespace TGC.Group.Model
             Ship = new Ship(this, "main_ship", shipScene.Meshes);
             InstanceObject(Ship);
 
+            InstanceObject(new Shark(this, "shark", sharkScene.Meshes, TGCVector3.Up * (WaterY - 400)));
+
             /* 20 peces */
             SpawnFishes();
 
@@ -320,6 +323,7 @@ namespace TGC.Group.Model
             fishMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\fish-TgcScene.xml").Meshes[0];
             coralMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml").Meshes[0];
             shipScene = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\ship-TgcScene.xml");
+            sharkScene = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\shark-TgcScene.xml");
         }
 
         private void LoadSkybox()

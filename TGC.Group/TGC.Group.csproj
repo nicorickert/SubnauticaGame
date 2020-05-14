@@ -106,9 +106,11 @@
     <Compile Include="Model\Items\Food.cs" />
     <Compile Include="Model\Items\Item.cs" />
     <Compile Include="Model\Player.cs" />
+    <Compile Include="Model\Roamer.cs" />
     <Compile Include="Model\Ship.cs" />
     <Compile Include="Model\StaticObject.cs" />
     <Compile Include="Model\Subnautica.cs" />
+    <Compile Include="Model\Shark.cs" />
     <Compile Include="Model\Utils\ECollisionStatus.cs" />
     <Compile Include="Model\Utils\HeightMapTextured.cs" />
     <Compile Include="Model\Utils\FPSCamera.cs" />

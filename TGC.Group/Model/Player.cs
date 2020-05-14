@@ -27,6 +27,7 @@ namespace TGC.Group.Model
         public int Health { get; private set; } = 100;
         public int Oxygen { get; private set; } = 100;
         public List<Item> Inventory { get; private set; } = new List<Item>();
+        public int AttackDamage { get; private set; } = 10;
 
         private readonly float movementSpeed = 800f;
         private readonly int maxHealth = 100;
@@ -119,16 +120,13 @@ namespace TGC.Group.Model
             TGCVector3 rotationAxis = TGCVector3.Cross(InitialLookDirection, LookDirection);  // Ojo el orden - no es conmutativo
             TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, MathExtended.AngleBetween(InitialLookDirection, LookDirection));
             TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(rotation);
-            nextTransform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
+            nextTransform *= rotationMatrix;
         }
 
         private bool IsSubmerged() => Position.Y < GameInstance.WaterY;
 
         private void UpdateVitals()
         {
-            if (godMode) // Para no morirme y poder explorar tranquilo
-                return;
-
             timeSinceLastTick += GameInstance.ElapsedTime;
 
             if(timeSinceLastTick >= timePerHitTick)
@@ -196,6 +194,9 @@ namespace TGC.Group.Model
 
         public void AddHealth(int quantity)
         {
+            if (godMode) // Para no morirme y poder explorar tranquilo
+                return;
+
             Health = FastMath.Clamp(Health + quantity, 0, maxHealth);
         }
 
