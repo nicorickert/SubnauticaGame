@@ -31,6 +31,7 @@ namespace TGC.Group.Model
         private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
         private List<GameObject> removedObjects = new List<GameObject>();
+        private float time = 0f;
         #endregion
 
         #region PUBLIC
@@ -56,6 +57,7 @@ namespace TGC.Group.Model
         private TgcText2D oxygenTextBox = new TgcText2D();
         private TgcText2D screenCenter = new TgcText2D();
         private TgcText2D inventario = new TgcText2D();
+        private TgcText2D gameTimer = new TgcText2D();
 
         #endregion
 
@@ -115,6 +117,7 @@ namespace TGC.Group.Model
 
             UpdateHUD();
 
+            time += ElapsedTime;
             PostUpdate();
         }
 
@@ -260,12 +263,20 @@ namespace TGC.Group.Model
             inventario.Size = new Size(300, 600);
             inventario.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
             inventario.Align = TgcText2D.TextAlign.LEFT;
+
+            gameTimer.Text = "Time: ";
+            gameTimer.Color = Color.Gold;
+            gameTimer.Position = new Point((int)FastMath.Floor(0.05f * deviceWidth), (int)FastMath.Floor(0.85f * deviceHeight));
+            gameTimer.Size = new Size(300, 600);
+            gameTimer.changeFont(new Font("TimesNewRoman", 12, FontStyle.Regular));
+            gameTimer.Align = TgcText2D.TextAlign.LEFT;
         }
 
         private void UpdateHUD()
         {
             healthTextBox.Text = "✚ " + Player.Health;
             oxygenTextBox.Text = "◴ " + Player.Oxygen;
+            gameTimer.Text = "Time: " + FastMath.Floor(time) + " sec";
 
             int index = 1;
             inventario.Text = "Inventario:\n\n";
@@ -282,6 +293,7 @@ namespace TGC.Group.Model
             oxygenTextBox.render();
             screenCenter.render();
             inventario.render();
+            gameTimer.render();
         }
 
         private void DisposeHUD()
