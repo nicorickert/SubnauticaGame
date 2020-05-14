@@ -18,11 +18,9 @@ namespace TGC.Group.Model
     public class Subnautica : TGCExample
     {
         #region MESHES
-        private TgcMesh playerMesh;
-        private TgcMesh fishMesh;
+        private List<TgcMesh> playerMeshes;
         private TgcMesh coralMesh;
-        private TgcScene shipScene;
-        private TgcScene sharkScene;
+        private List<TgcMesh> shipMeshes;
         #endregion
 
         #region SETTINGS
@@ -48,6 +46,8 @@ namespace TGC.Group.Model
         public List<GameObject> SceneObjects { get; private set; } = new List<GameObject>();
         public Player Player { get; private set; }
         public Ship Ship { get; private set; }
+
+        private SpawnManager spawnManager;
         #endregion
 
         #region HUD
@@ -72,10 +72,11 @@ namespace TGC.Group.Model
 
         public override void Init()
         {
-            InitBaseMeshes();
+            InitMainMeshes();
             InitHUD();
             LoadMainScene();
             ManageFocus();
+            spawnManager = new SpawnManager(this);
 
             // Cambio el farPlane
             D3DDevice.Instance.Device.Transform.Projection = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio,
@@ -97,7 +98,8 @@ namespace TGC.Group.Model
 
             if (focusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
             {
-                UpdateSceneObjects();
+                UpdateInstantiatedObjects();
+                spawnManager.Update();
 
                 // Objetos
                 foreach (GameObject o in SceneObjects)
@@ -131,6 +133,7 @@ namespace TGC.Group.Model
 
             skyBox.Render();
             island.RenderAll();
+            island.Meshes.ForEach(mesh => mesh.BoundingBox.Render());
 
             PostRender();
         }
@@ -138,6 +141,7 @@ namespace TGC.Group.Model
         public override void Dispose()
         {
             DisposeHUD();
+            spawnManager.Dispose();
 
             foreach (GameObject o in SceneObjects)
                 o.Dispose();
@@ -174,16 +178,11 @@ namespace TGC.Group.Model
 
             LoadSkybox();
 
-            Player = new Player(this, "player", new List<TgcMesh>(new TgcMesh[] { playerMesh }));
+            Player = new Player(this, "player", playerMeshes);
             InstanceObject(Player); //Tal vez no sea necesario meter al Player dentro de la bolsa de GameObjects
 
-            Ship = new Ship(this, "main_ship", shipScene.Meshes);
+            Ship = new Ship(this, "main_ship", shipMeshes);
             InstanceObject(Ship);
-
-            InstanceObject(new Shark(this, "shark", sharkScene.Meshes, TGCVector3.Up * (WaterY - 400)));
-
-            /* 20 peces */
-            SpawnFishes();
 
             LoadTerrain();
 
@@ -211,29 +210,6 @@ namespace TGC.Group.Model
             {
                 hm.Init();
             }
-        }
-
-        // Spawnea 20 peces
-        private void SpawnFishes()
-        {
-            for(int i = 0; i < 20; i++)
-            {
-                TGCVector3 spawnLocation = RandomSpawnLocation();
-                spawnLocation.Y = MathExtended.GetRandomNumberBetween((int)FloorY + 900, (int)WaterY - 100);
-                string name = "fish" + i;
-                InstanceObject(new Fish(this, name, new List<TgcMesh>(new TgcMesh[] { fishMesh.createMeshInstance(name) }), spawnLocation));
-            }
-        }
-
-        private TGCVector3 RandomSpawnLocation()
-        {
-            Random random = new Random();
-            TGCVector3 spawnLocation = TGCVector3.Empty;
-            spawnLocation.X = MathExtended.GetRandomNumberBetween(-5000, 5000);
-            spawnLocation.Y = MathExtended.GetRandomNumberBetween(-5000, 5000);
-            spawnLocation.Z = MathExtended.GetRandomNumberBetween(-5000, 5000);
-
-            return spawnLocation;
         }
 
         private void ManageFocus()
@@ -315,15 +291,13 @@ namespace TGC.Group.Model
             inventario.Dispose();
         }
 
-        private void InitBaseMeshes()
+        private void InitMainMeshes()
         {
             var loader = new TgcSceneLoader();
 
-            playerMesh = loader.loadSceneFromFile(MediaDir + "Player\\Player-TgcScene.xml").Meshes[0];
-            fishMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\fish-TgcScene.xml").Meshes[0];
-            coralMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml").Meshes[0];
-            shipScene = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\ship-TgcScene.xml");
-            sharkScene = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\shark-TgcScene.xml");
+            playerMeshes = loader.loadSceneFromFile(MediaDir + "Player\\Player-TgcScene.xml").Meshes;
+            coralMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml").Meshes[0];  // Que hacemos con esto :S
+            shipMeshes = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\ship-TgcScene.xml").Meshes;
         }
 
         private void LoadSkybox()
@@ -342,7 +316,7 @@ namespace TGC.Group.Model
             skyBox.Init();
         }
 
-        private void UpdateSceneObjects()
+        private void UpdateInstantiatedObjects()
         {
             SceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
             removedObjects.Clear();
