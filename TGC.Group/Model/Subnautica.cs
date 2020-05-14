@@ -54,6 +54,7 @@ namespace TGC.Group.Model
         private TgcText2D healthTextBox = new TgcText2D();
         private TgcText2D oxygenTextBox = new TgcText2D();
         private TgcText2D screenCenter = new TgcText2D();
+        private TgcText2D inventario = new TgcText2D();
 
         #endregion
 
@@ -273,12 +274,27 @@ namespace TGC.Group.Model
             screenCenter.Size = new Size(600, 200);
             screenCenter.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
             screenCenter.Align = TgcText2D.TextAlign.LEFT;
+
+            inventario.Text = "";
+            inventario.Color = Color.Gold;
+            inventario.Position = new Point((int)FastMath.Floor(0.8f * deviceWidth), (int)FastMath.Floor(0.4f * deviceHeight));
+            inventario.Size = new Size(300, 600);
+            inventario.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
+            inventario.Align = TgcText2D.TextAlign.LEFT;
         }
 
         private void UpdateHUD()
         {
             healthTextBox.Text = "✚ " + Player.Health;
             oxygenTextBox.Text = "◴ " + Player.Oxygen;
+
+            int index = 1;
+            inventario.Text = "Inventario:\n\n";
+            foreach (var item in Player.Inventory)
+            {
+                inventario.Text += index + ") " + item.Name + "\n";
+                index++;
+            }
         }
 
         private void RenderHUD()
@@ -286,12 +302,14 @@ namespace TGC.Group.Model
             healthTextBox.render();
             oxygenTextBox.render();
             screenCenter.render();
+            inventario.render();
         }
 
         private void DisposeHUD()
         {
             healthTextBox.Dispose();
             oxygenTextBox.Dispose();
+            inventario.Dispose();
         }
 
         private void InitBaseMeshes()

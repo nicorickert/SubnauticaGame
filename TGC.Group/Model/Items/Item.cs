@@ -14,6 +14,7 @@ namespace TGC.Group.Model.Items
 
         public Item(string name, string spritePath)
         {
+            Name = name;
             Sprite = spritePath; // new Image(spritePath); Inicializo el sprite correspondiente
         }
 

@@ -12,6 +12,8 @@ namespace TGC.Group.Model
     public class Player : GameObject
     {
         #region UTILS
+        private readonly float itemUseCooldown = 1f;
+        private float timeSinceLastItemUse = 0f;
         private readonly float timePerHitTick = 1f;
         private float timeSinceLastTick = 0f;
         private bool godMode = true;
@@ -40,6 +42,12 @@ namespace TGC.Group.Model
 
         public override void Update()
         {
+            // Para modo god
+            if (GameInstance.Input.keyDown(Key.G))
+                godMode = true;
+            if (GameInstance.Input.keyDown(Key.H))
+                godMode = false;
+
             Transform = TGCMatrix.Identity;
 
             FixRotation();
@@ -49,6 +57,7 @@ namespace TGC.Group.Model
                 ManageMovement();
                 CheckInteraction();
                 UpdateVitals();
+                CheckItemUse();
             }
         }
 
@@ -167,7 +176,21 @@ namespace TGC.Group.Model
                 selectedObject.Interact(this);
         }
 
-        protected List<GameObject> ReachableObjects() => ObjectsWithinRange(interactionRange);
+        private void CheckItemUse()
+        {
+            timeSinceLastItemUse += GameInstance.ElapsedTime;
+
+            if (timeSinceLastItemUse >= itemUseCooldown && Inventory.Count != 0)
+            {
+                if (GameInstance.Input.keyDown(Key.U))
+                {
+                    Inventory[Inventory.Count - 1].Use(this);
+                    timeSinceLastItemUse = 0;
+                }
+            }
+        }
+
+        private List<GameObject> ReachableObjects() => ObjectsWithinRange(interactionRange);
 
         #endregion
 
