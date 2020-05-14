@@ -15,6 +15,8 @@ namespace TGC.Group.Model
         private readonly float timePerHitTick = 1f;
         private float timeSinceLastTick = 0f;
         private bool godMode = true;
+        private TGCMatrix nextTransform = TGCMatrix.Identity;
+        private TGCVector3 nextPosition;
         #endregion
 
         #region STATS
@@ -40,13 +42,13 @@ namespace TGC.Group.Model
 
         public override void Update()
         {
-            Transform = TGCMatrix.Identity;
-
-            FixRotation();
+            nextTransform = TGCMatrix.Identity;
 
             if (IsAlive)
             {
+                FixRotation(); // Es importante que esto este antes que ManageMovement()
                 ManageMovement();
+                SimulateAndSetTransformation(nextPosition, nextTransform);
                 CheckInteraction();
                 UpdateVitals();
             }
@@ -97,19 +99,8 @@ namespace TGC.Group.Model
             TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
             TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
 
-            //TGCMatrix oldTransform = Transform;
-            //TGCVector3 oldPosition = Position;
-
-            //Position += totalTranslation;
-            //Transform *= translationMatrix;
-
-            //if (CollisionDetected()) // Si colisiona revierto todo
-            //{
-            //    Position = oldPosition;
-            //    Transform = oldTransform;
-            //}
-
-            SimulateTransformation(Position + totalTranslation, Rotation, Scale, Transform * translationMatrix); // OTRA OPCION, PERO NINGUNA ANDA MUY BIEN. SE TRABA
+            nextPosition = Position + totalTranslation;
+            nextTransform *= translationMatrix;
         }
 
         private void FixRotation()
@@ -117,7 +108,7 @@ namespace TGC.Group.Model
             TGCVector3 rotationAxis = TGCVector3.Cross(InitialLookDirection, LookDirection);  // Ojo el orden - no es conmutativo
             TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, MathExtended.AngleBetween(InitialLookDirection, LookDirection));
             TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(rotation);
-            Transform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
+            nextTransform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
         }
 
         private bool IsSubmerged() => Position.Y < GameInstance.WaterY;

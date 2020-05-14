@@ -13,6 +13,8 @@ namespace TGC.Group.Model
     public abstract class GameObject
     {
         private TGCMatrix transform = TGCMatrix.Identity;
+        protected TGCVector3 scale = TGCVector3.One;
+        protected TGCVector3 rotation = TGCVector3.Empty;
 
         private readonly int  nearObjectsRange = 2000;
 
@@ -33,8 +35,6 @@ namespace TGC.Group.Model
             }
         }
         public TGCVector3 Position { get; set; } = TGCVector3.Empty;
-        public TGCVector3 Scale { get; set; } = TGCVector3.One;
-        public TGCVector3 Rotation { get; set; } = TGCVector3.Empty;
         public TGCMatrix Transform
         {
             get { return transform; }
@@ -108,26 +108,21 @@ namespace TGC.Group.Model
 
         protected bool CollisionDetected() => Meshes.Any(mesh => NearObjects().Any(obj => obj.CollidesWith(mesh)));
 
-        protected void SimulateTransformation(TGCVector3 newPosition, TGCVector3 newRotation, TGCVector3 newScale, TGCMatrix newTransform)
+        protected void SimulateAndSetTransformation(TGCVector3 newPosition, TGCMatrix newTransform)
         {
             TGCVector3 oldPosition = Position;
-            TGCVector3 oldRotation = Rotation;
-            TGCVector3 oldScale = Scale;
             TGCMatrix oldTransform = Transform;
 
             Position = newPosition;
-            Rotation = newRotation;
-            Scale = newScale;
             Transform = newTransform;
 
             if (CollisionDetected())
             {
                 Position = oldPosition;
-                Rotation = oldRotation;
-                Scale = oldScale;
                 Transform = oldTransform;
             }
         }
+
         #endregion
     }
 }

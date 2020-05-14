@@ -13,16 +13,18 @@ namespace TGC.Group.Model
         #endregion
 
         #region UTILS
+
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private float timeSinceLastDirection = 0f;
         private float timeToChangeDirection = 3f;
+
         #endregion
 
         public Fish(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 spawnLocation) : base(gameInstance, name, meshes)
         {
             Position = spawnLocation;
             size = MathExtended.GetRandomNumberBetween(3, 20);
-            Scale = TGCVector3.One * size;
+            scale = TGCVector3.One * size;
         }
 
         #region TGC
@@ -64,26 +66,26 @@ namespace TGC.Group.Model
                 rotationVector.Y = -angle;
             }
 
-            Rotation += rotationVector;
+            rotation += rotationVector;
             Position += LookDirection * movementSpeed * GameInstance.ElapsedTime;
 
             /* Simulo transformacion */
             TGCMatrix oldTransform = Transform;
-            TGCVector3 oldRotation = Rotation;
+            TGCVector3 oldRotation = rotation;
             TGCVector3 oldPosition = Position;
-            TGCVector3 oldScale = Scale;
+            TGCVector3 oldScale = scale;
 
-            TGCMatrix rotation = TGCMatrix.RotationY(Rotation.Y);
-            TGCMatrix translation = TGCMatrix.Translation(Position);
-            TGCMatrix scaling = TGCMatrix.Scaling(Scale);
+            TGCMatrix rot = TGCMatrix.RotationY(rotation.Y);
+            TGCMatrix trans = TGCMatrix.Translation(Position);
+            TGCMatrix scal = TGCMatrix.Scaling(scale);
 
-            Transform = scaling *  rotation * translation;
+            Transform = scal * rot * trans;
 
             if (CollisionDetected())
             {
-                Rotation = oldRotation;
+                rotation = oldRotation;
                 Position = oldPosition;
-                Scale = oldScale;
+                scale = oldScale;
                 Transform = oldTransform;
             }
         }
