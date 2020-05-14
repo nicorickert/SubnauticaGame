@@ -16,7 +16,11 @@ namespace TGC.Group.Model
         private float timeSinceLastItemUse = 0f;
         private readonly float timePerHitTick = 1f;
         private float timeSinceLastTick = 0f;
+        private readonly float interactionCooldown = 1f;
+        private float timeSinceLastInteraction = 0f;
         private bool godMode = true;
+        private TGCMatrix nextTransform = TGCMatrix.Identity;
+        private TGCVector3 nextPosition;
         #endregion
 
         #region STATS
@@ -48,13 +52,13 @@ namespace TGC.Group.Model
             if (GameInstance.Input.keyDown(Key.H))
                 godMode = false;
 
-            Transform = TGCMatrix.Identity;
-
-            FixRotation();
+            nextTransform = TGCMatrix.Identity;
 
             if (IsAlive)
             {
+                FixRotation(); // Es importante que esto este antes que ManageMovement()
                 ManageMovement();
+                SimulateAndSetTransformation(nextPosition, nextTransform);
                 CheckInteraction();
                 UpdateVitals();
                 CheckItemUse();
@@ -106,19 +110,8 @@ namespace TGC.Group.Model
             TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
             TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
 
-            //TGCMatrix oldTransform = Transform;
-            //TGCVector3 oldPosition = Position;
-
-            //Position += totalTranslation;
-            //Transform *= translationMatrix;
-
-            //if (CollisionDetected()) // Si colisiona revierto todo
-            //{
-            //    Position = oldPosition;
-            //    Transform = oldTransform;
-            //}
-
-            SimulateTransformation(Position + totalTranslation, Rotation, Scale, Transform * translationMatrix); // OTRA OPCION, PERO NINGUNA ANDA MUY BIEN. SE TRABA
+            nextPosition = Position + totalTranslation;
+            nextTransform *= translationMatrix;
         }
 
         private void FixRotation()
@@ -126,7 +119,7 @@ namespace TGC.Group.Model
             TGCVector3 rotationAxis = TGCVector3.Cross(InitialLookDirection, LookDirection);  // Ojo el orden - no es conmutativo
             TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, MathExtended.AngleBetween(InitialLookDirection, LookDirection));
             TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(rotation);
-            Transform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
+            nextTransform *= rotationMatrix;  // TODO Ver cuando estén las colisiones si hay que hacer la rotacion respecto de la cabeza o desde los pies (actualmente desde los pies)
         }
 
         private bool IsSubmerged() => Position.Y < GameInstance.WaterY;
@@ -163,17 +156,22 @@ namespace TGC.Group.Model
 
         private void CheckInteraction()
         {
-            TgcPickingRay pickingRay = new TgcPickingRay(GameInstance.Input);
-            GameObject selectedObject = null;
+            timeSinceLastInteraction += GameInstance.ElapsedTime;
 
-            if (GameInstance.Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT)) // No funciona el buttonPressed
+            if (timeSinceLastInteraction >= interactionCooldown && GameInstance.Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT)) // No funciona el buttonPressed
             {
+                TgcPickingRay pickingRay = new TgcPickingRay(GameInstance.Input);
+                GameObject selectedObject = null;
+
                 pickingRay.updateRay();
                 selectedObject = ReachableObjects().Find(obj => obj.CheckRayCollision(pickingRay));
-            }
 
-            if (selectedObject != null)
-                selectedObject.Interact(this);
+                if (selectedObject != null)
+                {
+                    selectedObject.Interact(this);
+                    timeSinceLastInteraction = 0;
+                }
+            }
         }
 
         private void CheckItemUse()

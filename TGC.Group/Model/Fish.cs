@@ -20,9 +20,10 @@ namespace TGC.Group.Model
 
         public Fish(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 spawnLocation) : base(gameInstance, name, meshes)
         {
+            CollisionStatus = Utils.ECollisionStatus.NOT_COLLISIONABLE;
             Position = spawnLocation;
             size = MathExtended.GetRandomNumberBetween(3, 20);
-            Scale = TGCVector3.One * size;
+            scale = TGCVector3.One * size;
         }
 
         #region TGC
@@ -64,28 +65,14 @@ namespace TGC.Group.Model
                 rotationVector.Y = -angle;
             }
 
-            Rotation += rotationVector;
+            rotation += rotationVector;
             Position += LookDirection * movementSpeed * GameInstance.ElapsedTime;
 
-            /* Simulo transformacion */
-            TGCMatrix oldTransform = Transform;
-            TGCVector3 oldRotation = Rotation;
-            TGCVector3 oldPosition = Position;
-            TGCVector3 oldScale = Scale;
+            TGCMatrix rot = TGCMatrix.RotationY(rotation.Y);
+            TGCMatrix trans = TGCMatrix.Translation(Position);
+            TGCMatrix scal = TGCMatrix.Scaling(scale);
 
-            TGCMatrix rotation = TGCMatrix.RotationY(Rotation.Y);
-            TGCMatrix translation = TGCMatrix.Translation(Position);
-            TGCMatrix scaling = TGCMatrix.Scaling(Scale);
-
-            Transform = scaling *  rotation * translation;
-
-            if (CollisionDetected())
-            {
-                Rotation = oldRotation;
-                Position = oldPosition;
-                Scale = oldScale;
-                Transform = oldTransform;
-            }
+            Transform = scal * rot * trans;
         }
 
         #endregion

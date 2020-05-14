@@ -8,13 +8,15 @@ namespace TGC.Group.Model
     {
         public StaticObject(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 position, TGCVector3 scale, TGCVector3 rotation) : base(gameInstance, name, meshes)
         {
-            Position = position;
-            Rotation = rotation;
-            Scale = scale;
+            CollisionStatus = Utils.ECollisionStatus.NOT_COLLISIONABLE;
 
-            TGCMatrix scaleTransform = TGCMatrix.Scaling(Scale);
+            Position = position;
+            this.rotation = rotation;
+            this.scale = scale;
+
+            TGCMatrix scaleTransform = TGCMatrix.Scaling(this.scale);
             TGCMatrix translation = TGCMatrix.Translation(Position);
-            TGCMatrix rotationTransform = TGCMatrix.RotationYawPitchRoll(Rotation.Y, Rotation.X, Rotation.Z);
+            TGCMatrix rotationTransform = TGCMatrix.RotationYawPitchRoll(this.rotation.Y, this.rotation.X, this.rotation.Z);
 
             Transform = scaleTransform * rotationTransform * translation;
         }
