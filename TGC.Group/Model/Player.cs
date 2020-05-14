@@ -14,6 +14,8 @@ namespace TGC.Group.Model
         #region UTILS
         private readonly float timePerHitTick = 1f;
         private float timeSinceLastTick = 0f;
+        private readonly float interactionCooldown = 1f;
+        private float timeSinceLastInteraction = 0f;
         private bool godMode = true;
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private TGCVector3 nextPosition;
@@ -145,17 +147,22 @@ namespace TGC.Group.Model
 
         private void CheckInteraction()
         {
-            TgcPickingRay pickingRay = new TgcPickingRay(GameInstance.Input);
-            GameObject selectedObject = null;
+            timeSinceLastInteraction += GameInstance.ElapsedTime;
 
-            if (GameInstance.Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT)) // No funciona el buttonPressed
+            if (timeSinceLastInteraction >= interactionCooldown && GameInstance.Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT)) // No funciona el buttonPressed
             {
+                TgcPickingRay pickingRay = new TgcPickingRay(GameInstance.Input);
+                GameObject selectedObject = null;
+
                 pickingRay.updateRay();
                 selectedObject = ReachableObjects().Find(obj => obj.CheckRayCollision(pickingRay));
-            }
 
-            if (selectedObject != null)
-                selectedObject.Interact(this);
+                if (selectedObject != null)
+                {
+                    selectedObject.Interact(this);
+                    timeSinceLastInteraction = 0;
+                }
+            }
         }
 
         protected List<GameObject> ReachableObjects() => ObjectsWithinRange(interactionRange);

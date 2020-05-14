@@ -16,11 +16,11 @@ namespace TGC.Group.Model
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private float timeSinceLastDirection = 0f;
         private float timeToChangeDirection = 3f;
-
         #endregion
 
         public Fish(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 spawnLocation) : base(gameInstance, name, meshes)
         {
+            CollisionStatus = Utils.ECollisionStatus.NOT_COLLISIONABLE;
             Position = spawnLocation;
             size = MathExtended.GetRandomNumberBetween(3, 20);
             scale = TGCVector3.One * size;

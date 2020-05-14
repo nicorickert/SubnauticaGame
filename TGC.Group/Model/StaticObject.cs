@@ -8,6 +8,8 @@ namespace TGC.Group.Model
     {
         public StaticObject(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 position, TGCVector3 scale, TGCVector3 rotation) : base(gameInstance, name, meshes)
         {
+            CollisionStatus = Utils.ECollisionStatus.NOT_COLLISIONABLE;
+
             Position = position;
             this.rotation = rotation;
             this.scale = scale;

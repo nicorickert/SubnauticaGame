@@ -109,6 +109,7 @@
     <Compile Include="Model\Ship.cs" />
     <Compile Include="Model\StaticObject.cs" />
     <Compile Include="Model\Subnautica.cs" />
+    <Compile Include="Model\Utils\ECollisionStatus.cs" />
     <Compile Include="Model\Utils\HeightMapTextured.cs" />
     <Compile Include="Model\Utils\FPSCamera.cs" />
     <Compile Include="Model\Utils\MathExtended.cs" />

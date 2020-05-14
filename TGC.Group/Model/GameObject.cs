@@ -7,6 +7,7 @@ using TGC.Core.Collision;
 using TGC.Core;
 using System.Linq;
 using System.Drawing;
+using TGC.Group.Model.Utils;
 
 namespace TGC.Group.Model
 {
@@ -21,6 +22,7 @@ namespace TGC.Group.Model
         #region PROPERTIES
         public Subnautica GameInstance { get; protected set; }
         public string Name { get; protected set; }
+        public ECollisionStatus CollisionStatus { get; protected set; } = ECollisionStatus.COLLISIONABLE;
         public List<TgcMesh> Meshes { get; protected set; }
         public TGCVector3 InitialLookDirection = new TGCVector3(0, 0, -1);
         public TGCVector3 LookDirection { get; set; }
@@ -106,7 +108,7 @@ namespace TGC.Group.Model
 
         protected List<GameObject> ObjectsWithinRange(int range) => GameInstance.SceneObjects.FindAll(obj => obj != this && TGCVector3.Length(obj.Position - Position) <= range);
 
-        protected bool CollisionDetected() => Meshes.Any(mesh => NearObjects().Any(obj => CollidesWith(obj)));
+        protected bool CollisionDetected() => Meshes.Any(mesh => NearObjects().FindAll(obj => obj.CollisionStatus == ECollisionStatus.COLLISIONABLE).Any(obj => CollidesWith(obj)));
 
         protected void SimulateAndSetTransformation(TGCVector3 newPosition, TGCMatrix newTransform)
         {
@@ -143,7 +145,6 @@ namespace TGC.Group.Model
                 Transform = oldTransform;
             }
         }
-
         #endregion
     }
 }
