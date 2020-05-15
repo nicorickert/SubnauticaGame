@@ -9,13 +9,18 @@ namespace TGC.Group.Model.Items
 {
     public abstract class Item
     {
+        public EItemID ID { get; private set; }
         public string Sprite { get; protected set; } // El tipo se cambiará por lo que sea que use TGC
         public string Name { get; protected set; } = "Unnamed";
 
-        public Item(string name, string spritePath)
+        private List<IItemEffect> onUseEffects;
+
+        public Item(EItemID id, string name, string spritePath, List<IItemEffect> onUseEffects)
         {
+            ID = id;
             Name = name;
             Sprite = spritePath; // new Image(spritePath); Inicializo el sprite correspondiente
+            this.onUseEffects = onUseEffects;
         }
 
         public void Render(Point position)
@@ -24,7 +29,11 @@ namespace TGC.Group.Model.Items
         }
 
         #region INTERFACE
-        public abstract void Use(Player user);
+        public virtual void Use(Player user) // Template method
+        {
+            foreach (var effect in onUseEffects)
+                effect.Affect(user);
+        }
         #endregion
     }
 }

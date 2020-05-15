@@ -29,7 +29,7 @@ namespace TGC.Group.Model
         #region INTERFACE
         public override void Interact(Player interactor)
         {
-            interactor.CollectItem(new Food("raw_fish", "un spritepath", 20)); // ojo, arreglar lo del sprite path
+            interactor.CollectItem(ItemDatabase.Generate(EItemID.RAW_FISH)); // ojo, arreglar lo del sprite path
             Destroy();
         }
         #endregion

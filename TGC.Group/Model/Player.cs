@@ -26,7 +26,7 @@ namespace TGC.Group.Model
         #region STATS
         public int Health { get; private set; } = 100;
         public int Oxygen { get; private set; } = 100;
-        public List<Item> Inventory { get; private set; } = new List<Item>();
+        public Inventory Inventory { get; private set; } = new Inventory();
         public int AttackDamage { get; private set; } = 10;
 
         private readonly float movementSpeed = 800f;
@@ -175,11 +175,11 @@ namespace TGC.Group.Model
         {
             timeSinceLastItemUse += GameInstance.ElapsedTime;
 
-            if (timeSinceLastItemUse >= itemUseCooldown && Inventory.Count != 0)
+            if (timeSinceLastItemUse >= itemUseCooldown && !Inventory.IsEmpty)
             {
                 if (GameInstance.Input.keyDown(Key.U))
                 {
-                    Inventory[Inventory.Count - 1].Use(this);
+                    Inventory.UseItem(0, this);
                     timeSinceLastItemUse = 0;
                 }
             }
@@ -206,7 +206,7 @@ namespace TGC.Group.Model
 
         public void CollectItem(Item item)
         {
-            Inventory.Add(item);
+            Inventory.AddItem(item);
         }
 
         #endregion

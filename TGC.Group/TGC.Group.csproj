@@ -103,8 +103,12 @@
     </Compile>
     <Compile Include="Model\GameObject.cs" />
     <Compile Include="Model\Fish.cs" />
-    <Compile Include="Model\Items\Food.cs" />
+    <Compile Include="Model\Items\Consumable.cs" />
+    <Compile Include="Model\Items\Effects\Heal.cs" />
+    <Compile Include="Model\Items\Inventory.cs" />
     <Compile Include="Model\Items\Item.cs" />
+    <Compile Include="Model\Items\ItemEffect.cs" />
+    <Compile Include="Model\Items\ItemID.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Roamer.cs" />
     <Compile Include="Model\Ship.cs" />

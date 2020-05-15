@@ -276,7 +276,7 @@ namespace TGC.Group.Model
 
             int index = 1;
             inventario.Text = "Inventario:\n\n";
-            foreach (var item in Player.Inventory)
+            foreach (var item in Player.Inventory.Items)
             {
                 inventario.Text += index + ") " + item.Name + "\n";
                 index++;

@@ -80,7 +80,7 @@ namespace TGC.Group.Model
 
             if (!IsAlive)
             {
-                interactor.CollectItem(new Food("raw_shark_meat", "algun path", 80));
+                interactor.CollectItem(ItemDatabase.Generate(EItemID.RAW_SHARK));
                 Destroy();
             }
         }
