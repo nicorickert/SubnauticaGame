@@ -33,10 +33,9 @@ namespace TGC.Group.Model
             int deviceWidth = D3DDevice.Instance.Width;
             int deviceHeight = D3DDevice.Instance.Height;
 
-            craftingMenu.Text = "Blueprints: \n";
             craftingMenu.Color = Color.DarkOrange;
-            craftingMenu.Position = new Point((int)FastMath.Floor(0.4f * deviceWidth), (int)FastMath.Floor(0.2f * deviceHeight));
-            craftingMenu.Size = new Size(300, 600);
+            craftingMenu.Position = new Point((int)FastMath.Floor(0.3f * deviceWidth), (int)FastMath.Floor(0.2f * deviceHeight));
+            craftingMenu.Size = new Size(800, 200);
             craftingMenu.changeFont(new Font("TimesNewRoman", 20, FontStyle.Regular));
             craftingMenu.Align = TgcText2D.TextAlign.LEFT;
         }

@@ -9,6 +9,7 @@ namespace TGC.Group.Model.Items
     public class Inventory
     {
         public List<Item> Items { get; } = new List<Item>();  // Despues se puede cambiar para que sea de un tamaño fijo
+        public int Size { get { return Items.Count; } }
         public bool IsEmpty { get { return Items.Count == 0; } }
 
         public Inventory() { }

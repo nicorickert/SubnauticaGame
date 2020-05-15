@@ -18,9 +18,13 @@ namespace TGC.Group.Model
         private float timeSinceLastTick = 0f;
         private readonly float interactionCooldown = 1f;
         private float timeSinceLastInteraction = 0f;
+        private readonly float itemSelectionCooldown = 0.2f;
+        private float timeSinceLastItemSelected = 0f;
         private bool godMode = true;
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private TGCVector3 nextPosition;
+
+        public int SelectedItem { get; private set; } = 0;
         #endregion
 
         #region STATS
@@ -64,6 +68,7 @@ namespace TGC.Group.Model
                 SimulateAndSetTransformation(nextPosition, nextTransform);
                 CheckInteraction();
                 UpdateVitals();
+                UpdateSelectedItem();
                 CheckItemUse();
             }
         }
@@ -181,11 +186,38 @@ namespace TGC.Group.Model
             {
                 if (GameInstance.Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_RIGHT))
                 {
-                    Inventory.GetItem(0).Use(this);
+                    Inventory.GetItem(SelectedItem).Use(this);
+                    SelectedItem = FastMath.Max(SelectedItem - 1, 0);
                     timeSinceLastItemUse = 0;
                 }
             }
         }
+
+        private void UpdateSelectedItem()
+        {
+            timeSinceLastItemSelected += GameInstance.ElapsedTime;
+
+            if(timeSinceLastItemSelected >= itemSelectionCooldown)
+            {
+                if (Inventory.IsEmpty)
+                    SelectedItem = 0;
+                else if (GameInstance.Input.keyDown(Key.UpArrow))
+                {
+                    SelectedItem--;
+                    if (SelectedItem == -1)
+                        SelectedItem = Inventory.Size - 1;
+                }
+                else if (GameInstance.Input.keyDown(Key.DownArrow))
+                {
+                    SelectedItem++;
+                    if (SelectedItem == Inventory.Size)
+                        SelectedItem = 0;
+                }
+
+                timeSinceLastItemSelected = 0f;
+            }
+        }
+
 
         private List<GameObject> ReachableObjects() => ObjectsWithinRange(interactionRange);
 

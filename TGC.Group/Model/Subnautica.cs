@@ -52,7 +52,8 @@ namespace TGC.Group.Model
         private TgcText2D healthTextBox = new TgcText2D();
         private TgcText2D oxygenTextBox = new TgcText2D();
         private TgcText2D screenCenter = new TgcText2D();
-        private TgcText2D inventario = new TgcText2D();
+        private TgcText2D inventoryHud = new TgcText2D();
+        private TgcText2D selectedItem = new TgcText2D();
         private TgcText2D gameTimer = new TgcText2D();
 
         #endregion
@@ -253,12 +254,19 @@ namespace TGC.Group.Model
             screenCenter.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
             screenCenter.Align = TgcText2D.TextAlign.LEFT;
 
-            inventario.Text = "";
-            inventario.Color = Color.DarkOrange;
-            inventario.Position = new Point((int)FastMath.Floor(0.8f * deviceWidth), (int)FastMath.Floor(0.4f * deviceHeight));
-            inventario.Size = new Size(300, 600);
-            inventario.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
-            inventario.Align = TgcText2D.TextAlign.LEFT;
+            inventoryHud.Text = "Inventory: ";
+            inventoryHud.Color = Color.DarkOrange;
+            inventoryHud.Position = new Point((int)FastMath.Floor(0.8f * deviceWidth), (int)FastMath.Floor(0.4f * deviceHeight));
+            inventoryHud.Size = new Size(300, 600);
+            inventoryHud.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
+            inventoryHud.Align = TgcText2D.TextAlign.LEFT;
+
+            selectedItem.Text = "Selected item: ";
+            selectedItem.Color = Color.DarkOrange;
+            selectedItem.Position = new Point((int)FastMath.Floor(0.8f * deviceWidth), (int)FastMath.Floor(0.38f * deviceHeight));
+            selectedItem.Size = new Size(300, 300);
+            selectedItem.changeFont(new Font("TimesNewRoman", 14, FontStyle.Bold));
+            selectedItem.Align = TgcText2D.TextAlign.LEFT;
 
             gameTimer.Text = "Time: ";
             gameTimer.Color = Color.DarkOrange;
@@ -273,12 +281,13 @@ namespace TGC.Group.Model
             healthTextBox.Text = "✚ " + Player.Health;
             oxygenTextBox.Text = "◴ " + Player.Oxygen;
             gameTimer.Text = "Time: " + FastMath.Floor(time) + " sec";
+            selectedItem.Text = "Selected item: " + (Player.SelectedItem + 1);
 
             int index = 1;
-            inventario.Text = "Inventario:\n\n";
+            inventoryHud.Text = "Inventory:\n\n";
             foreach (var item in Player.Inventory.Items)
             {
-                inventario.Text += index + ") " + item.Name + "\n";
+                inventoryHud.Text += index + ") " + item.Name + "\n";
                 index++;
             }
         }
@@ -288,7 +297,8 @@ namespace TGC.Group.Model
             healthTextBox.render();
             oxygenTextBox.render();
             screenCenter.render();
-            inventario.render();
+            inventoryHud.render();
+            selectedItem.render();
             gameTimer.render();
         }
 
@@ -296,7 +306,9 @@ namespace TGC.Group.Model
         {
             healthTextBox.Dispose();
             oxygenTextBox.Dispose();
-            inventario.Dispose();
+            inventoryHud.Dispose();
+            selectedItem.Dispose();
+            gameTimer.Dispose();
         }
 
         private void InitMainMeshes()
