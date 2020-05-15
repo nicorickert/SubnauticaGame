@@ -28,5 +28,9 @@ namespace TGC.Group.Model.Items
         {
             Items.Remove(item);
         }
+
+        public int Quantity(EItemID itemId) => Items.Count(item => item.ID == itemId);
+
+        public Item Find(Predicate<Item> match) => Items.Find(match);
     }
 }

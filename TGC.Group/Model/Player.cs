@@ -28,6 +28,7 @@ namespace TGC.Group.Model
         public int Oxygen { get; private set; } = 100;
         public Inventory Inventory { get; private set; } = new Inventory();
         public int AttackDamage { get; private set; } = 10;
+        public List<BluePrint> AvailableBluePrints { get; private set; } = new List<BluePrint>();
 
         private readonly float movementSpeed = 800f;
         private readonly int maxHealth = 100;
@@ -41,6 +42,7 @@ namespace TGC.Group.Model
         public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
             Position = new TGCVector3(0, 100, 2000);
+            LearnBluePrint(BluePrintDatabase.FishSoup);
         }
 
         #region TGC
@@ -208,6 +210,13 @@ namespace TGC.Group.Model
         {
             Inventory.AddItem(item);
         }
+
+        public void LearnBluePrint(BluePrint bluePrint)
+        {
+            AvailableBluePrints.Add(bluePrint);
+        }
+
+        public bool CanReach(GameObject obj) => IsWithinRange(interactionRange, obj);
 
         #endregion
     }

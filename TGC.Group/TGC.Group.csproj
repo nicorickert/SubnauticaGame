@@ -103,6 +103,8 @@
     </Compile>
     <Compile Include="Model\GameObject.cs" />
     <Compile Include="Model\Fish.cs" />
+    <Compile Include="Model\Items\BluePrint.cs" />
+    <Compile Include="Model\Items\BluePrintDatabase.cs" />
     <Compile Include="Model\Items\Consumable.cs" />
     <Compile Include="Model\Items\Effects\Heal.cs" />
     <Compile Include="Model\Items\Inventory.cs" />
