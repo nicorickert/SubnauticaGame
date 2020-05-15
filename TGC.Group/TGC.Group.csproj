@@ -110,7 +110,7 @@
     <Compile Include="Model\Items\Inventory.cs" />
     <Compile Include="Model\Items\Item.cs" />
     <Compile Include="Model\Items\ItemEffect.cs" />
-    <Compile Include="Model\Items\ItemID.cs" />
+    <Compile Include="Model\Items\ItemDatabase.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Roamer.cs" />
     <Compile Include="Model\Ship.cs" />

@@ -179,9 +179,9 @@ namespace TGC.Group.Model
 
             if (timeSinceLastItemUse >= itemUseCooldown && !Inventory.IsEmpty)
             {
-                if (GameInstance.Input.keyDown(Key.U))
+                if (GameInstance.Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_RIGHT))
                 {
-                    Inventory.UseItem(0, this);
+                    Inventory.GetItem(0).Use(this);
                     timeSinceLastItemUse = 0;
                 }
             }

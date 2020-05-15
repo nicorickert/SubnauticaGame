@@ -62,7 +62,7 @@ namespace TGC.Group.Model.Items
             return craftedItem;
         }
 
-        private bool CanCraft(Player crafter) => requirements.All(req => crafter.Inventory.Quantity(req.itemId) >= req.amount);
+        private bool CanCraft(Player crafter) => requirements.All(req => crafter.Inventory.Amount(req.itemId) >= req.amount);
 
         private void RemoveRequirementsFrom(Player crafter)
         {

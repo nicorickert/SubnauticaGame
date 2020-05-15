@@ -19,17 +19,14 @@ namespace TGC.Group.Model.Items
             Items.Add(item);
         }
 
-        public void UseItem(int slot, Player user)
-        {
-            Items[slot].Use(user);
-        }
+        public Item GetItem(int index) => Items[index];
 
         public void Remove(Item item)
         {
             Items.Remove(item);
         }
 
-        public int Quantity(EItemID itemId) => Items.Count(item => item.ID == itemId);
+        public int Amount(EItemID itemId) => Items.Count(item => item.ID == itemId);
 
         public Item Find(Predicate<Item> match) => Items.Find(match);
     }
