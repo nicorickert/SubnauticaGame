@@ -25,21 +25,17 @@ namespace TGC.Group.Model
 
         #region SETTINGS
 
-        #region PRIVATE
         private TGCVector3 skyBoxDimensions = new TGCVector3(40000, 10000, 40000);
         private TgcScene island;
         private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
-        #endregion
 
-        #region PUBLIC
         public float FloorY { get; } = -3000;
         public float WaterY { get; } = 0;
         public float escapeDelay = 0;
         public bool focusInGame = true; // Variable para saber si estoy jugando o en menu
-        #endregion
 
         #endregion
 
@@ -237,14 +233,14 @@ namespace TGC.Group.Model
             int deviceHeight = D3DDevice.Instance.Height;
 
             healthTextBox.Text = "✚ 100";
-            healthTextBox.Color = Color.Gold;
+            healthTextBox.Color = Color.DarkOrange;
             healthTextBox.Position = new Point((int)FastMath.Floor(0.05f * deviceWidth), (int)FastMath.Floor(0.9f * deviceHeight));
             healthTextBox.Size = new Size(600, 200);
             healthTextBox.changeFont(new Font("TimesNewRoman", 25, FontStyle.Bold));
             healthTextBox.Align = TgcText2D.TextAlign.LEFT;
 
             oxygenTextBox.Text = "◴ 100";
-            oxygenTextBox.Color = Color.Gold;
+            oxygenTextBox.Color = Color.DarkOrange;
             oxygenTextBox.Position = new Point((int)FastMath.Floor(0.12f * deviceWidth), (int)FastMath.Floor(0.9f * deviceHeight));
             oxygenTextBox.Size = new Size(600, 200);
             oxygenTextBox.changeFont(new Font("TimesNewRoman", 25, FontStyle.Bold));
@@ -258,14 +254,14 @@ namespace TGC.Group.Model
             screenCenter.Align = TgcText2D.TextAlign.LEFT;
 
             inventario.Text = "";
-            inventario.Color = Color.Gold;
+            inventario.Color = Color.DarkOrange;
             inventario.Position = new Point((int)FastMath.Floor(0.8f * deviceWidth), (int)FastMath.Floor(0.4f * deviceHeight));
             inventario.Size = new Size(300, 600);
             inventario.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
             inventario.Align = TgcText2D.TextAlign.LEFT;
 
             gameTimer.Text = "Time: ";
-            gameTimer.Color = Color.Gold;
+            gameTimer.Color = Color.DarkOrange;
             gameTimer.Position = new Point((int)FastMath.Floor(0.05f * deviceWidth), (int)FastMath.Floor(0.85f * deviceHeight));
             gameTimer.Size = new Size(300, 600);
             gameTimer.changeFont(new Font("TimesNewRoman", 12, FontStyle.Regular));
