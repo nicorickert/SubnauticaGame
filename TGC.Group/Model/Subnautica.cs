@@ -31,11 +31,11 @@ namespace TGC.Group.Model
         private TgcSkyBox skyBox;
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
+        private readonly float waterY = 0f;
+        private readonly float floorY = -3000;
+        private float escapeDelay = 0;
 
-        public float FloorY { get; } = -3000;
-        public float WaterY { get; } = 0;
-        public float escapeDelay = 0;
-        public bool focusInGame = true; // Variable para saber si estoy jugando o en menu
+        public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
 
         #endregion
 
@@ -76,12 +76,7 @@ namespace TGC.Group.Model
             LoadMainScene();
             ManageFocus();
             spawnManager = new SpawnManager(this);
-
-            // Cambio el farPlane
-            D3DDevice.Instance.Device.Transform.Projection = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio,
-                    D3DDevice.Instance.ZNearPlaneDistance, D3DDevice.Instance.ZFarPlaneDistance * 3f).ToMatrix();
-
-            Camera = new FPSCamera(Player, new TGCVector3(0, 120, 30));
+            SetCamera();
         }
 
         public override void Update()
@@ -91,11 +86,11 @@ namespace TGC.Group.Model
 
             if (Input.keyDown(Key.Escape) && escapeDelay > 0.5f) { // uso el delay porque no me funciona el keyUp o keyPressed
                 escapeDelay = 0;
-                focusInGame = !focusInGame;
+                FocusInGame = !FocusInGame;
                 ManageFocus();
             }
 
-            if (focusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
+            if (FocusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
             {
                 UpdateInstantiatedObjects();
                 spawnManager.Update();
@@ -168,9 +163,22 @@ namespace TGC.Group.Model
             removedObjects.Add(obj);
         }
 
+        public float WaterLevelToWorldHeight(float waterLevel) => waterY + waterLevel;
+
+        public float FloorLevelToWorldHeight(float floorLevel) => floorY + floorLevel;
+
         #endregion
 
         #region PRIVATE_METHODS
+
+        private void SetCamera()
+        {
+            // Cambio el farPlane
+            D3DDevice.Instance.Device.Transform.Projection = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio,
+                    D3DDevice.Instance.ZNearPlaneDistance, D3DDevice.Instance.ZFarPlaneDistance * 3f).ToMatrix();
+
+            Camera = new FPSCamera(Player, Player.RelativeEyePosition);
+        }
 
         private void LoadMainScene()
         {
@@ -190,21 +198,21 @@ namespace TGC.Group.Model
             island = loader.loadSceneFromFile(MediaDir + "Scene\\Isla-TgcScene.xml");
 
             /* OBJETOS INDIVIDUALES */
-            InstanceObject(new StaticObject(this, "coral1", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(500, FloorY + 500, 0), 5));
-            InstanceObject(new StaticObject(this, "coral2", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(1000, FloorY + 500, 300), 5));
+            InstanceObject(new StaticObject(this, "coral1", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(500, floorY + 500, 0), 5));
+            InstanceObject(new StaticObject(this, "coral2", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(1000, floorY + 500, 300), 5));
 
-            InstanceObject(new StaticObject(this, "coral3", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(3000, FloorY + 300, -1000), 5));
-            InstanceObject(new StaticObject(this, "coral4", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(3500, FloorY + 300, -700), 5));
+            InstanceObject(new StaticObject(this, "coral3", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(3000, floorY + 300, -1000), 5));
+            InstanceObject(new StaticObject(this, "coral4", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(3500, floorY + 300, -700), 5));
 
-            InstanceObject(new StaticObject(this, "coral5", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(300, FloorY + 700, 2800), 5));
+            InstanceObject(new StaticObject(this, "coral5", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(300, floorY + 700, 2800), 5));
 
-            InstanceObject(new StaticObject(this, "coral6", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(1000, FloorY + 300, -3000), 5));
+            InstanceObject(new StaticObject(this, "coral6", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(1000, floorY + 300, -3000), 5));
         }
 
         private void LoadTerrain()
         {
-            heightMaps.Add(new HeightMapTextured(this, "SeaFloor", new TGCVector3(0, FloorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx"));
-            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, WaterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
+            heightMaps.Add(new HeightMapTextured(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx"));
+            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
 
             foreach (HeightMapTextured hm in heightMaps)
             {
@@ -214,7 +222,7 @@ namespace TGC.Group.Model
 
         private void ManageFocus()
         {
-            if (focusInGame)
+            if (FocusInGame)
             {
                 int deviceWidth = D3DDevice.Instance.Width;
                 int deviceHeight = D3DDevice.Instance.Height;
