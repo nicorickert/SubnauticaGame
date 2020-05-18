@@ -187,7 +187,7 @@ namespace TGC.Group.Model
             LoadSkybox();
 
             Player = new Player(this, "player", playerMeshes);
-            InstanceObject(Player); //Tal vez no sea necesario meter al Player dentro de la bolsa de GameObjects
+            InstanceObject(Player);
 
             Ship = new Ship(this, "main_ship", shipMeshes);
             InstanceObject(Ship);

@@ -29,12 +29,9 @@ namespace TGC.Group.Model.Utils
 
             // ---
 
-            TGCVector3 a = player.RelativeRightDirection * eyePosition.X;
-            TGCVector3 b = player.RelativeUpDirection * eyePosition.Y;
-            TGCVector3 c = player.LookDirection * eyePosition.Z;
-            TGCVector3 camaraPosition = a + b + c;
+            TGCVector3 transformedRelativeEyePosition = eyePosition.X * player.RelativeRightDirection + eyePosition.Y * player.RelativeUpDirection + eyePosition.Z * player.LookDirection; 
+            TGCVector3 camaraPosition = player.Position + transformedRelativeEyePosition;
 
-            //System.Console.WriteLine("Camara position: \n" + camaraPosition);
             SetCamera(camaraPosition, camaraPosition + player.LookDirection);
 
             // ROTO EL LOOKDIRECTION DEL PLAYER
