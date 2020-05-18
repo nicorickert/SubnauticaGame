@@ -114,6 +114,9 @@ namespace TGC.Group.Model
                 movementDirection += new TGCVector3(0, -1, 0);
             }
 
+            if (!IsSubmerged() && movementDirection.Y > 0)
+                movementDirection.Y = 0;
+
             TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
             TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
 
@@ -217,7 +220,6 @@ namespace TGC.Group.Model
                 timeSinceLastItemSelected = 0f;
             }
         }
-
 
         private List<GameObject> ReachableObjects() => ObjectsWithinRange(interactionRange);
 
