@@ -33,6 +33,9 @@ namespace TGC.Group.Model
         public Inventory Inventory { get; private set; } = new Inventory();
         public int AttackDamage { get; private set; } = 10;
         public List<BluePrint> AvailableBluePrints { get; private set; } = new List<BluePrint>();
+        public bool IsSubmerged { get { return Position.Y < GameInstance.WaterY - 130f; } }
+        public bool IsInTheWater { get { return Position.Y < GameInstance.WaterY - 100f; } }
+        public bool IsOutOfTheWater { get { return Position.Y > GameInstance.WaterY; } }
 
         private readonly float movementSpeed = 800f;
         private readonly int maxHealth = 100;
@@ -114,7 +117,7 @@ namespace TGC.Group.Model
                 movementDirection += new TGCVector3(0, -1, 0);
             }
 
-            if (!IsSubmerged() && movementDirection.Y > 0)
+            if (!IsInTheWater && movementDirection.Y > 0)
                 movementDirection.Y = 0;
 
             TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
@@ -132,15 +135,13 @@ namespace TGC.Group.Model
             nextTransform *= rotationMatrix;
         }
 
-        private bool IsSubmerged() => Position.Y < GameInstance.WaterY;
-
         private void UpdateVitals()
         {
             timeSinceLastTick += GameInstance.ElapsedTime;
 
             if(timeSinceLastTick >= timePerHitTick)
             {
-                if (IsSubmerged())
+                if (IsSubmerged)
                 {
                     if (IsOutOfOxygen)
                     {
