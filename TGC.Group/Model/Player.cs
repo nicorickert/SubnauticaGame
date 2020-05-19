@@ -131,9 +131,9 @@ namespace TGC.Group.Model
                 movementDirection.Y = 0;
 
             TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
-            TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
-
             nextPosition = Position + totalTranslation;
+
+            TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
             nextTransform *= translationMatrix;
         }
 
