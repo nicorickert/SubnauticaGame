@@ -15,6 +15,9 @@ namespace TGC.Group.Model
 
         private List<TgcMesh> meshesPlantas = new List<TgcMesh>();
 
+        public int XZRadius { get => (int)currentScaleXZ * verticesWidth / 2; }
+        public int YMax { get => (int)GameInstance.FloorLevelToWorldHeight(0) + 1500; } // Mas o menos para no calcularlo
+
 
         public SueloDelMar(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect) : base(gameInstance, name, centreP, heightMap, texture, effect)
         {

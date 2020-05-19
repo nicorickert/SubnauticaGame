@@ -25,7 +25,7 @@ namespace TGC.Group.Model
         private TGCVector3 nextPosition;
 
         public int SelectedItem { get; private set; } = 0;
-        public TGCVector3 RelativeEyePosition { get; } = new TGCVector3(0, 120, -300);
+        public TGCVector3 RelativeEyePosition { get; } = new TGCVector3(0, 120, 30);
         #endregion
 
         #region STATS
@@ -38,6 +38,7 @@ namespace TGC.Group.Model
         public bool IsInTheWater { get { return Position.Y < GameInstance.WaterLevelToWorldHeight(-100f); } }
         public bool CollidingWithFloor { get { return Position.Y <= GameInstance.FloorLevelToWorldHeight(0); } }
         public bool IsOutOfTheWater { get { return Position.Y > GameInstance.WaterLevelToWorldHeight(0); } }
+        public bool IsInSafeZone { get => IsWithinRange(interactionRange, GameInstance.Ship); }
 
         private readonly float movementSpeed = 1000f;
         private readonly int maxHealth = 100;

@@ -14,13 +14,13 @@ namespace TGC.Group.Model.Utils
         private List<TgcMesh> sharkMeshes;
         private List<TgcMesh> fishMeshes;
 
-        private readonly int initialFishNumber = 20;
+        private readonly int initialFishNumber = 80;
         private int totalFishCounter = 0;
 
         private readonly float fishSpawnCooldown = 10f;
         private float timeSinceLastFishSpawn = 0f;
 
-        private readonly float sharkSpawnCooldown = 90f;
+        private readonly float sharkSpawnCooldown = 30f;
         private float timeSinceLastSharkSpawn = 0f;
 
         public SpawnManager(Subnautica gameInstance)
@@ -59,9 +59,9 @@ namespace TGC.Group.Model.Utils
         {
             Random random = new Random();
             TGCVector3 spawnLocation = TGCVector3.Empty;
-            spawnLocation.X = MathExtended.GetRandomNumberBetween(-5000, 5000);
-            spawnLocation.Y = MathExtended.GetRandomNumberBetween(-5000, 5000);
-            spawnLocation.Z = MathExtended.GetRandomNumberBetween(-5000, 5000);
+            spawnLocation.X = MathExtended.GetRandomNumberBetween(-gameInstance.SueloDelMar.XZRadius, gameInstance.SueloDelMar.XZRadius);
+            spawnLocation.Y = MathExtended.GetRandomNumberBetween(-gameInstance.SueloDelMar.XZRadius, gameInstance.SueloDelMar.XZRadius);
+            spawnLocation.Z = MathExtended.GetRandomNumberBetween(-gameInstance.SueloDelMar.XZRadius, gameInstance.SueloDelMar.XZRadius);
 
             return spawnLocation;
         }
@@ -69,7 +69,7 @@ namespace TGC.Group.Model.Utils
         private TGCVector3 RandomWaterSpawnLocation()
         {
             TGCVector3 spawnLocation = RandomSpawnLocation();
-            spawnLocation.Y = spawnLocation.Y = MathExtended.GetRandomNumberBetween((int)gameInstance.FloorLevelToWorldHeight(900), (int)gameInstance.WaterLevelToWorldHeight(-100));
+            spawnLocation.Y = spawnLocation.Y = MathExtended.GetRandomNumberBetween((int)gameInstance.FloorLevelToWorldHeight(gameInstance.SueloDelMar.YMax), (int)gameInstance.WaterLevelToWorldHeight(-100));
             return spawnLocation;
         }
 
