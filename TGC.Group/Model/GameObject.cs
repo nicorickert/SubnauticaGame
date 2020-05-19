@@ -23,6 +23,7 @@ namespace TGC.Group.Model
         public Subnautica GameInstance { get; protected set; }
         public string Name { get; protected set; }
         public ECollisionStatus CollisionStatus { get; protected set; } = ECollisionStatus.COLLISIONABLE;
+        public bool Collisionable { get { return CollisionStatus == ECollisionStatus.COLLISIONABLE; } }
         public List<TgcMesh> Meshes { get; protected set; }
         public TGCVector3 InitialLookDirection = new TGCVector3(0, 0, -1);
         public TGCVector3 LookDirection { get; set; }
@@ -102,7 +103,7 @@ namespace TGC.Group.Model
 
         protected bool IsWithinRange(int range, GameObject obj) => TGCVector3.Length(obj.Position - Position) <= range;
 
-        protected bool CollisionDetected() => Meshes.Any(mesh => NearObjects().FindAll(obj => obj.CollisionStatus == ECollisionStatus.COLLISIONABLE).Any(obj => CollidesWith(obj)));
+        protected bool CollisionDetected() => Meshes.Any(mesh => NearObjects().FindAll(obj => obj.Collisionable).Any(obj => CollidesWith(obj)));
 
         protected void SimulateAndSetTransformation(TGCVector3 newPosition, TGCMatrix newTransform)
         {

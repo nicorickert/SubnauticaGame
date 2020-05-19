@@ -63,6 +63,17 @@ namespace TGC.Group.Model
             if (GameInstance.Input.keyDown(Key.H))
                 godMode = false;
 
+            if (IsAlive)
+            {
+                CheckInteraction();
+                UpdateVitals();
+                UpdateSelectedItem();
+                CheckItemUse();
+            }
+        }
+
+        public override void Render()
+        {
             nextTransform = TGCMatrix.Identity;
 
             if (IsAlive)
@@ -70,11 +81,9 @@ namespace TGC.Group.Model
                 FixRotation(); // Es importante que esto este antes que ManageMovement()
                 ManageMovement();
                 SimulateAndSetTransformation(nextPosition, nextTransform);
-                CheckInteraction();
-                UpdateVitals();
-                UpdateSelectedItem();
-                CheckItemUse();
             }
+
+            base.Render();
         }
 
         #endregion

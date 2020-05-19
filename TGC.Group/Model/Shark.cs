@@ -39,8 +39,15 @@ namespace TGC.Group.Model
         {
             if (IsChasing)
             {
+                TryToHitPlayer();
+            }
+        }
+
+        public override void Render()
+        {
+            if (IsChasing)
+            {
                 Chase();
-                HitPlayer();
             }
             else
             {
@@ -48,6 +55,8 @@ namespace TGC.Group.Model
                 Roam();
                 lastRoamingLookDirection = LookDirection;
             }
+
+            base.Render();
         }
         #endregion
 
@@ -72,7 +81,7 @@ namespace TGC.Group.Model
             SimulateAndSetTransformation(nextPosition, nextTransform);
         }
 
-        private void HitPlayer()
+        private void TryToHitPlayer()
         {
             timeSinceLastAttack += GameInstance.ElapsedTime;
 
