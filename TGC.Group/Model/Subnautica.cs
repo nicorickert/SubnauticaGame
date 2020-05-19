@@ -25,16 +25,16 @@ namespace TGC.Group.Model
 
         #region SETTINGS
 
-        private TGCVector3 skyBoxDimensions = new TGCVector3(60000, 10000, 60000);
+        private TGCVector3 skyBoxDimensions = new TGCVector3(60000, 20000, 60000);
         private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
+        private readonly float waterY = 0f;
+        private readonly float floorY = -3000;
+        private float escapeDelay = 0;
 
-        public float FloorY { get; } = -4000;
-        public float WaterY { get; } = 0;
-        public float escapeDelay = 0;
-        public bool focusInGame = true; // Variable para saber si estoy jugando o en menu
+        public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
 
         #endregion
 
@@ -75,12 +75,7 @@ namespace TGC.Group.Model
             LoadMainScene();
             ManageFocus();
             spawnManager = new SpawnManager(this);
-
-            // Cambio el farPlane
-            D3DDevice.Instance.Device.Transform.Projection = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio,
-                    D3DDevice.Instance.ZNearPlaneDistance, D3DDevice.Instance.ZFarPlaneDistance * 5f).ToMatrix();
-
-            Camera = new FPSCamera(Player, new TGCVector3(0, 120, 30));
+            SetCamera();
         }
 
         public override void Update()
@@ -90,11 +85,11 @@ namespace TGC.Group.Model
 
             if (Input.keyDown(Key.Escape) && escapeDelay > 0.5f) { // uso el delay porque no me funciona el keyUp o keyPressed
                 escapeDelay = 0;
-                focusInGame = !focusInGame;
+                FocusInGame = !FocusInGame;
                 ManageFocus();
             }
 
-            if (focusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
+            if (FocusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
             {
                 UpdateInstantiatedObjects();
                 spawnManager.Update();
@@ -164,9 +159,22 @@ namespace TGC.Group.Model
             removedObjects.Add(obj);
         }
 
+        public float WaterLevelToWorldHeight(float waterLevel) => waterY + waterLevel;
+
+        public float FloorLevelToWorldHeight(float floorLevel) => floorY + floorLevel;
+
         #endregion
 
         #region PRIVATE_METHODS
+
+        private void SetCamera()
+        {
+            // Cambio el farPlane
+            D3DDevice.Instance.Device.Transform.Projection = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio,
+                    D3DDevice.Instance.ZNearPlaneDistance, D3DDevice.Instance.ZFarPlaneDistance * 5f).ToMatrix();
+
+            Camera = new FPSCamera(Player, Player.RelativeEyePosition);
+        }
 
         private void LoadMainScene()
         {
@@ -175,20 +183,18 @@ namespace TGC.Group.Model
             LoadSkybox();
 
             Player = new Player(this, "player", playerMeshes);
-            InstanceObject(Player); //Tal vez no sea necesario meter al Player dentro de la bolsa de GameObjects
+            InstanceObject(Player);
 
             Ship = new Ship(this, "main_ship", shipMeshes);
             InstanceObject(Ship);
 
             LoadTerrain();
-
-            //TgcSceneLoader loader = new TgcSceneLoader();
         }
 
         private void LoadTerrain()
         {
-            heightMaps.Add(new SueloDelMar(this, "SeaFloor", new TGCVector3(0, FloorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "image.png", ShadersDir + "SeaFloorShader.fx"));
-            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, WaterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
+            heightMaps.Add(new HeightMapTextured(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx"));
+            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
 
             foreach (HeightMapTextured hm in heightMaps)
             {
@@ -198,7 +204,7 @@ namespace TGC.Group.Model
 
         private void ManageFocus()
         {
-            if (focusInGame)
+            if (FocusInGame)
             {
                 int deviceWidth = D3DDevice.Instance.Width;
                 int deviceHeight = D3DDevice.Instance.Height;

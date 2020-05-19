@@ -58,7 +58,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
 	float2 waterDirection = float2(0.03, 0.03) * time;
     float4 textureColor = tex2D(textureSampler, textureScale * input.Texcoord + waterDirection);
 	
-	return float4(textureColor.xyz, 0.9f);
+    return float4(textureColor.xyz, 0.9f);
 }
 
 

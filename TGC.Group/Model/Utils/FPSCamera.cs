@@ -23,20 +23,16 @@ namespace TGC.Group.Model.Utils
         public override void UpdateCamera(float elapsedTime)
         {
             /*SETEO LA CAMARA*/
-            float normEyePosition = TGCVector3.Length(eyePosition);
-            TGCVector3 eyePositionLookingTo = normEyePosition * TGCVector3.Normalize(player.LookDirection);  // Pongo la norma del eyePosition en la direccion del lookDir
-            TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + player.RelativeUpDirection * eyePosition.Y;
+            //float normEyePosition = TGCVector3.Length(eyePosition);
+            //TGCVector3 eyePositionLookingTo = normEyePosition * TGCVector3.Normalize(player.LookDirection);  // Pongo la norma del eyePosition en la direccion del lookDir
+            //TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + player.RelativeUpDirection * eyePosition.Y;
 
-            //float spaceRotation = MathExtended.AngleBetween(TGCVector3.Up, player.RelativeUpDirection);  // siempre tira angulos agudos
+            // ---
 
-            //if (player.RelativeUpDirection.Y < 0)  // No preguntes, calculos re locos con geogebra
-            //    spaceRotation = FastMath.PI - spaceRotation;
+            TGCVector3 transformedRelativeEyePosition = eyePosition.X * player.RelativeRightDirection + eyePosition.Y * player.RelativeUpDirection + eyePosition.Z * player.LookDirection; 
+            TGCVector3 camaraPosition = player.Position + transformedRelativeEyePosition;
 
-            //TGCVector3 rotationAxis = TGCVector3.Cross(TGCVector3.Up, player.RelativeUpDirection);
-            //TGCVector3 relativeEyePosition = MathExtended.TransformVector3(TGCMatrix.RotationAxis(rotationAxis, spaceRotation), eyePosition);
-            //TGCVector3 camaraPosition = player.Position + relativeEyePosition;
-
-            SetCamera(camaraPosition /*+ new TGCVector3(0,100,200)*/, camaraPosition + player.LookDirection);
+            SetCamera(camaraPosition, camaraPosition + player.LookDirection);
 
             // ROTO EL LOOKDIRECTION DEL PLAYER
             UpdatePlayerLookDirection();
@@ -47,7 +43,7 @@ namespace TGC.Group.Model.Utils
             TgcD3dInput input = player.GameInstance.Input;
 
             // MOVER LOOK DIRECTION CON MOVIMIENTO DEL MOUSE
-            if (player.GameInstance.focusInGame)
+            if (player.GameInstance.FocusInGame)
             {
                 mousePositionY -= -input.XposRelative * mouseSensibility; // ENTENDER PORQUE TENGO QUE INVERTIR LAS X CON Y
 

@@ -14,7 +14,7 @@ namespace TGC.Group.Model.Utils
         private List<TgcMesh> sharkMeshes;
         private List<TgcMesh> fishMeshes;
 
-        private int initialFishNumber = 20;
+        private readonly int initialFishNumber = 20;
         private int totalFishCounter = 0;
 
         private readonly float fishSpawnCooldown = 10f;
@@ -69,7 +69,7 @@ namespace TGC.Group.Model.Utils
         private TGCVector3 RandomWaterSpawnLocation()
         {
             TGCVector3 spawnLocation = RandomSpawnLocation();
-            spawnLocation.Y = spawnLocation.Y = MathExtended.GetRandomNumberBetween((int)gameInstance.FloorY + 900, (int)gameInstance.WaterY - 100);
+            spawnLocation.Y = spawnLocation.Y = MathExtended.GetRandomNumberBetween((int)gameInstance.FloorLevelToWorldHeight(900), (int)gameInstance.WaterLevelToWorldHeight(-100));
             return spawnLocation;
         }
 
