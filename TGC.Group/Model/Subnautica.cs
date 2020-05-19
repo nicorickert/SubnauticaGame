@@ -31,7 +31,7 @@ namespace TGC.Group.Model
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
         private readonly float waterY = 0f;
-        private readonly float floorY = -3000;
+        private readonly float floorY = -4000;
         private float escapeDelay = 0;
 
         public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
@@ -193,7 +193,7 @@ namespace TGC.Group.Model
 
         private void LoadTerrain()
         {
-            heightMaps.Add(new HeightMapTextured(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx"));
+            heightMaps.Add(new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx"));
             heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
 
             foreach (HeightMapTextured hm in heightMaps)
