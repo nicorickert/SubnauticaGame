@@ -61,15 +61,15 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 float4 psDefault(VS_OUTPUT input) : COLOR0
 {
 	float3 Nn = normalize(input.WorldNormal);
-	float3 Ln = normalize(float3(1,-1,1));
+	float3 Ln = normalize(float3(0,-2,1));
 
 	float n_dot_l = abs(dot(Nn, Ln));
 
-	float textureScale = 10;
+	float textureScale = 90;
     float4 textureColor = tex2D(textureSampler, input.Texcoord * textureScale);
 	
 	// Diffuse color
-	float3 diffuseColor = 0.3 * float3(0.5,0.5,0.5) * n_dot_l;
+	float3 diffuseColor = 0.4 * float3(0.5,0.4,0.2) * n_dot_l;
 	textureColor += float4(diffuseColor, 1);
 	
 	return textureColor;

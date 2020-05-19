@@ -25,14 +25,13 @@ namespace TGC.Group.Model
 
         #region SETTINGS
 
-        private TGCVector3 skyBoxDimensions = new TGCVector3(40000, 10000, 40000);
-        private TgcScene island;
+        private TGCVector3 skyBoxDimensions = new TGCVector3(60000, 10000, 60000);
         private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
 
-        public float FloorY { get; } = -3000;
+        public float FloorY { get; } = -4000;
         public float WaterY { get; } = 0;
         public float escapeDelay = 0;
         public bool focusInGame = true; // Variable para saber si estoy jugando o en menu
@@ -79,7 +78,7 @@ namespace TGC.Group.Model
 
             // Cambio el farPlane
             D3DDevice.Instance.Device.Transform.Projection = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio,
-                    D3DDevice.Instance.ZNearPlaneDistance, D3DDevice.Instance.ZFarPlaneDistance * 3f).ToMatrix();
+                    D3DDevice.Instance.ZNearPlaneDistance, D3DDevice.Instance.ZFarPlaneDistance * 5f).ToMatrix();
 
             Camera = new FPSCamera(Player, new TGCVector3(0, 120, 30));
         }
@@ -109,7 +108,7 @@ namespace TGC.Group.Model
                     hm.Update();
 
                 // Muevo el centro del skybox para que sea inalcanzable
-                skyBox.Center = new TGCVector3(Camera.Position.X, 0, Camera.Position.Z);
+                skyBox.Center = new TGCVector3(Camera.Position.X / 1.3f, 0, Camera.Position.Z / 1.3f);
             }
 
             UpdateHUD();
@@ -132,8 +131,6 @@ namespace TGC.Group.Model
                 hm.Render();
 
             skyBox.Render();
-            island.RenderAll();
-            island.Meshes.ForEach(mesh => mesh.BoundingBox.Render());
 
             PostRender();
         }
@@ -151,7 +148,6 @@ namespace TGC.Group.Model
                 hm.Dispose();
 
             skyBox.Dispose();
-            island.DisposeAll();
         }
 
         #endregion
@@ -186,24 +182,12 @@ namespace TGC.Group.Model
 
             LoadTerrain();
 
-            TgcSceneLoader loader = new TgcSceneLoader();
-            island = loader.loadSceneFromFile(MediaDir + "Scene\\Isla-TgcScene.xml");
-
-            /* OBJETOS INDIVIDUALES */
-            InstanceObject(new StaticObject(this, "coral1", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(500, FloorY + 500, 0), 5));
-            InstanceObject(new StaticObject(this, "coral2", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(1000, FloorY + 500, 300), 5));
-
-            InstanceObject(new StaticObject(this, "coral3", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(3000, FloorY + 300, -1000), 5));
-            InstanceObject(new StaticObject(this, "coral4", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(3500, FloorY + 300, -700), 5));
-
-            InstanceObject(new StaticObject(this, "coral5", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(300, FloorY + 700, 2800), 5));
-
-            InstanceObject(new StaticObject(this, "coral6", new List<TgcMesh>(new TgcMesh[] { coralMesh.createMeshInstance("coral1") }), new TGCVector3(1000, FloorY + 300, -3000), 5));
+            //TgcSceneLoader loader = new TgcSceneLoader();
         }
 
         private void LoadTerrain()
         {
-            heightMaps.Add(new HeightMapTextured(this, "SeaFloor", new TGCVector3(0, FloorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx"));
+            heightMaps.Add(new SueloDelMar(this, "SeaFloor", new TGCVector3(0, FloorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "image.png", ShadersDir + "SeaFloorShader.fx"));
             heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, WaterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
 
             foreach (HeightMapTextured hm in heightMaps)
@@ -323,7 +307,7 @@ namespace TGC.Group.Model
         private void LoadSkybox()
         {
             skyBox = new TgcSkyBox();
-            skyBox.Center = TGCVector3.Up * (skyBoxDimensions.Y / 10);
+            skyBox.Center = TGCVector3.Up * (skyBoxDimensions.Y / 11f);
             skyBox.Size = new TGCVector3(skyBoxDimensions);
 
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, MediaDir + "Skybox\\up.jpg");

@@ -34,7 +34,7 @@ namespace TGC.Group.Model
         public int AttackDamage { get; private set; } = 10;
         public List<BluePrint> AvailableBluePrints { get; private set; } = new List<BluePrint>();
 
-        private readonly float movementSpeed = 800f;
+        private readonly float movementSpeed = 1000f;
         private readonly int maxHealth = 100;
         private readonly int oxygenCapacity = 100;
         private readonly int interactionRange = 700;

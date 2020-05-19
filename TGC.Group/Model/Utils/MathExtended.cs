@@ -34,5 +34,10 @@ namespace TGC.Group.Model
         public static int Sign(float n) => Math.Sign(n);
 
         public static int GetRandomNumberBetween(int min, int max) => random.Next(min, max);
+
+        public static TGCVector3 Vector3ToTGCVector3(Microsoft.DirectX.Vector3 vector3)
+        {
+            return new TGCVector3(vector3.X, vector3.Y, vector3.Z);
+        }
     }
 }

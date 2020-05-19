@@ -21,7 +21,7 @@ namespace TGC.Group.Model
         public Ship(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
             Position = new TGCVector3(3500, 60, 0);   // seteo la posicion del barco
-            scale *= 3;
+            scale *= 4;
             rotation = new TGCVector3(0, FastMath.PI_HALF, 0);
 
             TGCMatrix translation = TGCMatrix.Translation(Position);

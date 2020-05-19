@@ -23,18 +23,21 @@ namespace TGC.Group.Model
     /// </summary>
     public class HeightMapTextured
     {
-        private Effect effect;
-        private string currentEffect;
-        private string currentHeightmap;
-        private float currentScaleXZ;
-        private float currentScaleY;
-        private string currentTexture;
-        private TgcTexture terrainTexture;
-        private int totalVertices;
-        private VertexBuffer vbTerrain;
-        private TGCVector3 centre;
+        protected Effect effect;
+        protected string currentEffect;
+        protected string currentHeightmap;
+        protected float currentScaleXZ;
+        protected float currentScaleY;
+        protected string currentTexture;
+        protected TgcTexture terrainTexture;
+        protected int totalVertices;
+        protected VertexBuffer vbTerrain;
+        protected TGCVector3 centre;
         public string name;
         public float time;
+        protected CustomVertex.PositionNormalTextured[] vertices;
+        protected int verticesWidth;
+        protected int verticesHeight;
 
         public Subnautica GameInstance { get; private set; }
 
@@ -50,13 +53,13 @@ namespace TGC.Group.Model
         public HeightMapTextured(Subnautica gameInstance, string name, string heightMap, string texture, string effect)
             :this(gameInstance, name, TGCVector3.Empty, heightMap, texture, effect) { }
 
-        public void Init()
+        public virtual void Init()
         {
 
             time = 0;
             //Modifiers para variar escala del mapa
-            currentScaleXZ = 300f;
-            currentScaleY = 10f;
+            currentScaleXZ = 1000f;
+            currentScaleY = 25f;
             createHeightMapMesh(D3DDevice.Instance.Device, currentHeightmap, currentScaleXZ, currentScaleY);
 
             loadTerrainTexture(D3DDevice.Instance.Device, currentTexture);
@@ -94,19 +97,19 @@ namespace TGC.Group.Model
 
             //Crear array temporal de vertices
             var dataIdx = 0;
-            var data = new CustomVertex.PositionNormalTextured[totalVertices];
+            vertices = new CustomVertex.PositionNormalTextured[totalVertices];
 
             // Ancho (x) y alto (z) total del heightmap (imagen)
-            var width = heightmap.GetLength(0);
-            var height = heightmap.GetLength(1);
+            verticesWidth = heightmap.GetLength(0);
+            verticesHeight = heightmap.GetLength(1);
 
             // Vector para mover los vertices respecto del centro
-            var vectorCenter = centre - new TGCVector3(width / 2 * scaleXZ, 0 , height / 2 * scaleXZ);
+            var vectorCenter = centre - new TGCVector3(verticesWidth / 2 * scaleXZ, 0 , verticesHeight / 2 * scaleXZ);
 
             //Iterar sobre toda la matriz del Heightmap y crear los triangulos necesarios para el terreno
-            for (var i = 0; i < width - 1; i++)
+            for (var i = 0; i < verticesWidth - 1; i++)
             {
-                for (var j = 0; j < height - 1; j++)
+                for (var j = 0; j < verticesHeight - 1; j++)
                 {
                     //Crear los cuatro vertices que conforman este cuadrante, aplicando la escala correspondiente y los desplazo para que el centro del hm este en el pasado por parametro
                     var v1 = new TGCVector3(i * scaleXZ, heightmap[i, j] * scaleY, j * scaleXZ) + vectorCenter;
@@ -125,23 +128,23 @@ namespace TGC.Group.Model
                     //Cargar triangulo 1
                     TGCVector3 n1 = TGCVector3.Cross(v2 - v1, v3 - v1);
                     n1.Normalize();
-                    data[dataIdx] = new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y);
-                    data[dataIdx + 1] = new CustomVertex.PositionNormalTextured(v2, n1, t2.X, t2.Y);
-                    data[dataIdx + 2] = new CustomVertex.PositionNormalTextured(v4, n1, t4.X, t4.Y);
+                    vertices[dataIdx] = new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y);
+                    vertices[dataIdx + 1] = new CustomVertex.PositionNormalTextured(v2, n1, t2.X, t2.Y);
+                    vertices[dataIdx + 2] = new CustomVertex.PositionNormalTextured(v4, n1, t4.X, t4.Y);
 
                     //Cargar triangulo 2
                     TGCVector3 n2 = TGCVector3.Cross(v4 - v1, v3 - v1);
                     n2.Normalize();
-                    data[dataIdx + 3] = new CustomVertex.PositionNormalTextured(v1, n2, t1.X, t1.Y);
-                    data[dataIdx + 4] = new CustomVertex.PositionNormalTextured(v4, n2, t4.X, t4.Y);
-                    data[dataIdx + 5] = new CustomVertex.PositionNormalTextured(v3, n2, t3.X, t3.Y);
+                    vertices[dataIdx + 3] = new CustomVertex.PositionNormalTextured(v1, n2, t1.X, t1.Y);
+                    vertices[dataIdx + 4] = new CustomVertex.PositionNormalTextured(v4, n2, t4.X, t4.Y);
+                    vertices[dataIdx + 5] = new CustomVertex.PositionNormalTextured(v3, n2, t3.X, t3.Y);
 
                     dataIdx += 6;
                 }
             }
 
             //Llenar todo el VertexBuffer con el array temporal
-            vbTerrain.SetData(data, 0, LockFlags.None);
+            vbTerrain.SetData(vertices, 0, LockFlags.None);
         }
 
         /// <summary>
