@@ -64,6 +64,17 @@ namespace TGC.Group.Model
             if (GameInstance.Input.keyDown(Key.H))
                 godMode = false;
 
+            if (IsAlive)
+            {
+                CheckInteraction();
+                UpdateVitals();
+                UpdateSelectedItem();
+                CheckItemUse();
+            }
+        }
+
+        public override void Render()
+        {
             nextTransform = TGCMatrix.Identity;
 
             if (IsAlive)
@@ -71,11 +82,9 @@ namespace TGC.Group.Model
                 FixRotation(); // Es importante que esto este antes que ManageMovement()
                 ManageMovement();
                 SimulateAndSetTransformation(nextPosition, nextTransform);
-                CheckInteraction();
-                UpdateVitals();
-                UpdateSelectedItem();
-                CheckItemUse();
             }
+
+            base.Render();
         }
 
         #endregion
@@ -130,16 +139,17 @@ namespace TGC.Group.Model
 
 
             TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
-            TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
-
             nextPosition = Position + totalTranslation;
+
+            TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
             nextTransform *= translationMatrix;
         }
 
         private void FixRotation()
         {
             TGCVector3 rotationAxis = TGCVector3.Cross(InitialLookDirection, LookDirection);  // Ojo el orden - no es conmutativo
-            TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, MathExtended.AngleBetween(InitialLookDirection, LookDirection));
+            float angle = MathExtended.AngleBetween(InitialLookDirection, LookDirection);
+            TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, angle);
             TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(rotation);
             nextTransform *= rotationMatrix;
         }
