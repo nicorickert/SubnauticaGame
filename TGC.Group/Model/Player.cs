@@ -25,7 +25,7 @@ namespace TGC.Group.Model
         private TGCVector3 nextPosition;
 
         public int SelectedItem { get; private set; } = 0;
-        public TGCVector3 RelativeEyePosition { get; } = new TGCVector3(0, 120, 30);
+        public TGCVector3 RelativeEyePosition { get; } = new TGCVector3(0, 120, -300);
         #endregion
 
         #region STATS
@@ -131,7 +131,8 @@ namespace TGC.Group.Model
         private void FixRotation()
         {
             TGCVector3 rotationAxis = TGCVector3.Cross(InitialLookDirection, LookDirection);  // Ojo el orden - no es conmutativo
-            TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, MathExtended.AngleBetween(InitialLookDirection, LookDirection));
+            float angle = MathExtended.AngleBetween(InitialLookDirection, LookDirection);
+            TGCQuaternion rotation = TGCQuaternion.RotationAxis(rotationAxis, angle);
             TGCMatrix rotationMatrix = TGCMatrix.RotationTGCQuaternion(rotation);
             nextTransform *= rotationMatrix;
         }
