@@ -26,7 +26,7 @@ namespace TGC.Group.Model
         #region SETTINGS
 
         private TGCVector3 skyBoxDimensions = new TGCVector3(60000, 20000, 60000);
-        private List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
+        public List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
@@ -159,9 +159,10 @@ namespace TGC.Group.Model
             removedObjects.Add(obj);
         }
 
-        public float WaterLevelToWorldHeight(float waterLevel) => waterY + waterLevel;
+        // heightmaps: 0 = piso, 1 = agua
+        public float WaterLevelToWorldHeight(float waterLevel) => heightMaps[1].CalcularAltura(Camera.Position.X, Camera.Position.Z) + waterLevel;
 
-        public float FloorLevelToWorldHeight(float floorLevel) => floorY + floorLevel;
+        public float FloorLevelToWorldHeight(float floorLevel) => heightMaps[0].CalcularAltura(Camera.Position.X, Camera.Position.Z) + floorLevel;
 
         #endregion
 

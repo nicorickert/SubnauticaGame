@@ -25,7 +25,7 @@ namespace TGC.Group.Model
         private TGCVector3 nextPosition;
 
         public int SelectedItem { get; private set; } = 0;
-        public TGCVector3 RelativeEyePosition { get; } = new TGCVector3(0, 120, 30);
+        public TGCVector3 RelativeEyePosition { get; } = new TGCVector3(0, 120, -300);
         #endregion
 
         #region STATS
@@ -36,6 +36,7 @@ namespace TGC.Group.Model
         public List<BluePrint> AvailableBluePrints { get; private set; } = new List<BluePrint>();
         public bool IsSubmerged { get { return Position.Y < GameInstance.WaterLevelToWorldHeight(-130f); } }
         public bool IsInTheWater { get { return Position.Y < GameInstance.WaterLevelToWorldHeight(-100f); } }
+        public bool CollidingWithFloor { get { return Position.Y <= GameInstance.FloorLevelToWorldHeight(0); } }
         public bool IsOutOfTheWater { get { return Position.Y > GameInstance.WaterLevelToWorldHeight(0); } }
 
         private readonly float movementSpeed = 1000f;
@@ -118,8 +119,15 @@ namespace TGC.Group.Model
                 movementDirection += new TGCVector3(0, -1, 0);
             }
 
-            if (!IsInTheWater && movementDirection.Y > 0)
+            if ((!IsInTheWater && movementDirection.Y > 0))
                 movementDirection.Y = 0;
+
+            if((CollidingWithFloor))
+            {
+                movementDirection.Y = 0;
+                Position = new TGCVector3(Position.X, GameInstance.FloorLevelToWorldHeight(0), Position.Z);
+            }
+
 
             TGCVector3 totalTranslation = TGCVector3.Normalize(movementDirection) * movementSpeed * GameInstance.ElapsedTime;
             TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
