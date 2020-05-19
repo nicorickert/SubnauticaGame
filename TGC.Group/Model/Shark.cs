@@ -11,21 +11,20 @@ namespace TGC.Group.Model
 {
     class Shark : Roamer
     {
+        #region SETTINGS
         private TGCVector3 lastRoamingLookDirection;
         private readonly float attackCooldown = 2f;
         private float timeSinceLastAttack = 0;
+        #endregion
 
-        private readonly int maxHealth = 100;
-        private int health = 100;
         private readonly float chasingSpeed = 400f;
         private readonly int attackDamage = 40;
         private readonly float attackRange = 600f;
 
-        private bool IsChasing { get { return NearObjects().Contains(GameInstance.Player) && GameInstance.Player.Position.Y < GameInstance.WaterY; } }
-        private bool IsAlive { get { return health != 0; } }
+        private bool IsChasing { get { return NearObjects().Contains(GameInstance.Player) && !GameInstance.Player.IsOutOfTheWater; } }
 
         public Shark(Subnautica gameInstace, string name, List<TgcMesh> meshes, TGCVector3 spawnLocation)
-            : base(gameInstace, name, meshes, 200f)
+            : base(gameInstace, name, meshes, 100, 200f)
         {
             InitialLookDirection = new TGCVector3(-1, 0, 0);
             LookDirection = InitialLookDirection;
@@ -52,6 +51,10 @@ namespace TGC.Group.Model
         }
         #endregion
 
+        #region LIVING_NPC
+        protected override Item GenerateDrop() => ItemDatabase.Generate(EItemID.RAW_SHARK);
+        #endregion
+
         private void Chase()
         {
             LookDirection = TGCVector3.Normalize(GameInstance.Player.Position - Position);
@@ -67,22 +70,6 @@ namespace TGC.Group.Model
             TGCMatrix nextTransform = rotationMatrix * translationMatrix;
 
             SimulateAndSetTransformation(nextPosition, nextTransform);
-        }
-
-        private void AddHealth(int quantity)
-        {
-            health = FastMath.Clamp(health + quantity, 0, maxHealth);
-        }
-
-        public override void Interact(Player interactor)
-        {
-            AddHealth(-1 * interactor.AttackDamage);
-
-            if (!IsAlive)
-            {
-                interactor.CollectItem(ItemDatabase.Generate(EItemID.RAW_SHARK));
-                Destroy();
-            }
         }
 
         private void HitPlayer()

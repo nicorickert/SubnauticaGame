@@ -8,13 +8,16 @@ using TGC.Core.SceneLoader;
 
 namespace TGC.Group.Model
 {
-    public abstract class Roamer : GameObject
+    public abstract class Roamer : LivingNPC
     {
+        #region SETTINGS
         private float timeSinceLastDirection = 0f;
         private float timeToChangeDirection = 3f;
+        #endregion
+
         protected float roamingSpeed;
 
-        public Roamer(Subnautica gameInstance, string name, List<TgcMesh> meshes, float roamingSpeed) : base(gameInstance, name, meshes)
+        public Roamer(Subnautica gameInstance, string name, List<TgcMesh> meshes, int maxHealth, float roamingSpeed) : base(gameInstance, name, meshes, maxHealth)
         {
             this.roamingSpeed = roamingSpeed;
         }

@@ -7,11 +7,9 @@ namespace TGC.Group.Model
 {
     class Fish : Roamer
     {
-        #region STATS
-        private float size;
-        #endregion
+        private readonly float size;
 
-        public Fish(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 spawnLocation) : base(gameInstance, name, meshes, 50f)
+        public Fish(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 spawnLocation) : base(gameInstance, name, meshes, 10, 50f)
         {
             CollisionStatus = Utils.ECollisionStatus.NOT_COLLISIONABLE;
             Position = spawnLocation;
@@ -26,12 +24,8 @@ namespace TGC.Group.Model
         }
         #endregion
 
-        #region INTERFACE
-        public override void Interact(Player interactor)
-        {
-            interactor.CollectItem(ItemDatabase.Generate(EItemID.RAW_FISH)); // ojo, arreglar lo del sprite path
-            Destroy();
-        }
+        #region LIVING_NPC
+        protected override Item GenerateDrop() => ItemDatabase.Generate(EItemID.RAW_FISH);
         #endregion
     }
 }
