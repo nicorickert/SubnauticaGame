@@ -38,6 +38,7 @@ namespace TGC.Group.Model
         protected CustomVertex.PositionNormalTextured[] vertices;
         protected int verticesWidth;
         protected int verticesHeight;
+        protected int[,] heightmapData;
 
         public Subnautica GameInstance { get; private set; }
 
@@ -89,10 +90,10 @@ namespace TGC.Group.Model
         private void createHeightMapMesh(Device d3dDevice, string path, float scaleXZ, float scaleY)
         {
             //parsear bitmap y cargar matriz de alturas
-            var heightmap = loadHeightMap(path);
+            heightmapData = loadHeightMap(path);
 
             //Crear vertexBuffer
-            totalVertices = 2 * 3 * (heightmap.GetLength(0) - 1) * (heightmap.GetLength(1) - 1);
+            totalVertices = 2 * 3 * (heightmapData.GetLength(0) - 1) * (heightmapData.GetLength(1) - 1);
             vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
 
             //Crear array temporal de vertices
@@ -100,8 +101,8 @@ namespace TGC.Group.Model
             vertices = new CustomVertex.PositionNormalTextured[totalVertices];
 
             // Ancho (x) y alto (z) total del heightmap (imagen)
-            verticesWidth = heightmap.GetLength(0);
-            verticesHeight = heightmap.GetLength(1);
+            verticesWidth = heightmapData.GetLength(0);
+            verticesHeight = heightmapData.GetLength(1);
 
             // Vector para mover los vertices respecto del centro
             var vectorCenter = centre - new TGCVector3(verticesWidth / 2 * scaleXZ, 0 , verticesHeight / 2 * scaleXZ);
@@ -112,16 +113,16 @@ namespace TGC.Group.Model
                 for (var j = 0; j < verticesHeight - 1; j++)
                 {
                     //Crear los cuatro vertices que conforman este cuadrante, aplicando la escala correspondiente y los desplazo para que el centro del hm este en el pasado por parametro
-                    var v1 = new TGCVector3(i * scaleXZ, heightmap[i, j] * scaleY, j * scaleXZ) + vectorCenter;
-                    var v2 = new TGCVector3(i * scaleXZ, heightmap[i, j + 1] * scaleY, (j + 1) * scaleXZ) + vectorCenter;
-                    var v3 = new TGCVector3((i + 1) * scaleXZ, heightmap[i + 1, j] * scaleY, j * scaleXZ) + vectorCenter;
-                    var v4 = new TGCVector3((i + 1) * scaleXZ, heightmap[i + 1, j + 1] * scaleY, (j + 1) * scaleXZ) + vectorCenter;
+                    var v1 = new TGCVector3(i * scaleXZ, heightmapData[i, j] * scaleY, j * scaleXZ) + vectorCenter;
+                    var v2 = new TGCVector3(i * scaleXZ, heightmapData[i, j + 1] * scaleY, (j + 1) * scaleXZ) + vectorCenter;
+                    var v3 = new TGCVector3((i + 1) * scaleXZ, heightmapData[i + 1, j] * scaleY, j * scaleXZ) + vectorCenter;
+                    var v4 = new TGCVector3((i + 1) * scaleXZ, heightmapData[i + 1, j + 1] * scaleY, (j + 1) * scaleXZ) + vectorCenter;
 
                     //Crear las coordenadas de textura para los cuatro vertices del cuadrante
-                    var t1 = new TGCVector2(i / (float)heightmap.GetLength(0), j / (float)heightmap.GetLength(1));
-                    var t2 = new TGCVector2(i / (float)heightmap.GetLength(0), (j + 1) / (float)heightmap.GetLength(1));
-                    var t3 = new TGCVector2((i + 1) / (float)heightmap.GetLength(0), j / (float)heightmap.GetLength(1));
-                    var t4 = new TGCVector2((i + 1) / (float)heightmap.GetLength(0), (j + 1) / (float)heightmap.GetLength(1));
+                    var t1 = new TGCVector2(i / (float)heightmapData.GetLength(0), j / (float)heightmapData.GetLength(1));
+                    var t2 = new TGCVector2(i / (float)heightmapData.GetLength(0), (j + 1) / (float)heightmapData.GetLength(1));
+                    var t3 = new TGCVector2((i + 1) / (float)heightmapData.GetLength(0), j / (float)heightmapData.GetLength(1));
+                    var t4 = new TGCVector2((i + 1) / (float)heightmapData.GetLength(0), (j + 1) / (float)heightmapData.GetLength(1));
 
                     // ACA METO LAS NORMALES
 
@@ -214,6 +215,44 @@ namespace TGC.Group.Model
                 return Math.PerlinNoise(iCoord, jCoord);
             }
             */
+
+        public float CalcularAltura(float x, float z)
+        {
+            var largo = currentScaleXZ * 64;  // 64 es el ancho del bitmap
+            var pos_i = 64f * (0.5f + x / largo);
+            var pos_j = 64f * (0.5f + z / largo);
+
+            var pi = (int)pos_i;
+            var fracc_i = pos_i - pi;
+            var pj = (int)pos_j;
+            var fracc_j = pos_j - pj;
+
+            if (pi < 0)
+                pi = 0;
+            else if (pi > 63)
+                pi = 63;
+
+            if (pj < 0)
+                pj = 0;
+            else if (pj > 63)
+                pj = 63;
+
+            var pi1 = pi + 1;
+            var pj1 = pj + 1;
+            if (pi1 > 63)
+                pi1 = 63;
+            if (pj1 > 63)
+                pj1 = 63;
+
+            // 2x2 percent closest filtering usual:
+            var H0 = heightmapData[pi, pj] * currentScaleY;
+            var H1 = heightmapData[pi1, pj] * currentScaleY;
+            var H2 = heightmapData[pi, pj1] * currentScaleY;
+            var H3 = heightmapData[pi1, pj1] * currentScaleY;
+            var H = (H0 * (1 - fracc_i) + H1 * fracc_i) * (1 - fracc_j) + (H2 * (1 - fracc_i) + H3 * fracc_i) * fracc_j;
+            // H tiene la altura en espacio de mesh
+            return H + centre.Y;
+        }
 
         public void Render()
         {
