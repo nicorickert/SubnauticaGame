@@ -51,7 +51,7 @@ namespace TGC.Group.Model
 
         public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
-            Position = new TGCVector3(0, 100, 2000);
+            Position = new TGCVector3(2000, -80, 1000);
             LearnBluePrint(BluePrintDatabase.FishSoup);
         }
 
