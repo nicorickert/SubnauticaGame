@@ -60,7 +60,7 @@ namespace TGC.Group.Model
             time = 0;
             //Modifiers para variar escala del mapa
             currentScaleXZ = 1000f;
-            currentScaleY = 25f;
+            currentScaleY = 20f;
             createHeightMapMesh(D3DDevice.Instance.Device, currentHeightmap, currentScaleXZ, currentScaleY);
 
             loadTerrainTexture(D3DDevice.Instance.Device, currentTexture);
