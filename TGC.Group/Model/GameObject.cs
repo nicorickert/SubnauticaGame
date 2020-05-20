@@ -62,7 +62,7 @@ namespace TGC.Group.Model
             foreach (TgcMesh mesh in Meshes)
             {
                 mesh.Render();
-                mesh.BoundingBox.Render(); // Borrar para no mostrar los bounding box
+                //mesh.BoundingBox.Render(); // Borrar para no mostrar los bounding box
             }
         }
 

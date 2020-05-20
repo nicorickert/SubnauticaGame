@@ -21,7 +21,7 @@ namespace TGC.Group.Model
         private readonly int attackDamage = 40;
         private readonly float attackRange = 600f;
 
-        private bool IsChasing { get { return NearObjects().Contains(GameInstance.Player) && !GameInstance.Player.IsOutOfTheWater; } }
+        private bool IsChasing { get { return NearObjects().Contains(GameInstance.Player) && !GameInstance.Player.IsOutOfTheWater && !GameInstance.Player.IsInSafeZone; } }
 
         public Shark(Subnautica gameInstace, string name, List<TgcMesh> meshes, TGCVector3 spawnLocation)
             : base(gameInstace, name, meshes, 100, 200f)

@@ -19,13 +19,13 @@ namespace TGC.Group.Model
     {
         #region MESHES
         private List<TgcMesh> playerMeshes;
-        private TgcMesh coralMesh;
         private List<TgcMesh> shipMeshes;
         #endregion
 
         #region SETTINGS
 
         private TGCVector3 skyBoxDimensions = new TGCVector3(60000, 20000, 60000);
+        public SueloDelMar SueloDelMar { get; private set; }
         public List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
         private List<GameObject> removedObjects = new List<GameObject>();
@@ -194,7 +194,8 @@ namespace TGC.Group.Model
 
         private void LoadTerrain()
         {
-            heightMaps.Add(new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx"));
+            SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx");
+            heightMaps.Add(SueloDelMar);
             heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
 
             foreach (HeightMapTextured hm in heightMaps)
@@ -307,7 +308,6 @@ namespace TGC.Group.Model
             var loader = new TgcSceneLoader();
 
             playerMeshes = loader.loadSceneFromFile(MediaDir + "Player\\Player-TgcScene.xml").Meshes;
-            coralMesh = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\coral-TgcScene.xml").Meshes[0];  // Que hacemos con esto :S
             shipMeshes = loader.loadSceneFromFile(MediaDir + "Aquatic\\Meshes\\ship-TgcScene.xml").Meshes;
         }
 

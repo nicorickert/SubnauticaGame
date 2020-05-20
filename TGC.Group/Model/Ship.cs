@@ -79,7 +79,7 @@ namespace TGC.Group.Model
             int index = 1;
             foreach (var bp in crafter.AvailableBluePrints)
             {
-                craftingMenu.Text += index + ") " + bp.Description + "\n";
+                craftingMenu.Text += "F" + index + ") " + bp.Description + "\n";
                 index++;
             }
         }
