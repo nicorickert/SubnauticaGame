@@ -160,9 +160,9 @@ namespace TGC.Group.Model
         }
 
         // heightmaps: 0 = piso, 1 = agua
-        public float WaterLevelToWorldHeight(float waterLevel) => heightMaps[1].CalcularAltura(Camera.Position.X, Camera.Position.Z) + waterLevel;
+        public float WaterLevelToWorldHeight(float waterLevel) => heightMaps[1].CalcularAltura(Player.Position.X, Player.Position.Z) + waterLevel;
 
-        public float FloorLevelToWorldHeight(float floorLevel) => heightMaps[0].CalcularAltura(Camera.Position.X, Camera.Position.Z) + floorLevel;
+        public float FloorLevelToWorldHeight(float floorLevel) => heightMaps[0].CalcularAltura(Player.Position.X, Player.Position.Z) + floorLevel;
 
         #endregion
 
