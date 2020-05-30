@@ -22,9 +22,9 @@ namespace TGC.Group.Model.Items
     public class BluePrint
     {
         private readonly List<ItemAmount> requirements;
-        private readonly EItemID productId;
         private string _rawDescription;
 
+        public EItemID ProductId { get; private set; }
         public string Description
         {
             get
@@ -44,7 +44,7 @@ namespace TGC.Group.Model.Items
         public BluePrint(List<ItemAmount> requirements, EItemID productId, string description)
         {
             this.requirements = requirements;
-            this.productId = productId;
+            this.ProductId = productId;
             _rawDescription = description;
         }
 
@@ -55,7 +55,7 @@ namespace TGC.Group.Model.Items
 
             if (CanCraft(crafter))
             {
-                craftedItem = ItemDatabase.Generate(productId);
+                craftedItem = ItemDatabase.Instance.Generate(ProductId);
                 RemoveRequirementsFrom(crafter);
             }
 

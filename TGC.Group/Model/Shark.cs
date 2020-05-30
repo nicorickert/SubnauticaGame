@@ -61,7 +61,7 @@ namespace TGC.Group.Model
         #endregion
 
         #region LIVING_NPC
-        protected override Item GenerateDrop() => ItemDatabase.Generate(EItemID.RAW_SHARK);
+        protected override Item GenerateDrop() => ItemDatabase.Instance.Generate(EItemID.RAW_SHARK);
         #endregion
 
         private void Chase()

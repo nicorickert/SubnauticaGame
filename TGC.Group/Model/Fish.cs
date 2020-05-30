@@ -28,7 +28,7 @@ namespace TGC.Group.Model
         #endregion
 
         #region LIVING_NPC
-        protected override Item GenerateDrop() => ItemDatabase.Generate(EItemID.RAW_FISH);
+        protected override Item GenerateDrop() => ItemDatabase.Instance.Generate(EItemID.RAW_FISH);
         #endregion
     }
 }

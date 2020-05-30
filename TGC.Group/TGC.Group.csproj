@@ -113,6 +113,8 @@
     <Compile Include="Model\Items\ItemEffect.cs" />
     <Compile Include="Model\Items\ItemDatabase.cs" />
     <Compile Include="Model\LivingNPC.cs" />
+    <Compile Include="Model\Menus\CraftingMenu\CraftingMenu.cs" />
+    <Compile Include="Model\Menus\CraftingMenu\CraftingSlot.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Roamer.cs" />
     <Compile Include="Model\Ship.cs" />
@@ -125,6 +127,8 @@
     <Compile Include="Model\Utils\FPSCamera.cs" />
     <Compile Include="Model\Utils\MathExtended.cs" />
     <Compile Include="Model\Utils\SpawnManager.cs" />
+    <Compile Include="Model\Utils\Sprites\CustomBitmap.cs" />
+    <Compile Include="Model\Utils\Sprites\CustomSprite.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form\GameForm.resx">

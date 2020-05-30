@@ -15,10 +15,49 @@ namespace TGC.Group.Model.Items
         CORAL_PIECE
     }
 
-
-    public static class ItemDatabase
+    public struct ItemInfo
     {
-        public static Item Generate(EItemID itemID)
+        public string Name { get; }
+        public string SpritePath { get; }
+
+
+        public ItemInfo(string name, string spritePath)
+        {
+            Name = name;
+            SpritePath = spritePath;
+        }
+    }
+
+
+    public class ItemDatabase
+    {
+        #region SINGLETON
+        private static ItemDatabase _instance = null;
+        public static ItemDatabase Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new ItemDatabase();
+
+                return _instance;
+            }
+        }
+        #endregion
+
+        private string mediaDir = Game.Default.MediaDirectory;
+
+        public Dictionary<EItemID, ItemInfo> ItemsInfo { get; } = new Dictionary<EItemID, ItemInfo>();
+
+        private ItemDatabase()
+        {
+            ItemsInfo[EItemID.RAW_FISH] = new ItemInfo("Raw fish", mediaDir + "cajaMadera4.jpg");
+            ItemsInfo[EItemID.RAW_SHARK] = new ItemInfo("Raw shark", mediaDir + "cajaMadera4.jpg");
+            ItemsInfo[EItemID.FISH_SOUP] = new ItemInfo("Fish soup", mediaDir + "cajaMadera4.jpg");
+            ItemsInfo[EItemID.CORAL_PIECE] = new ItemInfo("Coral piece", mediaDir + "cajaMadera4.jpg");
+        }
+
+        public Item Generate(EItemID itemID)
         {
             Item generatedItem = null;
             List<IItemEffect> effects = new List<IItemEffect>();
@@ -27,26 +66,28 @@ namespace TGC.Group.Model.Items
             {
                 case (EItemID.RAW_FISH):
                     effects.Add(new Heal(20));
-                    generatedItem = new Consumable(itemID, "Raw fish", "un path", effects);
+                    generatedItem = new Consumable(itemID, ItemsInfo[itemID].Name, ItemsInfo[itemID].SpritePath, effects);
                     break;
 
                 case (EItemID.RAW_SHARK):
                     effects.Add(new Heal(80));
-                    generatedItem = new Consumable(itemID, "Raw shark", "un path", effects);
+                    generatedItem = new Consumable(itemID, ItemsInfo[itemID].Name, ItemsInfo[itemID].SpritePath, effects);
                     break;
 
                 case (EItemID.FISH_SOUP):
                     effects.Add(new Heal(100));
-                    generatedItem = new Consumable(itemID, "Fish soup", "un path", effects);
+                    generatedItem = new Consumable(itemID, ItemsInfo[itemID].Name, ItemsInfo[itemID].SpritePath, effects);
                     break;
 
                 case (EItemID.CORAL_PIECE):
-                    generatedItem = new Item(itemID, "Coral piece", "un path", effects);
+                    generatedItem = new Item(itemID, ItemsInfo[itemID].Name, ItemsInfo[itemID].SpritePath, effects);
                     break;
             }
 
             // Si no matchea con ninguno (deberia ser imposible) explota al tratar de usarlo xq es null
             return generatedItem;
         }
+
+
     }
 }

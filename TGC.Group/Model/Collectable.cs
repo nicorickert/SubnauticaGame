@@ -58,7 +58,7 @@ namespace TGC.Group.Model
         {
             if (isActive)
             {
-                interactor.CollectItem(ItemDatabase.Generate(resourceID));
+                interactor.CollectItem(ItemDatabase.Instance.Generate(resourceID));
 
                 Deactivate();
             }
