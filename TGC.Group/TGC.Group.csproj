@@ -101,6 +101,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Game.settings</DependentUpon>
     </Compile>
+    <Compile Include="Model\Collectable.cs" />
     <Compile Include="Model\GameObject.cs" />
     <Compile Include="Model\Fish.cs" />
     <Compile Include="Model\Items\BluePrint.cs" />

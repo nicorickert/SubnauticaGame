@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TGC.Group.Model.Items
 {
-    public abstract class Item
+    public class Item
     {
         public EItemID ID { get; private set; }
         public string Sprite { get; protected set; } // El tipo se cambiará por lo que sea que use TGC

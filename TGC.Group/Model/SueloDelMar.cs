@@ -62,7 +62,7 @@ namespace TGC.Group.Model
                 TgcMesh mesh = meshesPlantas[random.Next(meshesPlantas.Count)];
 
 
-                GameInstance.InstanceObject(new StaticObject(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation));
+                GameInstance.InstanceObject(new Collectable(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation, Items.EItemID.CORAL_PIECE));
                 posicionesASaltear = random.Next(minSalto, maxSalto);
             }
         }
