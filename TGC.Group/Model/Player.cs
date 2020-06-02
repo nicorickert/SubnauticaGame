@@ -20,7 +20,7 @@ namespace TGC.Group.Model
         private float timeSinceLastInteraction = 0f;
         private readonly float itemSelectionCooldown = 0.2f;
         private float timeSinceLastItemSelected = 0f;
-        private bool godMode = false;
+        private bool godMode = true;
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private TGCVector3 nextPosition;
 
