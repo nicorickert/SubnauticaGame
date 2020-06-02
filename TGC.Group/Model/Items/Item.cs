@@ -32,12 +32,14 @@ namespace TGC.Group.Model.Items
                     int index = 0;
                     foreach (var effect in onUseEffects)
                     {
-                        if (index == 0)
-                            description += effect.Description();
-                        else if (index == effectsNumber - 1) // es el ultimo
+                        if (index == effectsNumber - 1) // es el ultimo
                             description += " y " + effect.Description() + ".";
+                        else if (index == 0)
+                            description += effect.Description();
                         else
                             description += ", " + effect.Description();
+
+                        index++;
                     }
                 }
 
