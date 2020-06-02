@@ -76,7 +76,6 @@ namespace TGC.Group.Model.Items
 
                 case (EItemID.FISH_SOUP):
                     effects.Add(new Heal(100));
-                    effects.Add(new Heal(20));
                     generatedItem = new Consumable(itemID, "Fish soup", mediaDir + "cajaMadera4.jpg", effects);
                     break;
 
