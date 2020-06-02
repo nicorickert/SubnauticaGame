@@ -8,6 +8,7 @@ namespace TGC.Group.Model.Items
 {
     public interface IItemEffect
     {
+        string Description();
         void Affect(Player user);
         void Disaffect(Player user);
     }

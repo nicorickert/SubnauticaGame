@@ -22,30 +22,31 @@ namespace TGC.Group.Model.Items
     public class BluePrint
     {
         private readonly List<ItemAmount> requirements;
-        private string _rawDescription;
 
         public EItemID ProductId { get; private set; }
         public string Description
         {
             get
             {
-                string finalDescription = _rawDescription + "(";
+                string requirementsDescription = "Con ";
+                ItemDatabase db = ItemDatabase.Instance;
 
                 foreach (var req in requirements)
                 {
-                    finalDescription += req.amount + " " + req.itemId.ToString() + ", ";
+                    requirementsDescription += req.amount + " " + db.Generate(req.itemId).Name + ", ";
                 }
 
-                finalDescription += ")";
-                return finalDescription;
+                Item productSample = db.Generate(ProductId);
+                string productDescription = "construir un " + productSample.Name + ". " + productSample.Description;
+
+                return requirementsDescription + productDescription;
             }
         }
 
-        public BluePrint(List<ItemAmount> requirements, EItemID productId, string description)
+        public BluePrint(List<ItemAmount> requirements, EItemID productId)
         {
             this.requirements = requirements;
-            this.ProductId = productId;
-            _rawDescription = description;
+            ProductId = productId;
         }
 
 

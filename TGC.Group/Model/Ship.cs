@@ -40,7 +40,9 @@ namespace TGC.Group.Model
             //    ChooseBluePrint();
 
             if (craftingMenu.IsBeingUsed && !craftingMenu.Owner.CanReach(this))
+            {
                 craftingMenu.Close();
+            }
             //}
         }
 
@@ -50,6 +52,13 @@ namespace TGC.Group.Model
 
             if (craftingMenu.IsBeingUsed)
                 craftingMenu.Render();
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            craftingMenu.Dispose();
         }
 
         #endregion

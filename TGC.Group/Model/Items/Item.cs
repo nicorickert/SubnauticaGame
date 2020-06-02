@@ -9,9 +9,41 @@ namespace TGC.Group.Model.Items
 {
     public class Item
     {
+        public virtual string ItemTypeDescription { get; set; } = "item";
+
         public EItemID ID { get; private set; }
         public string SpritePath { get; protected set; }
-        public string Name { get; protected set; } = "Unnamed";
+        public string Name { get; protected set; }
+        public string Description
+        {
+            get
+            {
+                float effectsNumber = onUseEffects.Count;
+
+                if (effectsNumber == 0)
+                    return "Un recurso.";
+
+                string description = "Un " + ItemTypeDescription + " que ";
+
+                if (effectsNumber == 1)
+                    description += onUseEffects[0].Description() + ".";
+                else
+                {
+                    int index = 0;
+                    foreach (var effect in onUseEffects)
+                    {
+                        if (index == 0)
+                            description += effect.Description();
+                        else if (index == effectsNumber - 1) // es el ultimo
+                            description += " y " + effect.Description() + ".";
+                        else
+                            description += ", " + effect.Description();
+                    }
+                }
+
+                return description;
+            }
+        }
 
         private List<IItemEffect> onUseEffects;
 

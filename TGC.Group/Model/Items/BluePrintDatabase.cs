@@ -15,7 +15,7 @@ namespace TGC.Group.Model.Items
                 ItemAmount req1 = new ItemAmount(EItemID.RAW_FISH, 1);
                 ItemAmount req2 = new ItemAmount(EItemID.RAW_SHARK, 1);
                 List<ItemAmount> requirements = new ItemAmount[] { req1, req2 }.ToList();
-                return new BluePrint(requirements, EItemID.FISH_SOUP, "Sopa que cura 100 de vida al jugador.");
+                return new BluePrint(requirements, EItemID.FISH_SOUP);
             }
         }
     }

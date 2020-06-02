@@ -10,6 +10,8 @@ namespace TGC.Group.Model.Items.Effects
     {
         int healingFactor = 0;
 
+        public string Description() => "cura al usuario " + healingFactor + " puntos de vida";
+
         public Heal(int healingFactor)
         {
             this.healingFactor = healingFactor;
