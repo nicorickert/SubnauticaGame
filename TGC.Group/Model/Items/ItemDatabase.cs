@@ -15,18 +15,18 @@ namespace TGC.Group.Model.Items
         CORAL_PIECE
     }
 
-    public struct ItemInfo
-    {
-        public string Name { get; }
-        public string SpritePath { get; }
+    //public struct ItemInfo
+    //{
+    //    public string Name { get; }
+    //    public string SpritePath { get; }
 
 
-        public ItemInfo(string name, string spritePath)
-        {
-            Name = name;
-            SpritePath = spritePath;
-        }
-    }
+    //    public ItemInfo(string name, string spritePath)
+    //    {
+    //        Name = name;
+    //        SpritePath = spritePath;
+    //    }
+    //}
 
 
     public class ItemDatabase
@@ -47,14 +47,14 @@ namespace TGC.Group.Model.Items
 
         private string mediaDir = Game.Default.MediaDirectory;
 
-        public Dictionary<EItemID, ItemInfo> ItemsInfo { get; } = new Dictionary<EItemID, ItemInfo>();
+        //public Dictionary<EItemID, ItemInfo> ItemsInfo { get; } = new Dictionary<EItemID, ItemInfo>();
 
         private ItemDatabase()
         {
-            ItemsInfo[EItemID.RAW_FISH] = new ItemInfo("Raw fish", mediaDir + "cajaMadera4.jpg");
-            ItemsInfo[EItemID.RAW_SHARK] = new ItemInfo("Raw shark", mediaDir + "cajaMadera4.jpg");
-            ItemsInfo[EItemID.FISH_SOUP] = new ItemInfo("Fish soup", mediaDir + "cajaMadera4.jpg");
-            ItemsInfo[EItemID.CORAL_PIECE] = new ItemInfo("Coral piece", mediaDir + "cajaMadera4.jpg");
+            //ItemsInfo[EItemID.RAW_FISH] = new ItemInfo("Raw fish", mediaDir + "cajaMadera4.jpg");
+            //ItemsInfo[EItemID.RAW_SHARK] = new ItemInfo("Raw shark", mediaDir + "cajaMadera4.jpg");
+            //ItemsInfo[EItemID.FISH_SOUP] = new ItemInfo("Fish soup", mediaDir + "cajaMadera4.jpg");
+            //ItemsInfo[EItemID.CORAL_PIECE] = new ItemInfo("Coral piece", mediaDir + "cajaMadera4.jpg");
         }
 
         public Item Generate(EItemID itemID)
@@ -66,21 +66,21 @@ namespace TGC.Group.Model.Items
             {
                 case (EItemID.RAW_FISH):
                     effects.Add(new Heal(20));
-                    generatedItem = new Consumable(itemID, ItemsInfo[itemID].Name, ItemsInfo[itemID].SpritePath, effects);
+                    generatedItem = new Consumable(itemID, "Raw fish", mediaDir + "cajaMadera4.jpg", effects);
                     break;
 
                 case (EItemID.RAW_SHARK):
                     effects.Add(new Heal(80));
-                    generatedItem = new Consumable(itemID, ItemsInfo[itemID].Name, ItemsInfo[itemID].SpritePath, effects);
+                    generatedItem = new Consumable(itemID, "Raw shark", mediaDir + "cajaMadera4.jpg", effects);
                     break;
 
                 case (EItemID.FISH_SOUP):
                     effects.Add(new Heal(100));
-                    generatedItem = new Consumable(itemID, ItemsInfo[itemID].Name, ItemsInfo[itemID].SpritePath, effects);
+                    generatedItem = new Consumable(itemID, "Fish soup", mediaDir + "cajaMadera4.jpg", effects);
                     break;
 
                 case (EItemID.CORAL_PIECE):
-                    generatedItem = new Item(itemID, ItemsInfo[itemID].Name, ItemsInfo[itemID].SpritePath, effects);
+                    generatedItem = new Item(itemID, "Coral piece", mediaDir + "cajaMadera4.jpg", effects);
                     break;
             }
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using TGC.Core.Mathematica;
 using TGC.Core.Text;
 using TGC.Group.Model.Items;
@@ -22,28 +17,46 @@ namespace TGC.Group.Model.Menus.CraftingMenu
 
         public CraftingSlot(BluePrint bluePrint, TGCVector2 position)
         {
-            productSlot = new CustomSprite(Game.Default.TexturaCaja);
+            Item productSample = ItemDatabase.Instance.Generate(bluePrint.ProductId);
+
+            productSlot = new CustomSprite(Game.Default.MediaDirectory + "cajaMadera4.jpg");
             productSlot.Position = position;
+            float slotScalingFactor = 0.5f;
+            productSlot.Scaling = TGCVector2.One * slotScalingFactor;
 
-            productSprite = new CustomSprite(ItemDatabase.Instance.ItemsInfo[bluePrint.ProductId].SpritePath);
-            productSprite.Position = position + new TGCVector2(productSlot.Bitmap.Size.Width / 4, productSlot.Bitmap.Size.Height / 4);
+            productSprite = new CustomSprite(productSample.SpritePath);
+            productSprite.Scaling = TGCVector2.One * 0.25f;
+            productSprite.Position = position + new TGCVector2(productSlot.Bitmap.Size.Width * slotScalingFactor / 4, productSlot.Bitmap.Size.Height * slotScalingFactor / 4);
 
-            title.Text = ItemDatabase.Instance.ItemsInfo[bluePrint.ProductId].Name;
-            title.Position = new Point((int) position.X + productSlot.Bitmap.Size.Width + 10, (int) position.Y);
+            title.Text = productSample.Name;
+            title.Position = new Point((int) (position.X + productSlot.Bitmap.Size.Width * slotScalingFactor + 5), (int) position.Y + 20);
+            title.Align = TgcText2D.TextAlign.LEFT;
+            title.changeFont(new Font("TimesNewRoman", 20, FontStyle.Bold));
+            title.Color = Color.DarkGray;
 
             description.Text = bluePrint.Description;
-            description.Position = new Point(title.Position.X, title.Position.Y - 10); 
+            description.Position = new Point(title.Position.X, title.Position.Y + 30);
+            description.Align = TgcText2D.TextAlign.LEFT;
+            description.changeFont(new Font("TimesNewRoman", 14, FontStyle.Bold));
+            description.Color = Color.LightGray;
+          
         }
 
 
-        public void Render()
+        public void Render(Drawer2D drawer)
         {
-            // TODO
+            drawer.DrawSprite(productSlot);
+            drawer.DrawSprite(productSprite);
+            title.render();
+            description.render();
         }
 
         public void Dispose()
         {
-            // TODO
+            productSlot.Dispose();
+            productSprite.Dispose();
+            title.Dispose();
+            description.Dispose();
         }
     }
 }

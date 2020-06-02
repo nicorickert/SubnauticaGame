@@ -129,6 +129,7 @@
     <Compile Include="Model\Utils\SpawnManager.cs" />
     <Compile Include="Model\Utils\Sprites\CustomBitmap.cs" />
     <Compile Include="Model\Utils\Sprites\CustomSprite.cs" />
+    <Compile Include="Model\Utils\Sprites\Drawer2D.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form\GameForm.resx">

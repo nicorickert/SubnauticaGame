@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TGC.Core.Direct3D;
 using TGC.Core.Mathematica;
+using TGC.Group.Model.Utils.Sprites;
 
 namespace TGC.Group.Model.Menus.CraftingMenu
 {
@@ -23,21 +25,28 @@ namespace TGC.Group.Model.Menus.CraftingMenu
 
                 craftingSlots.Clear();
 
-                TGCVector2 nextPosition = position;
-                foreach (var bp in _owner.AvailableBluePrints)
+                if(_owner != null)
                 {
-                    CraftingSlot craftingSlot = new CraftingSlot(bp, nextPosition);
-                    craftingSlots.Add(craftingSlot);
-                    nextPosition.Y += craftingSlot.Size.Height + 10;
+                    TGCVector2 nextPosition = position;
+                    foreach (var bp in _owner.AvailableBluePrints)
+                    {
+                        CraftingSlot craftingSlot = new CraftingSlot(bp, nextPosition);
+                        craftingSlots.Add(craftingSlot);
+                        nextPosition.Y += craftingSlot.Size.Height + 10;
 
-                    // TODO ver si necesito hacer dos columnas
+                        // TODO ver si necesito hacer dos columnas
+                    }
                 }
             }
         }
+        public bool IsBeingUsed { get => Owner != null; }
 
-        public CraftingMenu(TGCVector2 position)
+        public CraftingMenu()
         {
-            this.position = position;
+            float deviceHeight = D3DDevice.Instance.Height;
+            float deviceWidth = D3DDevice.Instance.Width;
+
+            position = new TGCVector2(deviceWidth * 0.3f, deviceHeight * 0.1f);
         }
 
         public void Update()
@@ -47,17 +56,30 @@ namespace TGC.Group.Model.Menus.CraftingMenu
 
         public void Render()
         {
-            if (Owner != null)
-            {
-                foreach (var slot in craftingSlots)
-                    slot.Render();
-            }
+            Drawer2D drawer = new Drawer2D();
+
+            drawer.BeginDrawSprite();
+
+            foreach (var slot in craftingSlots)
+                slot.Render(drawer);
+
+            drawer.EndDrawSprite();
         }
 
         public void Dispose()
         {
             foreach (var slot in craftingSlots)
                 slot.Dispose();
+        }
+
+        public void Open(Player crafter)
+        {
+            Owner = crafter;
+        }
+
+        public void Close()
+        {
+            Owner = null;
         }
     }
 }

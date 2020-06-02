@@ -10,7 +10,7 @@ namespace TGC.Group.Model.Items
     public class Item
     {
         public EItemID ID { get; private set; }
-        public string Sprite { get; protected set; } // El tipo se cambiará por lo que sea que use TGC
+        public string SpritePath { get; protected set; }
         public string Name { get; protected set; } = "Unnamed";
 
         private List<IItemEffect> onUseEffects;
@@ -19,7 +19,7 @@ namespace TGC.Group.Model.Items
         {
             ID = id;
             Name = name;
-            Sprite = spritePath; // new Image(spritePath); Inicializo el sprite correspondiente
+            SpritePath = spritePath; // new Image(spritePath); Inicializo el sprite correspondiente
             this.onUseEffects = onUseEffects;
         }
 
