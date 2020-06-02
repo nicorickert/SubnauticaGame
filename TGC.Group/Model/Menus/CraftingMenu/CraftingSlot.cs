@@ -30,7 +30,7 @@ namespace TGC.Group.Model.Menus.CraftingMenu
             productSprite.Position = productSlot.Position + new TGCVector2(productSlot.Bitmap.Size.Width * slotScalingFactor / 4, productSlot.Bitmap.Size.Height * slotScalingFactor / 4);
 
             title.Text = productSample.Name;
-            title.Position = new Point((int) (productSlot.Position.X + productSlot.Bitmap.Size.Width * slotScalingFactor + 5), (int) productSlot.Position.Y + 20);
+            title.Position = new Point((int) (productSlot.Position.X + productSlot.Bitmap.Size.Width * slotScalingFactor + 15), (int) productSlot.Position.Y + 20);
             title.Align = TgcText2D.TextAlign.LEFT;
             title.changeFont(new Font("TimesNewRoman", 20, FontStyle.Bold));
             title.Color = Color.DarkGray;
