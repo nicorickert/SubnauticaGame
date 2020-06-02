@@ -32,7 +32,7 @@ namespace TGC.Group.Model.Menus.CraftingMenu
                     {
                         CraftingSlot craftingSlot = new CraftingSlot(bp, nextPosition);
                         craftingSlots.Add(craftingSlot);
-                        nextPosition.Y += craftingSlot.Size.Height + 10;
+                        nextPosition.Y += craftingSlot.Size.Height + 30;
 
                         // TODO ver si necesito hacer dos columnas
                     }
@@ -61,9 +61,12 @@ namespace TGC.Group.Model.Menus.CraftingMenu
             drawer.BeginDrawSprite();
 
             foreach (var slot in craftingSlots)
-                slot.Render(drawer);
+                slot.RenderSprites(drawer);
 
             drawer.EndDrawSprite();
+
+            foreach (var slot in craftingSlots)
+                slot.RenderText();
         }
 
         public void Dispose()
