@@ -30,8 +30,6 @@ namespace TGC.Group.Model.Utils
             //TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + player.RelativeUpDirection * eyePosition.Y;
 
             // ---
-            if (GameInstance.MouseEnabled) // Si se tiene el mouse activado, no rotar la cámara
-                return;
 
             TGCVector3 transformedRelativeEyePosition = eyePosition.X * player.RelativeRightDirection + eyePosition.Y * player.RelativeUpDirection + eyePosition.Z * player.LookDirection; 
             TGCVector3 camaraPosition = player.Position + transformedRelativeEyePosition;
@@ -39,6 +37,8 @@ namespace TGC.Group.Model.Utils
             SetCamera(camaraPosition, camaraPosition + player.LookDirection);
 
             // ROTO EL LOOKDIRECTION DEL PLAYER
+            if (GameInstance.MouseEnabled) // Si se tiene el mouse activado, no rotar la cámara
+                return;
             UpdatePlayerLookDirection();
         }
 
