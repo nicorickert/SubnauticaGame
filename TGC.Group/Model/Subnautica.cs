@@ -204,19 +204,29 @@ namespace TGC.Group.Model
             }
         }
 
+        public void MouseDisable()
+        {
+            int deviceWidth = D3DDevice.Instance.Width;
+            int deviceHeight = D3DDevice.Instance.Height;
+            Cursor.Clip = new Rectangle(deviceWidth / 2, deviceHeight / 2, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
+            Cursor.Hide();
+        }
+
+        public void MouseEnable()
+        {
+            Cursor.Clip = new Rectangle(); // libero el mouse
+            Cursor.Show();
+        }
+
         private void ManageFocus()
         {
             if (FocusInGame)
             {
-                int deviceWidth = D3DDevice.Instance.Width;
-                int deviceHeight = D3DDevice.Instance.Height;
-                Cursor.Clip = new Rectangle(deviceWidth/2, deviceHeight/2, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
-                Cursor.Hide();
+                MouseDisable();
             }
             else
             {
-                Cursor.Clip = new Rectangle(); // libero el mouse
-                Cursor.Show();
+                MouseEnable();
             }
         }
 
