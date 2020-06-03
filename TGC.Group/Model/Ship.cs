@@ -14,8 +14,7 @@ namespace TGC.Group.Model
     public class Ship : GameObject
     {
         private CraftingMenu craftingMenu = new CraftingMenu();
-        private readonly float craftingCooldown = 1f;
-        private float timeSinceLastSelection = 0f;
+
 
         public Ship(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
@@ -34,16 +33,12 @@ namespace TGC.Group.Model
 
         public override void Update()
         {
-            //if(crafter != null)
-            //{
-            //    UpdateCraftingMenu();
-            //    ChooseBluePrint();
+            craftingMenu.Update(GameInstance.ElapsedTime);
 
             if (craftingMenu.IsBeingUsed && !craftingMenu.Owner.CanReach(this))
             {
                 craftingMenu.Close();
             }
-            //}
         }
 
         public override void Render()

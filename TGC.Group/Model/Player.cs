@@ -53,6 +53,12 @@ namespace TGC.Group.Model
         {
             Position = new TGCVector3(3300, -80, 700);
             LearnBluePrint(BluePrintDatabase.FishSoup);
+            for (int i = 0; i < 2; i++)
+            {
+                CollectItem(ItemDatabase.Instance.Generate(EItemID.RAW_SHARK));
+                CollectItem(ItemDatabase.Instance.Generate(EItemID.RAW_FISH));
+                CollectItem(ItemDatabase.Instance.Generate(EItemID.CORAL_PIECE));
+            }
         }
 
         #region TGC

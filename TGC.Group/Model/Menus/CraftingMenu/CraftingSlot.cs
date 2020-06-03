@@ -8,6 +8,8 @@ namespace TGC.Group.Model.Menus.CraftingMenu
 {
     class CraftingSlot
     {
+        private BluePrint bluePrint;
+
         private CustomSprite slotBackground;
         private CustomSprite productSlot;
         private CustomSprite productSprite;
@@ -15,10 +17,14 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         private TgcText2D description = new TgcText2D();
 
         public Size Size { get; private set; }
+        public TGCVector2 Position { get; }
 
         public CraftingSlot(BluePrint bluePrint, TGCVector2 position)
         {
             Item productSample = ItemDatabase.Instance.Generate(bluePrint.ProductId);
+
+            this.bluePrint = bluePrint;
+            Position = position;
 
             productSlot = new CustomSprite(Game.Default.MediaDirectory + "cajaMadera4.jpg");
             productSlot.Position = new TGCVector2(position.X + 10, position.Y + 10);
@@ -45,7 +51,7 @@ namespace TGC.Group.Model.Menus.CraftingMenu
             Size = new Size((int)(productSlot.Bitmap.Size.Width * slotScalingFactor + description.Size.Width + 30), (int)(productSlot.Bitmap.Height * slotScalingFactor + 20));
 
             slotBackground = new CustomSprite(Game.Default.MediaDirectory + "craftingSlotBackground.jpg");
-            slotBackground.Position = position;
+            slotBackground.Position = Position;
             slotBackground.SrcRect = new Rectangle((int)position.X, (int)position.Y, Size.Width, Size.Height);
         }
 
@@ -69,6 +75,16 @@ namespace TGC.Group.Model.Menus.CraftingMenu
             productSprite.Dispose();
             title.Dispose();
             description.Dispose();
+        }
+
+        public bool IsSelected(TGCVector2 clickPosition)
+        {
+            return clickPosition.X > Position.X && clickPosition.X < Position.X + Size.Width && clickPosition.Y > Position.Y && clickPosition.Y < Position.Y + Size.Height;
+        }
+
+        public void OnClick(Player clicker)
+        {
+            bluePrint.Craft(clicker);
         }
     }
 }

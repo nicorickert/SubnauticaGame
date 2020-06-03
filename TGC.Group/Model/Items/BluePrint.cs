@@ -50,17 +50,14 @@ namespace TGC.Group.Model.Items
         }
 
 
-        public Item Craft(Player crafter)
+        public void Craft(Player crafter)
         {
-            Item craftedItem = null;
-
             if (CanCraft(crafter))
             {
-                craftedItem = ItemDatabase.Instance.Generate(ProductId);
+                Item craftedItem = ItemDatabase.Instance.Generate(ProductId);
                 RemoveRequirementsFrom(crafter);
+                crafter.CollectItem(craftedItem);
             }
-
-            return craftedItem;
         }
 
         private bool CanCraft(Player crafter) => requirements.All(req => crafter.Inventory.Amount(req.itemId) >= req.amount);

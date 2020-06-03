@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TGC.Core.Direct3D;
+using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Group.Model.Utils.Sprites;
 
@@ -13,6 +14,8 @@ namespace TGC.Group.Model.Menus.CraftingMenu
     {
         private TGCVector2 position;
         private List<CraftingSlot> craftingSlots = new List<CraftingSlot>();
+        private readonly float craftingCooldown = 0.3f;
+        private float timeSinceLastCraft = 0f;
 
         private Player _owner = null;
         public Player Owner
@@ -49,9 +52,25 @@ namespace TGC.Group.Model.Menus.CraftingMenu
             position = new TGCVector2(deviceWidth * 0.3f, deviceHeight * 0.1f);
         }
 
-        public void Update()
+        public void Update(float elapsedTime)
         {
-            // Chequear seleccion
+            timeSinceLastCraft += elapsedTime;
+
+            if (IsBeingUsed)
+            {
+                TgcD3dInput input = Owner.GameInstance.Input;
+                if (input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT) && timeSinceLastCraft >= craftingCooldown)
+                {
+                    TGCVector2 clickPosition = new TGCVector2(input.Xpos, input.Ypos);
+
+                    CraftingSlot selectedSlot = craftingSlots.Find(slot => slot.IsSelected(clickPosition));
+
+                    if (selectedSlot != null)
+                        selectedSlot.OnClick(Owner);
+
+                    timeSinceLastCraft = 0;
+                }
+            }
         }
 
         public void Render()
@@ -77,11 +96,19 @@ namespace TGC.Group.Model.Menus.CraftingMenu
 
         public void Open(Player crafter)
         {
+            if (IsBeingUsed)
+                Close();
+
             Owner = crafter;
+            Owner.GameInstance.MouseEnable();
         }
 
         public void Close()
         {
+            if (Owner == null)
+                throw new Exception("Menu can't be opened for null owner.");
+
+            Owner.GameInstance.MouseDisable();
             Owner = null;
         }
     }
