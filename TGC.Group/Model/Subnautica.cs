@@ -34,6 +34,7 @@ namespace TGC.Group.Model
         private readonly float floorY = -4000;
         private float escapeDelay = 0;
 
+        public bool MouseEnabled { get; private set; } = false;
         public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
 
         #endregion
@@ -174,7 +175,7 @@ namespace TGC.Group.Model
             D3DDevice.Instance.Device.Transform.Projection = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio,
                     D3DDevice.Instance.ZNearPlaneDistance, D3DDevice.Instance.ZFarPlaneDistance * 10f).ToMatrix();
 
-            Camera = new FPSCamera(Player, Player.RelativeEyePosition);
+            Camera = new FPSCamera(this, Player, Player.RelativeEyePosition);
         }
 
         private void LoadMainScene()
@@ -206,6 +207,7 @@ namespace TGC.Group.Model
 
         public void MouseDisable()
         {
+            MouseEnabled = false;
             int deviceWidth = D3DDevice.Instance.Width;
             int deviceHeight = D3DDevice.Instance.Height;
             Cursor.Clip = new Rectangle(deviceWidth / 2, deviceHeight / 2, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
@@ -214,6 +216,7 @@ namespace TGC.Group.Model
 
         public void MouseEnable()
         {
+            MouseEnabled = true;
             Cursor.Clip = new Rectangle(); // libero el mouse
             Cursor.Show();
         }

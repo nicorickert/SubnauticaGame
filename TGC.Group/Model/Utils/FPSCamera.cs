@@ -7,6 +7,7 @@ namespace TGC.Group.Model.Utils
 {
     class FPSCamera : TgcCamera
     {
+        private Subnautica GameInstance;
         private GameObject player;
         private TGCVector3 eyePosition;
         private float mousePositionX = 0;
@@ -14,10 +15,11 @@ namespace TGC.Group.Model.Utils
         private readonly float mouseSensibility = 0.015f;
         private readonly float maxUpDownView = FastMath.PI_HALF - 0.01f;
 
-        public FPSCamera(GameObject player, TGCVector3 eyePosition) : base()
+        public FPSCamera(Subnautica gameInstance, GameObject player, TGCVector3 eyePosition) : base()
         {
             this.player = player;
             this.eyePosition = eyePosition;
+            this.GameInstance = gameInstance;
         }
 
         public override void UpdateCamera(float elapsedTime)
@@ -28,6 +30,8 @@ namespace TGC.Group.Model.Utils
             //TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + player.RelativeUpDirection * eyePosition.Y;
 
             // ---
+            if (GameInstance.MouseEnabled) // Si se tiene el mouse activado, no rotar la cámara
+                return;
 
             TGCVector3 transformedRelativeEyePosition = eyePosition.X * player.RelativeRightDirection + eyePosition.Y * player.RelativeUpDirection + eyePosition.Z * player.LookDirection; 
             TGCVector3 camaraPosition = player.Position + transformedRelativeEyePosition;
