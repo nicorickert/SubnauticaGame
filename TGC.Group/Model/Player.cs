@@ -65,11 +65,14 @@ namespace TGC.Group.Model
             LearnBluePrint(BluePrintDatabase.SharkToothKnife);
             LearnBluePrint(BluePrintDatabase.OxygenTank);
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 10; i++)
             {
-                CollectItem(ItemDatabase.Instance.Generate(EItemID.RAW_SHARK));
-                CollectItem(ItemDatabase.Instance.Generate(EItemID.RAW_FISH));
                 CollectItem(ItemDatabase.Instance.Generate(EItemID.CORAL_PIECE));
+                CollectItem(ItemDatabase.Instance.Generate(EItemID.FISH_SCALE));
+                CollectItem(ItemDatabase.Instance.Generate(EItemID.METAL_SCRAP));
+                CollectItem(ItemDatabase.Instance.Generate(EItemID.SHARK_TOOTH));
+                CollectItem(ItemDatabase.Instance.Generate(EItemID.RAW_FISH));
+                CollectItem(ItemDatabase.Instance.Generate(EItemID.RAW_SHARK));
             }
         }
 

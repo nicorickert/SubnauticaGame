@@ -16,6 +16,7 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         private List<CraftingSlot> craftingSlots = new List<CraftingSlot>();
         private readonly float craftingCooldown = 0.3f;
         private float timeSinceLastCraft = 0f;
+        private bool craftingCooldownEnabled = false;
 
         private Player _owner = null;
         public Player Owner
@@ -54,7 +55,8 @@ namespace TGC.Group.Model.Menus.CraftingMenu
 
         public void Update(float elapsedTime)
         {
-            timeSinceLastCraft += elapsedTime;
+            if (craftingCooldownEnabled)
+                timeSinceLastCraft += elapsedTime;
 
             if (IsBeingUsed)
             {
@@ -101,6 +103,9 @@ namespace TGC.Group.Model.Menus.CraftingMenu
 
             Owner = crafter;
             Owner.GameInstance.MouseEnable();
+
+            timeSinceLastCraft = 0f;
+            craftingCooldownEnabled = true;
         }
 
         public void Close()
@@ -110,6 +115,8 @@ namespace TGC.Group.Model.Menus.CraftingMenu
 
             Owner.GameInstance.MouseDisable();
             Owner = null;
+
+            craftingCooldownEnabled = false;
         }
     }
 }

@@ -12,6 +12,7 @@ using TGC.Core.Text;
 using System.Drawing;
 using TGC.Core.Collision;
 using TGC.Core.Input;
+using TGC.Group.Model.Items;
 
 namespace TGC.Group.Model
 {
@@ -263,7 +264,7 @@ namespace TGC.Group.Model
             inventoryHud.Color = Color.DarkOrange;
             inventoryHud.Position = new Point((int)FastMath.Floor(0.8f * deviceWidth), (int)FastMath.Floor(0.4f * deviceHeight));
             inventoryHud.Size = new Size(300, 600);
-            inventoryHud.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
+            inventoryHud.changeFont(new Font("TimesNewRoman", 20, FontStyle.Regular));
             inventoryHud.Align = TgcText2D.TextAlign.LEFT;
 
             selectedItem.Text = "Selected item: ";
@@ -290,9 +291,10 @@ namespace TGC.Group.Model
 
             int index = 1;
             inventoryHud.Text = "Inventory:\n\n";
-            foreach (var item in Player.Inventory.Items)
+            foreach (var itemID in Player.Inventory.AccumulatedItems.Keys)
             {
-                inventoryHud.Text += index + ") " + item.Name + "\n";
+                Item item = ItemDatabase.Instance.Generate(itemID);
+                inventoryHud.Text += index + ". " + item.Name + " ("+ Player.Inventory.AccumulatedItems[itemID] + ")\n";
                 index++;
             }
         }
