@@ -15,6 +15,11 @@ namespace TGC.Group.Model
             Position = spawnLocation;
             size = MathExtended.GetRandomNumberBetween(3, 20);
             scale = TGCVector3.One * size;
+
+            // LIVING_NPC
+
+            dropsProbability[ItemDatabase.Instance.Generate(EItemID.RAW_FISH)] = 100;
+            dropsProbability[ItemDatabase.Instance.Generate(EItemID.FISH_SCALE)] = 50;
         }
 
         #region TGC
@@ -25,10 +30,6 @@ namespace TGC.Group.Model
             Roam();
             base.Render();
         }
-        #endregion
-
-        #region LIVING_NPC
-        protected override Item GenerateDrop() => ItemDatabase.Instance.Generate(EItemID.RAW_FISH);
         #endregion
     }
 }

@@ -108,9 +108,14 @@
     <Compile Include="Model\Items\BluePrintDatabase.cs" />
     <Compile Include="Model\Items\Consumable.cs" />
     <Compile Include="Model\Items\Effects\Heal.cs" />
+    <Compile Include="Model\Items\Effects\IncreaseAttackDamage.cs" />
+    <Compile Include="Model\Items\Effects\IncreaseOxyenCapacity.cs" />
+    <Compile Include="Model\Items\Effects\MaxHealthIncrease.cs" />
+    <Compile Include="Model\Items\Equipable.cs" />
+    <Compile Include="Model\Items\Equipment.cs" />
     <Compile Include="Model\Items\Inventory.cs" />
     <Compile Include="Model\Items\Item.cs" />
-    <Compile Include="Model\Items\ItemEffect.cs" />
+    <Compile Include="Model\Items\Effects\ItemEffect.cs" />
     <Compile Include="Model\Items\ItemDatabase.cs" />
     <Compile Include="Model\LivingNPC.cs" />
     <Compile Include="Model\Menus\CraftingMenu\CraftingMenu.cs" />

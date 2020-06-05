@@ -9,7 +9,7 @@ namespace TGC.Group.Model.Items
 {
     public class Item
     {
-        public virtual string ItemTypeDescription { get; set; } = "item";
+        public virtual string ItemTypeDescription { get; } = "item";
 
         public EItemID ID { get; private set; }
         public string SpritePath { get; protected set; }
@@ -67,6 +67,12 @@ namespace TGC.Group.Model.Items
         {
             foreach (var effect in onUseEffects)
                 effect.Affect(user);
+        }
+
+        public virtual void UnUse(Player user)
+        {
+            foreach (var effect in onUseEffects)
+                effect.Disaffect(user);
         }
         #endregion
     }

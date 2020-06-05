@@ -32,6 +32,7 @@ namespace TGC.Group.Model
         public int Health { get; private set; } = 100;
         public int Oxygen { get; private set; } = 100;
         public Inventory Inventory { get; private set; } = new Inventory();
+        public Equipment Equipment { get; private set; }
         public int AttackDamage { get; private set; } = 10;
         public List<BluePrint> AvailableBluePrints { get; private set; } = new List<BluePrint>();
         public bool IsSubmerged { get { return Position.Y < GameInstance.WaterLevelToWorldHeight(-130f); } }
@@ -41,8 +42,10 @@ namespace TGC.Group.Model
         public bool IsInSafeZone { get => IsWithinRange(interactionRange, GameInstance.Ship); }
 
         private readonly float movementSpeed = 1000f;
-        private readonly int maxHealth = 100;
-        private readonly int oxygenCapacity = 100;
+        private readonly int baseMaxHealth = 100;
+        private readonly int baseOxygenCapacity = 100;
+        private int maxHealth;
+        private int oxygenCapacity;
         private readonly int interactionRange = 700;
 
         private bool IsAlive { get { return Health > 0; } }
@@ -51,8 +54,17 @@ namespace TGC.Group.Model
 
         public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
         {
+            maxHealth = baseMaxHealth;
+            oxygenCapacity = baseOxygenCapacity;
+
             Position = new TGCVector3(3300, -80, 700);
+            Equipment = new Equipment(this);
+
             LearnBluePrint(BluePrintDatabase.FishSoup);
+            LearnBluePrint(BluePrintDatabase.CoralArmor);
+            LearnBluePrint(BluePrintDatabase.SharkToothKnife);
+            LearnBluePrint(BluePrintDatabase.OxygenTank);
+
             for (int i = 0; i < 2; i++)
             {
                 CollectItem(ItemDatabase.Instance.Generate(EItemID.RAW_SHARK));
@@ -262,14 +274,36 @@ namespace TGC.Group.Model
             Health = FastMath.Clamp(Health + quantity, 0, maxHealth);
         }
 
+        public void IncreaseMaxHealth(int quantity)
+        {
+            maxHealth = FastMath.Max(baseMaxHealth, maxHealth + quantity);
+            AddHealth(quantity);
+        }
+
+        public void IncreaseOxygenCapacity(int quantity)
+        {
+            oxygenCapacity = FastMath.Max(baseOxygenCapacity, oxygenCapacity + quantity);
+            AddOxygen(quantity);
+        }
+
         public void AddOxygen(int quantity)
         {
             Oxygen = FastMath.Clamp(Oxygen + quantity, 0, oxygenCapacity);
         }
 
+        public void IncreaseAttackDamage(int quantity)
+        {
+            AttackDamage += quantity;
+        }
+
         public void CollectItem(Item item)
         {
             Inventory.AddItem(item);
+        }
+
+        public void UnEquipBodyPart(EBodyPart bodyPart)
+        {
+            Equipment.UnEquip(bodyPart);
         }
 
         public void LearnBluePrint(BluePrint bluePrint)

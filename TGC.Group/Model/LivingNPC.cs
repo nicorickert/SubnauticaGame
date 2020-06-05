@@ -11,6 +11,7 @@ namespace TGC.Group.Model
 {
     public abstract class LivingNPC : GameObject
     {
+        protected Dictionary<Item, int> dropsProbability = new Dictionary<Item, int>(); // en %
         protected readonly int maxHealth = 10;
         protected int health = 10;
 
@@ -29,11 +30,12 @@ namespace TGC.Group.Model
 
             if (!IsAlive)
             {
-                Item itemDrop = GenerateDrop();
-
-                if (itemDrop != null)
-                    interactor.CollectItem(itemDrop);
-
+                foreach (Item item in dropsProbability.Keys)
+                {
+                    if (dropsProbability[item] > MathExtended.GetRandomNumberBetween(0, 100))
+                        interactor.CollectItem(item);
+                }
+                    
                 Destroy();
             }
         }
@@ -43,7 +45,5 @@ namespace TGC.Group.Model
         {
             health = FastMath.Clamp(health + quantity, 0, maxHealth);
         }
-
-        protected virtual Item GenerateDrop() => null;
     }
 }

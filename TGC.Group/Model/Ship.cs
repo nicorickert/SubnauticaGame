@@ -60,7 +60,8 @@ namespace TGC.Group.Model
 
         public override void Interact(Player interactor)
         {
-            craftingMenu.Open(interactor);
+            if(!craftingMenu.IsBeingUsed)
+                craftingMenu.Open(interactor);
         }
     }
 }

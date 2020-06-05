@@ -32,6 +32,10 @@ namespace TGC.Group.Model
 
             Position = spawnLocation;
             Transform = TGCMatrix.Translation(Position);
+
+            dropsProbability[ItemDatabase.Instance.Generate(EItemID.RAW_SHARK)] = 100;
+            dropsProbability[ItemDatabase.Instance.Generate(EItemID.SHARK_TOOTH)] = 100;
+            dropsProbability[ItemDatabase.Instance.Generate(EItemID.METAL_SCRAP)] = 30;
         }
 
         #region TGC
@@ -60,9 +64,6 @@ namespace TGC.Group.Model
         }
         #endregion
 
-        #region LIVING_NPC
-        protected override Item GenerateDrop() => ItemDatabase.Instance.Generate(EItemID.RAW_SHARK);
-        #endregion
 
         private void Chase()
         {

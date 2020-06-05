@@ -8,6 +8,8 @@ namespace TGC.Group.Model.Items
 {
     public class Consumable : Item
     {
+        public override string ItemTypeDescription => "consumible";
+
         public Consumable(EItemID id, string name, string spritePath, List<IItemEffect> onUseEffect)
             : base(id, name, spritePath, onUseEffect) { }
 
