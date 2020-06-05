@@ -48,6 +48,8 @@ namespace TGC.Group.Model.Menus.Inventory
 
                     if (selectedSlot != null)
                         selectedSlot.OnClick(owner);
+                    else
+                        Close();
 
                     timeSinceLastItemUse = 0;
                 }
