@@ -41,7 +41,7 @@ namespace TGC.Group.Model.Menus.Inventory
 
             itemDescription.Text = itemSample.Description;
             itemDescription.Position = new Point(itemName.Position.X, itemName.Position.Y + 30);
-            itemDescription.Size = new Size(600, 300);
+            itemDescription.Size = new Size(400, 300);
             itemDescription.Align = TgcText2D.TextAlign.LEFT;
             itemDescription.changeFont(new Font("TimesNewRoman", 11, FontStyle.Bold));
             itemDescription.Color = Color.LightGray;
