@@ -165,9 +165,37 @@ namespace TGC.Group.Model
 
         public float FloorLevelToWorldHeight(float floorLevel) => heightMaps[0].CalcularAltura(Player.Position.X, Player.Position.Z) + floorLevel;
 
+        public void MouseDisable()
+        {
+            MouseEnabled = false;
+            int deviceWidth = D3DDevice.Instance.Width;
+            int deviceHeight = D3DDevice.Instance.Height;
+            Cursor.Clip = new Rectangle(deviceWidth / 2, deviceHeight / 2, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
+            Cursor.Hide();
+        }
+
+        public void MouseEnable()
+        {
+            MouseEnabled = true;
+            Cursor.Clip = new Rectangle(); // libero el mouse
+            Cursor.Show();
+        }
+
         #endregion
 
         #region PRIVATE_METHODS
+
+        private void ManageFocus()
+        {
+            if (FocusInGame)
+            {
+                MouseDisable();
+            }
+            else
+            {
+                MouseEnable();
+            }
+        }
 
         private void SetCamera()
         {
@@ -202,34 +230,6 @@ namespace TGC.Group.Model
             foreach (HeightMapTextured hm in heightMaps)
             {
                 hm.Init();
-            }
-        }
-
-        public void MouseDisable()
-        {
-            MouseEnabled = false;
-            int deviceWidth = D3DDevice.Instance.Width;
-            int deviceHeight = D3DDevice.Instance.Height;
-            Cursor.Clip = new Rectangle(deviceWidth / 2, deviceHeight / 2, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
-            Cursor.Hide();
-        }
-
-        public void MouseEnable()
-        {
-            MouseEnabled = true;
-            Cursor.Clip = new Rectangle(); // libero el mouse
-            Cursor.Show();
-        }
-
-        private void ManageFocus()
-        {
-            if (FocusInGame)
-            {
-                MouseDisable();
-            }
-            else
-            {
-                MouseEnable();
             }
         }
 
