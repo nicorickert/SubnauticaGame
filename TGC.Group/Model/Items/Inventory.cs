@@ -23,7 +23,7 @@ namespace TGC.Group.Model.Items
             AccumulatedItems[item.ID] = Amount(item.ID) + 1;
         }
 
-        public Item GetItem(int index) => Items[index];
+        public Item GetItem(EItemID itemID) => Find(item => item.ID == itemID);
 
         public void Remove(Item item)
         {

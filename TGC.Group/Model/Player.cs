@@ -6,26 +6,26 @@ using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Group.Model.Utils;
 using TGC.Group.Model.Items;
+using TGC.Group.Model.Menus.Inventory;
 
 namespace TGC.Group.Model
 {
     public class Player : GameObject
     {
         #region UTILS
-        private readonly float itemUseCooldown = 1f;
-        private float timeSinceLastItemUse = 0f;
         private readonly float timePerHitTick = 1f;
         private float timeSinceLastTick = 0f;
         private readonly float interactionCooldown = 1f;
         private float timeSinceLastInteraction = 0f;
-        private readonly float itemSelectionCooldown = 0.2f;
-        private float timeSinceLastItemSelected = 0f;
+        private readonly float inventoryMenuUsageCooldown = 0.3f;
+        private float timeSinceLastInventoryMenuUsage = 0f;
         private bool godMode = false;
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private TGCVector3 nextPosition;
 
         public int SelectedItem { get; private set; } = 0;
         public TGCVector3 RelativeEyePosition { get; } = new TGCVector3(0, 120, 30);
+        private InventoryMenu inventoryMenu;
         #endregion
 
         #region STATS
@@ -59,6 +59,7 @@ namespace TGC.Group.Model
 
             Position = new TGCVector3(3300, -80, 700);
             Equipment = new Equipment(this);
+            inventoryMenu = new InventoryMenu(this);
 
             LearnBluePrint(BluePrintDatabase.FishSoup);
             LearnBluePrint(BluePrintDatabase.CoralArmor);
@@ -90,8 +91,8 @@ namespace TGC.Group.Model
             {
                 CheckInteraction();
                 UpdateVitals();
-                UpdateSelectedItem();
-                CheckItemUse();
+                inventoryMenu.Update(GameInstance.ElapsedTime);
+                CheckInventoryUsage();
             }
         }
 
@@ -104,6 +105,9 @@ namespace TGC.Group.Model
                 FixRotation(); // Es importante que esto este antes que ManageMovement()
                 ManageMovement();
                 SimulateAndSetTransformation(nextPosition, nextTransform);
+
+                if (inventoryMenu.IsBeingUsed)
+                    inventoryMenu.Render();
             }
 
             base.Render();
@@ -223,48 +227,22 @@ namespace TGC.Group.Model
             }
         }
 
-        private void CheckItemUse()
-        {
-            timeSinceLastItemUse += GameInstance.ElapsedTime;
-
-            if (timeSinceLastItemUse >= itemUseCooldown && !Inventory.IsEmpty)
-            {
-                if (GameInstance.Input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_RIGHT))
-                {
-                    Inventory.GetItem(SelectedItem).Use(this);
-                    SelectedItem = FastMath.Max(SelectedItem - 1, 0);
-                    timeSinceLastItemUse = 0;
-                }
-            }
-        }
-
-        private void UpdateSelectedItem()
-        {
-            timeSinceLastItemSelected += GameInstance.ElapsedTime;
-
-            if(timeSinceLastItemSelected >= itemSelectionCooldown)
-            {
-                if (Inventory.IsEmpty)
-                    SelectedItem = 0;
-                else if (GameInstance.Input.keyDown(Key.UpArrow))
-                {
-                    SelectedItem--;
-                    if (SelectedItem == -1)
-                        SelectedItem = Inventory.Size - 1;
-                }
-                else if (GameInstance.Input.keyDown(Key.DownArrow))
-                {
-                    SelectedItem++;
-                    if (SelectedItem == Inventory.Size)
-                        SelectedItem = 0;
-                }
-
-                timeSinceLastItemSelected = 0f;
-            }
-        }
-
         private List<GameObject> ReachableObjects() => ObjectsWithinRange(interactionRange);
 
+        private void CheckInventoryUsage()
+        {
+            timeSinceLastInventoryMenuUsage += GameInstance.ElapsedTime;
+
+            if (timeSinceLastInventoryMenuUsage > inventoryMenuUsageCooldown && GameInstance.Input.keyDown(Key.I))
+            {
+                if(inventoryMenu.IsBeingUsed)
+                    inventoryMenu.Close();
+                else
+                    inventoryMenu.Open();
+
+                timeSinceLastInventoryMenuUsage = 0f;
+            }
+        }
         #endregion
 
         #region INTERFACE

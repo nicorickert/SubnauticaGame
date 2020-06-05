@@ -34,7 +34,7 @@ namespace TGC.Group.Model.Menus.CraftingMenu
                     TGCVector2 nextPosition = position;
                     foreach (var bp in _owner.AvailableBluePrints)
                     {
-                        CraftingSlot craftingSlot = new CraftingSlot(bp, nextPosition);
+                        CraftingSlot craftingSlot = new CraftingSlot(nextPosition, bp);
                         craftingSlots.Add(craftingSlot);
                         nextPosition.Y += craftingSlot.Size.Height + 30;
 
@@ -69,6 +69,8 @@ namespace TGC.Group.Model.Menus.CraftingMenu
 
                     if (selectedSlot != null)
                         selectedSlot.OnClick(Owner);
+                    else
+                        Close();
 
                     timeSinceLastCraft = 0;
                 }

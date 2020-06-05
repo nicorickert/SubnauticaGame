@@ -53,8 +53,6 @@ namespace TGC.Group.Model
         private TgcText2D healthTextBox = new TgcText2D();
         private TgcText2D oxygenTextBox = new TgcText2D();
         private TgcText2D screenCenter = new TgcText2D();
-        private TgcText2D inventoryHud = new TgcText2D();
-        private TgcText2D selectedItem = new TgcText2D();
         private TgcText2D gameTimer = new TgcText2D();
 
         #endregion
@@ -260,20 +258,6 @@ namespace TGC.Group.Model
             screenCenter.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
             screenCenter.Align = TgcText2D.TextAlign.LEFT;
 
-            inventoryHud.Text = "Inventory: ";
-            inventoryHud.Color = Color.DarkOrange;
-            inventoryHud.Position = new Point((int)FastMath.Floor(0.8f * deviceWidth), (int)FastMath.Floor(0.4f * deviceHeight));
-            inventoryHud.Size = new Size(300, 600);
-            inventoryHud.changeFont(new Font("TimesNewRoman", 20, FontStyle.Regular));
-            inventoryHud.Align = TgcText2D.TextAlign.LEFT;
-
-            selectedItem.Text = "Selected item: ";
-            selectedItem.Color = Color.DarkOrange;
-            selectedItem.Position = new Point((int)FastMath.Floor(0.8f * deviceWidth), (int)FastMath.Floor(0.38f * deviceHeight));
-            selectedItem.Size = new Size(300, 300);
-            selectedItem.changeFont(new Font("TimesNewRoman", 14, FontStyle.Bold));
-            selectedItem.Align = TgcText2D.TextAlign.LEFT;
-
             gameTimer.Text = "Time: ";
             gameTimer.Color = Color.DarkOrange;
             gameTimer.Position = new Point((int)FastMath.Floor(0.05f * deviceWidth), (int)FastMath.Floor(0.85f * deviceHeight));
@@ -287,16 +271,6 @@ namespace TGC.Group.Model
             healthTextBox.Text = "✚ " + Player.Health;
             oxygenTextBox.Text = "◴ " + Player.Oxygen;
             gameTimer.Text = "Time: " + FastMath.Floor(time) + " sec";
-            selectedItem.Text = "Selected item: " + (Player.SelectedItem + 1);
-
-            int index = 1;
-            inventoryHud.Text = "Inventory:\n\n";
-            foreach (var itemID in Player.Inventory.AccumulatedItems.Keys)
-            {
-                Item item = ItemDatabase.Instance.Generate(itemID);
-                inventoryHud.Text += index + ". " + item.Name + " ("+ Player.Inventory.AccumulatedItems[itemID] + ")\n";
-                index++;
-            }
         }
 
         private void RenderHUD()
@@ -304,8 +278,6 @@ namespace TGC.Group.Model
             healthTextBox.render();
             oxygenTextBox.render();
             screenCenter.render();
-            inventoryHud.render();
-            selectedItem.render();
             gameTimer.render();
         }
 
@@ -313,8 +285,6 @@ namespace TGC.Group.Model
         {
             healthTextBox.Dispose();
             oxygenTextBox.Dispose();
-            inventoryHud.Dispose();
-            selectedItem.Dispose();
             gameTimer.Dispose();
         }
 

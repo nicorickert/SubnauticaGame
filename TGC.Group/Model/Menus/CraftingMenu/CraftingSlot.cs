@@ -6,7 +6,7 @@ using TGC.Group.Model.Utils.Sprites;
 
 namespace TGC.Group.Model.Menus.CraftingMenu
 {
-    class CraftingSlot
+    class CraftingSlot : MenuSlot
     {
         private BluePrint bluePrint;
 
@@ -16,15 +16,12 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         private TgcText2D title = new TgcText2D();
         private TgcText2D description = new TgcText2D();
 
-        public Size Size { get; private set; }
-        public TGCVector2 Position { get; }
-
-        public CraftingSlot(BluePrint bluePrint, TGCVector2 position)
+        public CraftingSlot(TGCVector2 position, BluePrint bluePrint)
+           : base(position)
         {
             Item productSample = ItemDatabase.Instance.Generate(bluePrint.ProductId);
 
             this.bluePrint = bluePrint;
-            Position = position;
 
             productSlot = new CustomSprite(Game.Default.MediaDirectory + "cajaMadera4.jpg");
             productSlot.Position = new TGCVector2(position.X + 10, position.Y + 10);
@@ -56,20 +53,20 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         }
 
 
-        public void RenderSprites(Drawer2D drawer)
+        public override void RenderSprites(Drawer2D drawer)
         {
             drawer.DrawSprite(slotBackground);
             drawer.DrawSprite(productSlot);
             drawer.DrawSprite(productSprite);
         }
 
-        public void RenderText()
+        public override void RenderText()
         {
             title.render();
             description.render();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             productSlot.Dispose();
             productSprite.Dispose();
@@ -77,12 +74,7 @@ namespace TGC.Group.Model.Menus.CraftingMenu
             description.Dispose();
         }
 
-        public bool IsSelected(TGCVector2 clickPosition)
-        {
-            return clickPosition.X > Position.X && clickPosition.X < Position.X + Size.Width && clickPosition.Y > Position.Y && clickPosition.Y < Position.Y + Size.Height;
-        }
-
-        public void OnClick(Player clicker)
+        public override void OnClick(Player clicker)
         {
             bluePrint.Craft(clicker);
         }
