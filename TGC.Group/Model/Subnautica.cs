@@ -13,6 +13,7 @@ using System.Drawing;
 using TGC.Core.Collision;
 using TGC.Core.Input;
 using TGC.Group.Model.Items;
+using TGC.Core.BoundingVolumes;
 
 namespace TGC.Group.Model
 {
@@ -118,7 +119,10 @@ namespace TGC.Group.Model
 
             RenderHUD();
 
-            foreach (GameObject o in SceneObjects)
+            //foreach (GameObject o in SceneObjects)
+            //    o.Render();
+
+            foreach (GameObject o in ObjectsToRender())
                 o.Render();
 
             // HeightMaps
@@ -317,6 +321,11 @@ namespace TGC.Group.Model
         {
             SceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
             removedObjects.Clear();
+        }
+
+        private List<GameObject> ObjectsToRender()
+        {
+            return SceneObjects.FindAll(obj => obj.CollidesWith(Frustum));
         }
 
         #endregion

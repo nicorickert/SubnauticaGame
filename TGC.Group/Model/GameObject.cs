@@ -8,6 +8,7 @@ using TGC.Core;
 using System.Linq;
 using System.Drawing;
 using TGC.Group.Model.Utils;
+using TGC.Core.BoundingVolumes;
 
 namespace TGC.Group.Model
 {
@@ -92,6 +93,16 @@ namespace TGC.Group.Model
         public bool CollidesWith(GameObject foreign)
         {
             return Meshes.Any(mesh => foreign.Meshes.Any(foreignMesh => TgcCollisionUtils.classifyBoxBox(mesh.BoundingBox, foreignMesh.BoundingBox) != TgcCollisionUtils.BoxBoxResult.Afuera));
+        }
+
+        public bool CollidesWith(TgcFrustum frustum)
+        {
+            return Meshes.Any(mesh =>
+            {
+                TgcCollisionUtils.FrustumResult collisionResult = TgcCollisionUtils.classifyFrustumAABB(frustum, mesh.BoundingBox);
+                return collisionResult == TgcCollisionUtils.FrustumResult.INSIDE || collisionResult == TgcCollisionUtils.FrustumResult.INTERSECT;
+            });
+
         }
         #endregion
         #endregion
