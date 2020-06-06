@@ -119,10 +119,7 @@ namespace TGC.Group.Model
 
             RenderHUD();
 
-            //foreach (GameObject o in SceneObjects)
-            //    o.Render();
-
-            foreach (GameObject o in ObjectsToRender())
+            foreach (GameObject o in SceneObjects)
                 o.Render();
 
             // HeightMaps
@@ -321,11 +318,6 @@ namespace TGC.Group.Model
         {
             SceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
             removedObjects.Clear();
-        }
-
-        private List<GameObject> ObjectsToRender()
-        {
-            return SceneObjects.FindAll(obj => obj.CollidesWith(Frustum));
         }
 
         #endregion

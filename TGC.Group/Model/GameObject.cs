@@ -60,7 +60,7 @@ namespace TGC.Group.Model
 
         public virtual void Render()
         {
-            foreach (TgcMesh mesh in Meshes)
+            foreach (TgcMesh mesh in MeshesToRender())
             {
                 mesh.Render();
                 //mesh.BoundingBox.Render(); // Borrar para no mostrar los bounding box
@@ -93,16 +93,6 @@ namespace TGC.Group.Model
         public bool CollidesWith(GameObject foreign)
         {
             return Meshes.Any(mesh => foreign.Meshes.Any(foreignMesh => TgcCollisionUtils.classifyBoxBox(mesh.BoundingBox, foreignMesh.BoundingBox) != TgcCollisionUtils.BoxBoxResult.Afuera));
-        }
-
-        public bool CollidesWith(TgcFrustum frustum)
-        {
-            return Meshes.Any(mesh =>
-            {
-                TgcCollisionUtils.FrustumResult collisionResult = TgcCollisionUtils.classifyFrustumAABB(frustum, mesh.BoundingBox);
-                return collisionResult == TgcCollisionUtils.FrustumResult.INSIDE || collisionResult == TgcCollisionUtils.FrustumResult.INTERSECT;
-            });
-
         }
         #endregion
         #endregion
@@ -150,6 +140,17 @@ namespace TGC.Group.Model
                 scale = oldScale;
                 Transform = oldTransform;
             }
+        }
+
+        protected List<TgcMesh> MeshesToRender()
+        {
+            // FRUSTUM CULLING
+        
+            return Meshes.FindAll(mesh =>
+            {
+                TgcCollisionUtils.FrustumResult collisionResult = TgcCollisionUtils.classifyFrustumAABB(GameInstance.Frustum, mesh.BoundingBox);
+                return collisionResult == TgcCollisionUtils.FrustumResult.INSIDE || collisionResult == TgcCollisionUtils.FrustumResult.INTERSECT;
+            });
         }
         #endregion
     }
