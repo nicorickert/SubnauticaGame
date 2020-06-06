@@ -12,7 +12,6 @@ namespace TGC.Group.Model.Items
         public virtual string ItemTypeDescription { get; } = "item";
 
         public EItemID ID { get; private set; }
-        public string SpritePath { get; protected set; }
         public string Name { get; protected set; }
         public string Description
         {
@@ -49,11 +48,10 @@ namespace TGC.Group.Model.Items
 
         private List<IItemEffect> onUseEffects;
 
-        public Item(EItemID id, string name, string spritePath, List<IItemEffect> onUseEffects)
+        public Item(EItemID id, string name, List<IItemEffect> onUseEffects)
         {
             ID = id;
             Name = name;
-            SpritePath = spritePath; // new Image(spritePath); Inicializo el sprite correspondiente
             this.onUseEffects = onUseEffects;
         }
 

@@ -28,7 +28,7 @@ namespace TGC.Group.Model.Menus.CraftingMenu
             float slotScalingFactor = 0.5f;
             productSlot.Scaling = TGCVector2.One * slotScalingFactor;
 
-            productSprite = new CustomSprite(productSample.SpritePath);
+            productSprite = ItemDatabase.Instance.ItemSprites[productSample.ID];
             productSprite.Scaling = TGCVector2.One * 0.25f;
             productSprite.Position = productSlot.Position + new TGCVector2(productSlot.Bitmap.Size.Width * slotScalingFactor / 4, productSlot.Bitmap.Size.Height * slotScalingFactor / 4);
 
@@ -69,7 +69,6 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         public override void Dispose()
         {
             productSlot.Dispose();
-            productSprite.Dispose();
             title.Dispose();
             description.Dispose();
         }

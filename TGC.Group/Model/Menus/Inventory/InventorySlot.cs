@@ -28,7 +28,7 @@ namespace TGC.Group.Model.Menus.Inventory
             itemSample = ItemDatabase.Instance.Generate(itemID);
             this.amount = amount;
 
-            itemSprite = new CustomSprite(itemSample.SpritePath);
+            itemSprite = ItemDatabase.Instance.ItemSprites[itemID];
             itemSprite.Position = Position;
             float scalingFactor = 0.25f;
             itemSprite.Scaling = TGCVector2.One * scalingFactor;
@@ -69,7 +69,6 @@ namespace TGC.Group.Model.Menus.Inventory
 
         public override void Dispose()
         {
-            itemSprite.Dispose();
             itemName.Dispose();
             itemDescription.Dispose();
             itemAmount.Dispose();

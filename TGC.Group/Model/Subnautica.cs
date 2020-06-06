@@ -142,6 +142,7 @@ namespace TGC.Group.Model
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Dispose();
 
+            ItemDatabase.Instance.Dispose();
             skyBox.Dispose();
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TGC.Group.Model.Items.Effects;
+using TGC.Group.Model.Utils.Sprites;
 
 namespace TGC.Group.Model.Items
 {
@@ -20,19 +21,6 @@ namespace TGC.Group.Model.Items
         OXYGEN_TANK,
         SHARK_TOOTH_KNIFE
     }
-
-    //public struct ItemInfo
-    //{
-    //    public string Name { get; }
-    //    public string SpritePath { get; }
-
-
-    //    public ItemInfo(string name, string spritePath)
-    //    {
-    //        Name = name;
-    //        SpritePath = spritePath;
-    //    }
-    //}
 
 
     public class ItemDatabase
@@ -53,14 +41,20 @@ namespace TGC.Group.Model.Items
 
         private string mediaDir = Game.Default.MediaDirectory;
 
-        //public Dictionary<EItemID, ItemInfo> ItemsInfo { get; } = new Dictionary<EItemID, ItemInfo>();
+        public Dictionary<EItemID, CustomSprite> ItemSprites = new Dictionary<EItemID, CustomSprite>();
 
         private ItemDatabase()
         {
-            //ItemsInfo[EItemID.RAW_FISH] = new ItemInfo("Raw fish", mediaDir + "cajaMadera4.jpg");
-            //ItemsInfo[EItemID.RAW_SHARK] = new ItemInfo("Raw shark", mediaDir + "cajaMadera4.jpg");
-            //ItemsInfo[EItemID.FISH_SOUP] = new ItemInfo("Fish soup", mediaDir + "cajaMadera4.jpg");
-            //ItemsInfo[EItemID.CORAL_PIECE] = new ItemInfo("Coral piece", mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.CORAL_ARMOR] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.CORAL_PIECE] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.FISH_SCALE] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.FISH_SOUP] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.METAL_SCRAP] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.OXYGEN_TANK] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.RAW_FISH] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.RAW_SHARK] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.SHARK_TOOTH] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.SHARK_TOOTH_KNIFE] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
         }
 
         public Item Generate(EItemID itemID)
@@ -72,48 +66,48 @@ namespace TGC.Group.Model.Items
             {
                 case (EItemID.RAW_FISH):
                     effects.Add(new Heal(20));
-                    generatedItem = new Consumable(itemID, "Carne de pescado", mediaDir + "cajaMadera4.jpg", effects);
+                    generatedItem = new Consumable(itemID, "Carne de pescado", effects);
                     break;
 
                 case (EItemID.RAW_SHARK):
                     effects.Add(new Heal(80));
-                    generatedItem = new Consumable(itemID, "Carne de tiburon", mediaDir + "cajaMadera4.jpg", effects);
+                    generatedItem = new Consumable(itemID, "Carne de tiburon", effects);
                     break;
 
                 case (EItemID.FISH_SOUP):
                     effects.Add(new Heal(100));
-                    generatedItem = new Consumable(itemID, "Sopa de pescados", mediaDir + "cajaMadera4.jpg", effects);
+                    generatedItem = new Consumable(itemID, "Sopa de pescados", effects);
                     break;
 
                 case (EItemID.CORAL_PIECE):
-                    generatedItem = new Item(itemID, "Pedazo de coral", mediaDir + "cajaMadera4.jpg", effects);
+                    generatedItem = new Item(itemID, "Pedazo de coral", effects);
                     break;
 
                 case (EItemID.CORAL_ARMOR):
                     effects.Add(new MaxHealthIncrease(50));
-                    generatedItem = new Equipable(itemID, "Armadura de coral", mediaDir + "cajaMadera4.jpg", effects, EBodyPart.BODY);
+                    generatedItem = new Equipable(itemID, "Armadura de coral", effects, EBodyPart.BODY);
                     break;
 
                 case (EItemID.FISH_SCALE):
-                    generatedItem = new Item(itemID, "Escama de pescado", mediaDir + "cajaMadera4.jpg", effects);
+                    generatedItem = new Item(itemID, "Escama de pescado", effects);
                     break;
 
                 case (EItemID.SHARK_TOOTH):
-                    generatedItem = new Item(itemID, "Diente de tiburon", mediaDir + "cajaMadera4.jpg", effects);
+                    generatedItem = new Item(itemID, "Diente de tiburon", effects);
                     break;
 
                 case (EItemID.METAL_SCRAP):
-                    generatedItem = new Item(itemID, "Reciduo metalico", mediaDir + "cajaMadera4.jpg", effects);
+                    generatedItem = new Item(itemID, "Reciduo metalico", effects);
                     break;
 
                 case (EItemID.SHARK_TOOTH_KNIFE):
                     effects.Add(new IncreaseAttackDamage(40));
-                    generatedItem = new Equipable(itemID, "Cuchillo de diente de tiburon", mediaDir + "cajaMadera4.jpg", effects, EBodyPart.WEAPON);
+                    generatedItem = new Equipable(itemID, "Cuchillo de diente de tiburon", effects, EBodyPart.WEAPON);
                     break;
 
                 case (EItemID.OXYGEN_TANK):
                     effects.Add(new IncreaseOxyenCapacity(100));
-                    generatedItem = new Equipable(itemID, "Tanque de oxigeno", mediaDir + "cajaMadera4.jpg", effects, EBodyPart.BACK);
+                    generatedItem = new Equipable(itemID, "Tanque de oxigeno", effects, EBodyPart.BACK);
                     break;
             }
 
@@ -121,6 +115,12 @@ namespace TGC.Group.Model.Items
             return generatedItem;
         }
 
-
+        public void Dispose()
+        {
+            foreach (var sprite in ItemSprites.Values)
+            {
+                sprite.Dispose();
+            }
+        }
     }
 }

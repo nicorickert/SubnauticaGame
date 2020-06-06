@@ -17,8 +17,8 @@ namespace TGC.Group.Model.Items
 
         public EBodyPart BodyPart { get; private set; }
 
-        public Equipable(EItemID id, string name, string spritePath, List<IItemEffect> onUseEffects, EBodyPart bodyPart)
-            : base(id, name, spritePath, onUseEffects)
+        public Equipable(EItemID id, string name, List<IItemEffect> onUseEffects, EBodyPart bodyPart)
+            : base(id, name, onUseEffects)
         {
             BodyPart = bodyPart;
         }
