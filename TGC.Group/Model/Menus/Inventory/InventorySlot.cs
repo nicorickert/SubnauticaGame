@@ -34,7 +34,7 @@ namespace TGC.Group.Model.Menus.Inventory
             itemSprite.Scaling = TGCVector2.One * scalingFactor;
 
             itemName.Text = itemSample.Name;
-            itemName.Position = new Point((int)(itemSprite.Position.X + itemSprite.Bitmap.Size.Width * scalingFactor + 10), (int)itemSprite.Position.Y + 10);
+            itemName.Position = new Point((int)(itemSprite.Position.X + itemSprite.Bitmap.Size.Width * scalingFactor + 10), (int)itemSprite.Position.Y + 5);
             itemName.Align = TgcText2D.TextAlign.LEFT;
             itemName.changeFont(new Font("TimesNewRoman", 14, FontStyle.Bold));
             itemName.Color = Color.DarkGray;

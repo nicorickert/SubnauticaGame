@@ -45,16 +45,16 @@ namespace TGC.Group.Model.Items
 
         private ItemDatabase()
         {
-            ItemSprites[EItemID.CORAL_ARMOR] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
-            ItemSprites[EItemID.CORAL_PIECE] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
-            ItemSprites[EItemID.FISH_SCALE] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
-            ItemSprites[EItemID.FISH_SOUP] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
-            ItemSprites[EItemID.METAL_SCRAP] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
-            ItemSprites[EItemID.OXYGEN_TANK] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
-            ItemSprites[EItemID.RAW_FISH] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
-            ItemSprites[EItemID.RAW_SHARK] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
-            ItemSprites[EItemID.SHARK_TOOTH] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
-            ItemSprites[EItemID.SHARK_TOOTH_KNIFE] = new CustomSprite(mediaDir + "cajaMadera4.jpg");
+            ItemSprites[EItemID.CORAL_ARMOR] = new CustomSprite(mediaDir + "Sprites\\coralArmorSprite.png");
+            ItemSprites[EItemID.CORAL_PIECE] = new CustomSprite(mediaDir + "Sprites\\coralPieceSprite.png");
+            ItemSprites[EItemID.FISH_SCALE] = new CustomSprite(mediaDir + "Sprites\\fishScaleSprite.png");
+            ItemSprites[EItemID.FISH_SOUP] = new CustomSprite(mediaDir + "Sprites\\fishSoupSprite.png");
+            ItemSprites[EItemID.METAL_SCRAP] = new CustomSprite(mediaDir + "Sprites\\metalScrapSprite.png");
+            ItemSprites[EItemID.OXYGEN_TANK] = new CustomSprite(mediaDir + "Sprites\\oxygenTankSprite.png");
+            ItemSprites[EItemID.RAW_FISH] = new CustomSprite(mediaDir + "Sprites\\fishSprite.png");
+            ItemSprites[EItemID.RAW_SHARK] = new CustomSprite(mediaDir + "Sprites\\sharkSprite.png");
+            ItemSprites[EItemID.SHARK_TOOTH] = new CustomSprite(mediaDir + "Sprites\\sharkToothSprite.png");
+            ItemSprites[EItemID.SHARK_TOOTH_KNIFE] = new CustomSprite(mediaDir + "Sprites\\sharkToothKnifeSprite.png");
         }
 
         public Item Generate(EItemID itemID)

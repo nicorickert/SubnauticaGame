@@ -29,8 +29,8 @@ namespace TGC.Group.Model.Menus.CraftingMenu
             productSlot.Scaling = TGCVector2.One * slotScalingFactor;
 
             productSprite = ItemDatabase.Instance.ItemSprites[productSample.ID];
-            productSprite.Scaling = TGCVector2.One * 0.25f;
-            productSprite.Position = productSlot.Position + new TGCVector2(productSlot.Bitmap.Size.Width * slotScalingFactor / 4, productSlot.Bitmap.Size.Height * slotScalingFactor / 4);
+            productSprite.Scaling = TGCVector2.One * 0.5f;
+            productSprite.Position = productSlot.Position;
 
             title.Text = productSample.Name;
             title.Position = new Point((int) (productSlot.Position.X + productSlot.Bitmap.Size.Width * slotScalingFactor + 15), (int) productSlot.Position.Y + 20);
