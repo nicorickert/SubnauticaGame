@@ -60,7 +60,7 @@ namespace TGC.Group.Model
             time = 0;
             //Modifiers para variar escala del mapa
             currentScaleXZ = 1000f;
-            currentScaleY = 20f;
+            currentScaleY = 25f;
             createHeightMapMesh(D3DDevice.Instance.Device, currentHeightmap, currentScaleXZ, currentScaleY);
 
             loadTerrainTexture(D3DDevice.Instance.Device, currentTexture);
@@ -125,20 +125,20 @@ namespace TGC.Group.Model
                     var t4 = new TGCVector2((i + 1) / (float)heightmapData.GetLength(0), (j + 1) / (float)heightmapData.GetLength(1));
 
                     // ACA METO LAS NORMALES
+                    TGCVector3 n1 = calcularNormal(v1, i, j, vectorCenter, scaleXZ, scaleY);
+                    TGCVector3 n2 = calcularNormal(v2, i, j + 1, vectorCenter, scaleXZ, scaleY);
+                    TGCVector3 n3 = calcularNormal(v3, i + 1, j, vectorCenter, scaleXZ, scaleY);
+                    TGCVector3 n4 = calcularNormal(v4, i + 1, j + 1, vectorCenter, scaleXZ, scaleY);
 
                     //Cargar triangulo 1
-                    TGCVector3 n1 = TGCVector3.Cross(v2 - v1, v3 - v1);
-                    n1.Normalize();
                     vertices[dataIdx] = new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y);
-                    vertices[dataIdx + 1] = new CustomVertex.PositionNormalTextured(v2, n1, t2.X, t2.Y);
-                    vertices[dataIdx + 2] = new CustomVertex.PositionNormalTextured(v4, n1, t4.X, t4.Y);
+                    vertices[dataIdx + 1] = new CustomVertex.PositionNormalTextured(v2, n2, t2.X, t2.Y);
+                    vertices[dataIdx + 2] = new CustomVertex.PositionNormalTextured(v4, n4, t4.X, t4.Y);
 
                     //Cargar triangulo 2
-                    TGCVector3 n2 = TGCVector3.Cross(v4 - v1, v3 - v1);
-                    n2.Normalize();
-                    vertices[dataIdx + 3] = new CustomVertex.PositionNormalTextured(v1, n2, t1.X, t1.Y);
-                    vertices[dataIdx + 4] = new CustomVertex.PositionNormalTextured(v4, n2, t4.X, t4.Y);
-                    vertices[dataIdx + 5] = new CustomVertex.PositionNormalTextured(v3, n2, t3.X, t3.Y);
+                    vertices[dataIdx + 3] = new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y);
+                    vertices[dataIdx + 4] = new CustomVertex.PositionNormalTextured(v4, n4, t4.X, t4.Y);
+                    vertices[dataIdx + 5] = new CustomVertex.PositionNormalTextured(v3, n3, t3.X, t3.Y);
 
                     dataIdx += 6;
                 }
@@ -146,6 +146,55 @@ namespace TGC.Group.Model
 
             //Llenar todo el VertexBuffer con el array temporal
             vbTerrain.SetData(vertices, 0, LockFlags.None);
+        }
+
+        TGCVector3 calcularNormal(TGCVector3 verticeActual, int i, int j, TGCVector3 vectorCenter, float scaleXZ, float scaleY)
+        {
+            TGCVector3 normal = TGCVector3.Empty;
+            TGCVector3 vectIzq = TGCVector3.Empty, vectInf = TGCVector3.Empty, vectDer = TGCVector3.Empty, vectSup = TGCVector3.Empty;
+            // Cada vertice forma parte de 4 triángulos, excepto el borde.
+            bool esBordeIzq = i == 0;
+            bool esBordeInf = j == 0;
+            bool esBordeDer = i == verticesWidth - 1;
+            bool esBordeSup = j == verticesHeight - 1;
+
+            // Calculo vectores correspondientes
+            if (!esBordeIzq)
+            {
+                var vIzq = new TGCVector3((i - 1) * scaleXZ, heightmapData[(i - 1), j] * scaleY, j * scaleXZ) + vectorCenter;
+                vectIzq = vIzq - verticeActual;
+            }
+            if (!esBordeInf)
+            {
+                var vInf = new TGCVector3(i * scaleXZ, heightmapData[i, (j - 1)] * scaleY, (j - 1) * scaleXZ) + vectorCenter;
+                vectInf = vInf - verticeActual;
+            }
+            if (!esBordeDer)
+            {
+                var vDer = new TGCVector3((i + 1) * scaleXZ, heightmapData[(i + 1), j] * scaleY, j * scaleXZ) + vectorCenter;
+                vectDer= vDer - verticeActual;
+            }
+            if (!esBordeSup)
+            {
+                var vSup = new TGCVector3(i * scaleXZ, heightmapData[i, (j + 1)] * scaleY, (j + 1) * scaleXZ) + vectorCenter;
+                vectSup = vSup - verticeActual;
+            }
+
+            // Calculo y sumo las normales
+            if (!esBordeIzq && !esBordeInf)
+                normal += TGCVector3.Cross(vectInf, vectIzq);
+
+            if (!esBordeIzq && !esBordeSup)
+                normal += TGCVector3.Cross(vectIzq, vectSup);
+
+            if (!esBordeDer && !esBordeInf)
+                normal += TGCVector3.Cross(vectDer, vectInf);
+
+            if (!esBordeDer && !esBordeSup)
+                normal += TGCVector3.Cross(vectSup, vectDer);
+
+            normal.Normalize();
+            return normal;
         }
 
         /// <summary>

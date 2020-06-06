@@ -104,7 +104,7 @@ namespace TGC.Group.Model
                     hm.Update();
 
                 // Muevo el centro del skybox para que sea inalcanzable
-                //skyBox.Center = new TGCVector3(Camera.Position.X / 1.3f, 0, Camera.Position.Z / 1.3f);
+                skyBox.Center = new TGCVector3(Camera.Position.X, 0, Camera.Position.Z);
             }
 
             UpdateHUD();
