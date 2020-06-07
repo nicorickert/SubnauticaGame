@@ -1,6 +1,4 @@
 ﻿using TGC.Core.SceneLoader;
-using Microsoft.DirectX.Direct3D;
-using System.Collections.Generic;
 
 namespace TGC.Group.Model
 {
@@ -8,7 +6,6 @@ namespace TGC.Group.Model
     {
         public QuadTreeNode[] children;
         public TgcMesh[] models;
-        public List<CustomVertex.PositionNormalTextured> vertices;
 
         public bool esHoja()
         {
