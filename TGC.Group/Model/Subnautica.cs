@@ -118,6 +118,7 @@ namespace TGC.Group.Model
             PreRender();
 
             RenderHUD();
+            skyBox.Render();
 
             foreach (GameObject o in SceneObjects)
                 o.Render();
@@ -126,7 +127,6 @@ namespace TGC.Group.Model
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Render();
 
-            skyBox.Render();
 
             PostRender();
         }
