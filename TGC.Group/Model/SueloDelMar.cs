@@ -17,8 +17,7 @@ namespace TGC.Group.Model
         private List<GameObject> instancesPlantas = new List<GameObject>();
         private QuadTree quadtree;
 
-        public int XZRadius { get => (int)currentScaleXZ * verticesWidth / 2; }
-        public int YMax { get => (int)GameInstance.FloorLevelToWorldHeight(0) + 1500; } // Mas o menos para no calcularlo
+        
 
 
         public SueloDelMar(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect) : base(gameInstance, name, centreP, heightMap, texture, effect)
@@ -30,18 +29,14 @@ namespace TGC.Group.Model
         public override void Init()
         {
             base.Init();
+
             InitMainMeshes();
             CrearObjetosEnElEscenario(vertices.ToArray());
-
             quadtree = new QuadTree();
-            quadtree.create(instancesPlantas, new Core.BoundingVolumes.TgcBoundingAxisAlignBox(centre - new TGCVector3(XZRadius, -4000, XZRadius), centre + new TGCVector3(XZRadius, YMax, XZRadius)));
+            quadtree.addGameObjects(instancesPlantas);
+            quadtree.create(vertices, new Core.BoundingVolumes.TgcBoundingAxisAlignBox(centre - new TGCVector3(3200, -4000, 3200), centre + new TGCVector3(XZRadius, YMax, XZRadius)), effect, terrainTexture);
             quadtree.createDebugQuadTreeMeshes();
-        }
-
-        public override void Render()
-        {
-            base.Render();
-            quadtree.render(GameInstance.Frustum, true);
+    
         }
 
         #region PRIVATE METHODS

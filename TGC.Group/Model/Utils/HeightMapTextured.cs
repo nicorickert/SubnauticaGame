@@ -6,6 +6,7 @@ using TGC.Core.Mathematica;
 using Effect = Microsoft.DirectX.Direct3D.Effect;
 using TGC.Core.Shaders;
 using TGC.Core.Textures;
+using System.Collections.Generic;
 
 namespace TGC.Group.Model
 {
@@ -35,10 +36,14 @@ namespace TGC.Group.Model
         protected TGCVector3 centre;
         public string name;
         public float time;
-        protected CustomVertex.PositionNormalTextured[] vertices;
+        protected List<CustomVertex.PositionNormalTextured> vertices; // TODO hacer el toArray al usarlo para el setData
         protected int verticesWidth;
         protected int verticesHeight;
         protected int[,] heightmapData;
+        private QuadTree quadtree;
+
+        public int XZRadius { get => (int)currentScaleXZ * verticesWidth / 2; }
+        public int YMax { get => (int)GameInstance.FloorLevelToWorldHeight(0) + 1500; } // Mas o menos para no calcularlo
 
         public Subnautica GameInstance { get; private set; }
 
@@ -73,6 +78,9 @@ namespace TGC.Group.Model
                 effect.SetValue("textureExample", terrainTexture.D3dTexture);
             }
 
+            quadtree = new QuadTree();
+            quadtree.create(vertices, new Core.BoundingVolumes.TgcBoundingAxisAlignBox(centre - new TGCVector3(XZRadius, 0, XZRadius), centre + new TGCVector3(XZRadius, 5000, XZRadius)), effect, terrainTexture);
+            quadtree.createDebugQuadTreeMeshes();
         }
 
         public void Update()
@@ -94,11 +102,11 @@ namespace TGC.Group.Model
 
             //Crear vertexBuffer
             totalVertices = 2 * 3 * (heightmapData.GetLength(0) - 1) * (heightmapData.GetLength(1) - 1);
-            vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
+            //vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
 
             //Crear array temporal de vertices
-            var dataIdx = 0;
-            vertices = new CustomVertex.PositionNormalTextured[totalVertices];
+            //var dataIdx = 0;
+            vertices = new List<CustomVertex.PositionNormalTextured>();
 
             // Ancho (x) y alto (z) total del heightmap (imagen)
             verticesWidth = heightmapData.GetLength(0);
@@ -131,22 +139,22 @@ namespace TGC.Group.Model
                     TGCVector3 n4 = calcularNormal(v4, i + 1, j + 1, vectorCenter, scaleXZ, scaleY);
 
                     //Cargar triangulo 1
-                    vertices[dataIdx] = new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y);
-                    vertices[dataIdx + 1] = new CustomVertex.PositionNormalTextured(v2, n2, t2.X, t2.Y);
-                    vertices[dataIdx + 2] = new CustomVertex.PositionNormalTextured(v4, n4, t4.X, t4.Y);
+                    vertices.Add(new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y));
+                    vertices.Add(new CustomVertex.PositionNormalTextured(v2, n2, t2.X, t2.Y));
+                    vertices.Add(new CustomVertex.PositionNormalTextured(v4, n4, t4.X, t4.Y));
 
                     //Cargar triangulo 2
-                    vertices[dataIdx + 3] = new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y);
-                    vertices[dataIdx + 4] = new CustomVertex.PositionNormalTextured(v4, n4, t4.X, t4.Y);
-                    vertices[dataIdx + 5] = new CustomVertex.PositionNormalTextured(v3, n3, t3.X, t3.Y);
+                    vertices.Add(new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y));
+                    vertices.Add(new CustomVertex.PositionNormalTextured(v4, n4, t4.X, t4.Y));
+                    vertices.Add(new CustomVertex.PositionNormalTextured(v3, n3, t3.X, t3.Y));
 
-                    dataIdx += 6;
+                    //dataIdx += 6;
                 }
             }
 
             //Llenar todo el VertexBuffer con el array temporal
-            vbTerrain.SetData(vertices, 0, LockFlags.None);
-
+            //vbTerrain.SetData(vertices, 0, LockFlags.None);
+            // TODO: ponerlo en el quadtree
         }
 
         TGCVector3 calcularNormal(TGCVector3 verticeActual, int i, int j, TGCVector3 vectorCenter, float scaleXZ, float scaleY)
@@ -304,10 +312,24 @@ namespace TGC.Group.Model
             return H + centre.Y;
         }
 
-        public virtual void Render()
+        public void Render()
         {
+            if (GameInstance.Input.keyDown(Microsoft.DirectX.DirectInput.Key.B))
+            {
+                quadtree.render(GameInstance.Frustum, false);
+                return;
+            }
+
+
+           
+            int totalVertices = vertices.Count;
+            if (totalVertices == 0) return; // si es 0 explota
             var device = D3DDevice.Instance.Device;
-            
+            // Render de los triángulos
+            VertexBuffer vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, device, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
+
+            vbTerrain.SetData(vertices.ToArray(), 0, LockFlags.None);
+
             device.VertexFormat = CustomVertex.PositionNormalTextured.Format; // PositionNormalTextured
             device.SetStreamSource(0, vbTerrain, 0);
             //Render terrain
@@ -323,7 +345,7 @@ namespace TGC.Group.Model
                 for (var n = 0; n < numPasses; n++)
                 {
                     effect.BeginPass(n);
-                    D3DDevice.Instance.Device.DrawPrimitives(PrimitiveType.TriangleList, 0, totalVertices / 3);
+                    device.DrawPrimitives(PrimitiveType.TriangleList, 0, totalVertices / 3);
                     effect.EndPass();
                 }
                 effect.End();
@@ -331,7 +353,8 @@ namespace TGC.Group.Model
                 device.RenderState.AlphaTestEnable = false;
                 device.RenderState.AlphaBlendEnable = false;
 
-            } else
+            }
+            else
             {
                 device.SetTexture(0, terrainTexture.D3dTexture);
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, totalVertices / 3);
