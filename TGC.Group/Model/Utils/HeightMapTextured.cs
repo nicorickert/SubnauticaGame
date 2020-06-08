@@ -40,10 +40,9 @@ namespace TGC.Group.Model
         protected int verticesWidth;
         protected int verticesHeight;
         protected int[,] heightmapData;
-        private QuadTree quadtree;
 
         public int XZRadius { get => (int)currentScaleXZ * verticesWidth / 2; }
-        public int YMax { get => (int)GameInstance.FloorLevelToWorldHeight(0) + 1500; } // Mas o menos para no calcularlo
+        public int YMax { get => (int)GameInstance.FloorLevelToWorldHeight(0) + 2000; } // Mas o menos para no calcularlo
 
         public Subnautica GameInstance { get; private set; }
 
@@ -64,8 +63,8 @@ namespace TGC.Group.Model
 
             time = 0;
             //Modifiers para variar escala del mapa
-            currentScaleXZ = 1000f;
-            currentScaleY = 25f;
+            currentScaleXZ = 500f;
+            currentScaleY = 20f;
             createHeightMapMesh(D3DDevice.Instance.Device, currentHeightmap, currentScaleXZ, currentScaleY);
 
             loadTerrainTexture(D3DDevice.Instance.Device, currentTexture);
@@ -77,10 +76,6 @@ namespace TGC.Group.Model
                 effect.Technique = "Default";
                 effect.SetValue("textureExample", terrainTexture.D3dTexture);
             }
-
-            quadtree = new QuadTree();
-            quadtree.create(vertices, new Core.BoundingVolumes.TgcBoundingAxisAlignBox(centre - new TGCVector3(XZRadius, 0, XZRadius), centre + new TGCVector3(XZRadius, 5000, XZRadius)), effect, terrainTexture);
-            quadtree.createDebugQuadTreeMeshes();
         }
 
         public void Update()
@@ -101,11 +96,6 @@ namespace TGC.Group.Model
             heightmapData = loadHeightMap(path);
 
             //Crear vertexBuffer
-            totalVertices = 2 * 3 * (heightmapData.GetLength(0) - 1) * (heightmapData.GetLength(1) - 1);
-            //vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
-
-            //Crear array temporal de vertices
-            //var dataIdx = 0;
             vertices = new List<CustomVertex.PositionNormalTextured>();
 
             // Ancho (x) y alto (z) total del heightmap (imagen)
@@ -120,40 +110,39 @@ namespace TGC.Group.Model
             {
                 for (var j = 0; j < verticesHeight - 1; j++)
                 {
-                    //Crear los cuatro vertices que conforman este cuadrante, aplicando la escala correspondiente y los desplazo para que el centro del hm este en el pasado por parametro
                     var v1 = new TGCVector3(i * scaleXZ, heightmapData[i, j] * scaleY, j * scaleXZ) + vectorCenter;
-                    var v2 = new TGCVector3(i * scaleXZ, heightmapData[i, j + 1] * scaleY, (j + 1) * scaleXZ) + vectorCenter;
                     var v3 = new TGCVector3((i + 1) * scaleXZ, heightmapData[i + 1, j] * scaleY, j * scaleXZ) + vectorCenter;
-                    var v4 = new TGCVector3((i + 1) * scaleXZ, heightmapData[i + 1, j + 1] * scaleY, (j + 1) * scaleXZ) + vectorCenter;
-
-                    //Crear las coordenadas de textura para los cuatro vertices del cuadrante
+                    
                     var t1 = new TGCVector2(i / (float)heightmapData.GetLength(0), j / (float)heightmapData.GetLength(1));
-                    var t2 = new TGCVector2(i / (float)heightmapData.GetLength(0), (j + 1) / (float)heightmapData.GetLength(1));
                     var t3 = new TGCVector2((i + 1) / (float)heightmapData.GetLength(0), j / (float)heightmapData.GetLength(1));
-                    var t4 = new TGCVector2((i + 1) / (float)heightmapData.GetLength(0), (j + 1) / (float)heightmapData.GetLength(1));
 
-                    // ACA METO LAS NORMALES
                     TGCVector3 n1 = calcularNormal(v1, i, j, vectorCenter, scaleXZ, scaleY);
-                    TGCVector3 n2 = calcularNormal(v2, i, j + 1, vectorCenter, scaleXZ, scaleY);
                     TGCVector3 n3 = calcularNormal(v3, i + 1, j, vectorCenter, scaleXZ, scaleY);
-                    TGCVector3 n4 = calcularNormal(v4, i + 1, j + 1, vectorCenter, scaleXZ, scaleY);
 
-                    //Cargar triangulo 1
+                    // V1
                     vertices.Add(new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y));
-                    vertices.Add(new CustomVertex.PositionNormalTextured(v2, n2, t2.X, t2.Y));
-                    vertices.Add(new CustomVertex.PositionNormalTextured(v4, n4, t4.X, t4.Y));
 
-                    //Cargar triangulo 2
-                    vertices.Add(new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y));
-                    vertices.Add(new CustomVertex.PositionNormalTextured(v4, n4, t4.X, t4.Y));
+                    if (j == 0 && i > 0) // Para el degenerate triangle, que sirve para ignorar un triangulo del strip
+                    {
+                        vertices.Add(new CustomVertex.PositionNormalTextured(v1, n1, t1.X, t1.Y));
+                    }
+
+                    // V2
                     vertices.Add(new CustomVertex.PositionNormalTextured(v3, n3, t3.X, t3.Y));
 
-                    //dataIdx += 6;
+
+                    if (j == verticesHeight - 2 && i < verticesWidth - 2) // Para el degenerate triangle, que sirve para ignorar un triangulo del strip
+                    {
+                        vertices.Add(new CustomVertex.PositionNormalTextured(v3, n3, t3.X, t3.Y));
+                    }
                 }
             }
 
             //Llenar todo el VertexBuffer con el array temporal
-            //vbTerrain.SetData(vertices, 0, LockFlags.None);
+            totalVertices = vertices.Count;
+            vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
+
+            vbTerrain.SetData(vertices.ToArray(), 0, LockFlags.None);
             // TODO: ponerlo en el quadtree
         }
 
@@ -312,23 +301,10 @@ namespace TGC.Group.Model
             return H + centre.Y;
         }
 
-        public void Render()
+        public virtual void Render()
         {
-            if (GameInstance.Input.keyDown(Microsoft.DirectX.DirectInput.Key.B))
-            {
-                quadtree.render(GameInstance.Frustum, false);
-                return;
-            }
 
-
-           
-            int totalVertices = vertices.Count;
-            if (totalVertices == 0) return; // si es 0 explota
             var device = D3DDevice.Instance.Device;
-            // Render de los triángulos
-            VertexBuffer vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, device, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
-
-            vbTerrain.SetData(vertices.ToArray(), 0, LockFlags.None);
 
             device.VertexFormat = CustomVertex.PositionNormalTextured.Format; // PositionNormalTextured
             device.SetStreamSource(0, vbTerrain, 0);
@@ -345,7 +321,7 @@ namespace TGC.Group.Model
                 for (var n = 0; n < numPasses; n++)
                 {
                     effect.BeginPass(n);
-                    device.DrawPrimitives(PrimitiveType.TriangleList, 0, totalVertices / 3);
+                    device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, totalVertices-2 );
                     effect.EndPass();
                 }
                 effect.End();

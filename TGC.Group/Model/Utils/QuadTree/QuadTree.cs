@@ -17,13 +17,9 @@ namespace TGC.Group.Model
     /// </summary>
     public class QuadTree
     {
-        private Effect effect;
-        private TgcTexture texture;
         private readonly QuadTreeBuilder builder;
         private List<TgcBoxDebug> debugQuadTreeBoxes;
         private List<TgcMesh> modelos = new List<TgcMesh>();
-        private List<CustomVertex.PositionNormalTextured> vertices;
-        private List<CustomVertex.PositionNormalTextured> verticesToRender = new List<CustomVertex.PositionNormalTextured>();
         private QuadTreeNode QuadTreeRootNode;
         private TgcBoundingAxisAlignBox sceneBounds;
 
@@ -31,28 +27,23 @@ namespace TGC.Group.Model
         {
             builder = new QuadTreeBuilder();
         }
-        
-        public void addGameObjects(List<GameObject> gameObjects)
+
+        public void create(List<GameObject> gameObjects, TgcBoundingAxisAlignBox sceneBounds)
         {
+
             gameObjects.ForEach(el => {
                 this.modelos.AddRange(el.Meshes);
             });
+
             //Deshabilitar todos los mesh inicialmente
             foreach (var mesh in modelos)
             {
                 mesh.Enabled = false;
             }
-        }
-
-        public void create(List<CustomVertex.PositionNormalTextured> vertices, TgcBoundingAxisAlignBox sceneBounds, Effect effect, TgcTexture texture)
-        {
-            this.vertices = vertices;
             this.sceneBounds = sceneBounds;
-            this.effect = effect;
-            this.texture = texture;
 
             //Crear QuadTree
-            QuadTreeRootNode = builder.crearQuadTree(modelos, vertices, sceneBounds);
+            QuadTreeRootNode = builder.crearQuadTree(modelos, sceneBounds);
         }
 
         /// <summary>
@@ -61,23 +52,6 @@ namespace TGC.Group.Model
         public void createDebugQuadTreeMeshes()
         {
             debugQuadTreeBoxes = builder.createDebugQuadTreeMeshes(QuadTreeRootNode, sceneBounds);
-        }
-
-        public void renderVertexNode(QuadTreeNode node)
-        {
-            if (node.esHoja())
-            {
-                if (node.Enabled)
-                {
-                    node.Render(D3DDevice.Instance.Device, effect, texture);    // Solo le hago render si colisiona con el frustrum
-                    node.Enabled = false;
-                }
-            } else
-            {
-                foreach(var child in node.children) {
-                    renderVertexNode(child);
-                }
-            }
         }
 
         /// <summary>
@@ -90,8 +64,6 @@ namespace TGC.Group.Model
             findVisibleMeshes(frustum, QuadTreeRootNode,
                 pMin.X, pMin.Y, pMin.Z,
                 pMax.X, pMax.Y, pMax.Z);
-
-            renderVertexNode(QuadTreeRootNode);
 
             //Renderizar
             foreach (var mesh in modelos)
@@ -110,50 +82,6 @@ namespace TGC.Group.Model
                     debugBox.Render();
                 }
             }
-
-
-
-            /*
-            int totalVertices = verticesToRender.Count;
-            if (totalVertices == 0) return; // si es 0 explota
-            // Render de los triángulos
-            var device = D3DDevice.Instance.Device;
-            VertexBuffer vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionNormalTextured), totalVertices, device, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionNormalTextured.Format, Pool.Default);
-
-            vbTerrain.SetData(verticesToRender.ToArray(), 0, LockFlags.None);
-
-            device.VertexFormat = CustomVertex.PositionNormalTextured.Format; // PositionNormalTextured
-            device.SetStreamSource(0, vbTerrain, 0);
-            //Render terrain
-
-            if (effect != null && !effect.Disposed)
-            {
-                // Habilito el canal alpha
-                device.RenderState.AlphaTestEnable = true;
-                device.RenderState.AlphaBlendEnable = true;
-
-                TGCShaders.Instance.SetShaderMatrixIdentity(effect);
-                var numPasses = effect.Begin(0);
-                for (var n = 0; n < numPasses; n++)
-                {
-                    effect.BeginPass(n);
-                    D3DDevice.Instance.Device.DrawPrimitives(PrimitiveType.TriangleList, 0, totalVertices / 3);
-                    effect.EndPass();
-                }
-                effect.End();
-
-                device.RenderState.AlphaTestEnable = false;
-                device.RenderState.AlphaBlendEnable = false;
-
-            }
-            else
-            {
-                device.SetTexture(0, texture.D3dTexture);
-                device.DrawPrimitives(PrimitiveType.TriangleList, 0, totalVertices / 3);
-            }
-
-            verticesToRender = new List<CustomVertex.PositionNormalTextured>();
-            */
         }
 
         /// <summary>
@@ -252,7 +180,6 @@ namespace TGC.Group.Model
             {
                 m.Enabled = true;
             }
-            node.Enabled = true;
         }
     }
 }
