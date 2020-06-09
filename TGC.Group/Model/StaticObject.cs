@@ -42,5 +42,13 @@ namespace TGC.Group.Model
         public override void Update() { /* No tienen logica */ }
 
         #endregion
+
+        protected override List<TgcMesh> MeshesToRender()
+        {
+            if (GameInstance.StaticSceneObjectIsVisible(this))
+                return Meshes;
+            else
+                return new List<TgcMesh>();
+        }
     }
 }

@@ -40,7 +40,6 @@ namespace TGC.Group.Model
         public override void Render()
         {
             base.Render();
-            quadtree.render(GameInstance.Frustum, false);
         }
 
         #region PRIVATE METHODS

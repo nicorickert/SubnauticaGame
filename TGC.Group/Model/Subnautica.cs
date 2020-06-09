@@ -14,6 +14,7 @@ using TGC.Core.Collision;
 using TGC.Core.Input;
 using TGC.Group.Model.Items;
 using TGC.Core.BoundingVolumes;
+using System.Linq;
 
 namespace TGC.Group.Model
 {
@@ -45,6 +46,7 @@ namespace TGC.Group.Model
         #region OBJECTS
         public List<StaticObject> StaticSceneObjects { get; private set; } = new List<StaticObject>();
         public List<GameObject> NonStaticSceneObjects { get; private set; } = new List<GameObject>();
+        public List<GameObject> SceneObjects => StaticSceneObjects.Concat(NonStaticSceneObjects).ToList();
         public Player Player { get; private set; }
         public Ship Ship { get; private set; }
 
@@ -81,7 +83,7 @@ namespace TGC.Group.Model
             spawnManager = new SpawnManager(this);
             SetCamera();
 
-            ScenesQuadTree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(SueloDelMar.centre - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), SueloDelMar.centre + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
+            ScenesQuadTree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(new TGCVector3(0,floorY,0) - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), new TGCVector3(0, floorY, 0) + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
             ScenesQuadTree.createDebugQuadTreeMeshes();
         }
 
@@ -101,8 +103,8 @@ namespace TGC.Group.Model
                 UpdateInstantiatedObjects();
                 spawnManager.Update();
 
-                // Objetos
-                foreach (GameObject o in NonStaticSceneObjects)
+                // Todos los objetos (estaticos y no estaticos)
+                foreach (GameObject o in SceneObjects)
                     o.Update();
 
                 // HeightMaps
@@ -126,7 +128,7 @@ namespace TGC.Group.Model
             RenderHUD();
             skyBox.Render();
 
-            foreach (GameObject o in NonStaticSceneObjects)
+            foreach (GameObject o in SceneObjects)
                 o.Render();
 
             // HeightMaps
@@ -142,7 +144,7 @@ namespace TGC.Group.Model
             DisposeHUD();
             spawnManager.Dispose();
 
-            foreach (GameObject o in NonStaticSceneObjects)
+            foreach (GameObject o in SceneObjects)
                 o.Dispose();
 
             // HeightMaps
@@ -195,6 +197,11 @@ namespace TGC.Group.Model
             Cursor.Show();
 
             showCrosshair = false;
+        }
+
+        public bool StaticSceneObjectIsVisible(StaticObject obj)
+        {
+            return ScenesQuadTree.VisibleStaticSceneObjects(Frustum).Contains(obj);
         }
 
         #endregion

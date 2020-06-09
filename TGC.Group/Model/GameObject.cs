@@ -142,14 +142,14 @@ namespace TGC.Group.Model
             }
         }
 
-        protected List<TgcMesh> MeshesToRender()
+        protected virtual List<TgcMesh> MeshesToRender()
         {
             // FRUSTUM CULLING
         
             return Meshes.FindAll(mesh =>
             {
                 TgcCollisionUtils.FrustumResult collisionResult = TgcCollisionUtils.classifyFrustumAABB(GameInstance.Frustum, mesh.BoundingBox);
-                return collisionResult == TgcCollisionUtils.FrustumResult.INSIDE || collisionResult == TgcCollisionUtils.FrustumResult.INTERSECT;
+                return collisionResult != TgcCollisionUtils.FrustumResult.OUTSIDE;
             });
         }
         #endregion
