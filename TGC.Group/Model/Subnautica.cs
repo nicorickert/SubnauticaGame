@@ -101,6 +101,9 @@ namespace TGC.Group.Model
                 foreach (GameObject o in SceneObjects)
                     o.Update();
 
+                foreach (StaticObject so in StaticSceneObjects)
+                    so.Update();
+
                 // HeightMaps
                 foreach (HeightMapTextured hm in heightMaps)
                     hm.Update();
