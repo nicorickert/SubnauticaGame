@@ -244,7 +244,7 @@ namespace TGC.Group.Model
 
         private void LoadTerrain()
         {
-            SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMFondo-x128.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx");
+            SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMFondo-x64.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx");
             heightMaps.Add(SueloDelMar);
             heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
 
