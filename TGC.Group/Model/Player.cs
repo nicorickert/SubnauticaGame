@@ -103,7 +103,8 @@ namespace TGC.Group.Model
             if (IsAlive)
             {
                 FixRotation(); // Es importante que esto este antes que ManageMovement()
-                ManageMovement();
+                if (GameInstance.FocusInGame)
+                    ManageMovement();           // No mover el player si se está en pausa
                 SimulateAndSetTransformation(nextPosition, nextTransform);
 
                 if (inventoryMenu.IsBeingUsed)
@@ -243,6 +244,13 @@ namespace TGC.Group.Model
                 timeSinceLastInventoryMenuUsage = 0f;
             }
         }
+        #endregion
+
+        #region PUBLIC_METHODS
+        public void CloseInventory()
+        {
+            inventoryMenu.Close();
+        }    
         #endregion
 
         #region INTERFACE

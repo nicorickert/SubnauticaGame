@@ -63,5 +63,10 @@ namespace TGC.Group.Model
             if(!craftingMenu.IsBeingUsed)
                 craftingMenu.Open(interactor);
         }
+
+        public void CloseCraftingMenu()
+        {
+            craftingMenu.Close();
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace TGC.Group.Model
     public class QuadTreeNode
     {
         public QuadTreeNode[] children;
-        public Collectable[] collectables;
+        public TgcMesh[] models;
         public List<CustomVertex.PositionNormalTextured> vertices;
         public bool Enabled;
 

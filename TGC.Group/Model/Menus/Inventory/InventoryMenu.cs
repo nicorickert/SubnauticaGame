@@ -7,6 +7,7 @@ using TGC.Core.Direct3D;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
 using TGC.Group.Model.Utils.Sprites;
+using Microsoft.DirectX.DirectInput;
 
 namespace TGC.Group.Model.Menus.Inventory
 {
@@ -19,7 +20,7 @@ namespace TGC.Group.Model.Menus.Inventory
         private List<InventorySlot> slots = new List<InventorySlot>();
         private TGCVector2 position;
 
-        public bool IsBeingUsed { get; private set; } = false;
+        public bool IsBeingUsed { get; set; } = false;
 
         public InventoryMenu(Player owner)
         {

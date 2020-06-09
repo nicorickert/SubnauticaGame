@@ -84,6 +84,8 @@ namespace TGC.Group.Model
             PreUpdate();
             escapeDelay += ElapsedTime;
 
+            UpdateHUD();
+
             if (Input.keyDown(Key.Escape) && escapeDelay > 0.5f) { // uso el delay porque no me funciona el keyUp o keyPressed
                 escapeDelay = 0;
                 FocusInGame = !FocusInGame;
@@ -106,8 +108,6 @@ namespace TGC.Group.Model
                 // Muevo el centro del skybox para que sea inalcanzable
                 skyBox.Center = new TGCVector3(Camera.Position.X, 0, Camera.Position.Z);
             }
-
-            UpdateHUD();
 
             time += ElapsedTime;
             PostUpdate();
@@ -194,6 +194,11 @@ namespace TGC.Group.Model
             }
             else
             {
+                if (MouseEnabled)
+                {
+                    Player.CloseInventory();
+                    Ship.CloseCraftingMenu();
+                }
                 MouseEnable();
             }
         }
