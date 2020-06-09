@@ -34,6 +34,7 @@ namespace TGC.Group.Model
         private readonly float floorY = -6500;
         private float escapeDelay = 0;
 
+        private QuadTree quadtree;
         public SueloDelMar SueloDelMar { get; private set; }
         public List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         public bool MouseEnabled { get; private set; } = false;
@@ -79,6 +80,9 @@ namespace TGC.Group.Model
             ManageFocus();
             spawnManager = new SpawnManager(this);
             SetCamera();
+            quadtree = new QuadTree();
+            quadtree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(SueloDelMar.centre - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), SueloDelMar.centre + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
+            quadtree.createDebugQuadTreeMeshes();
         }
 
         public override void Update()
@@ -127,6 +131,8 @@ namespace TGC.Group.Model
 
             foreach (GameObject o in SceneObjects)
                 o.Render();
+
+            quadtree.render(Frustum, false);
 
             // HeightMaps
             foreach (HeightMapTextured hm in heightMaps)

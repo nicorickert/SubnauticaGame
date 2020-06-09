@@ -19,7 +19,7 @@ namespace TGC.Group.Model
     {
         private readonly QuadTreeBuilder builder;
         private List<TgcBoxDebug> debugQuadTreeBoxes;
-        private List<TgcMesh> modelos = new List<TgcMesh>();
+        private List<StaticObject> objetos;
         private QuadTreeNode QuadTreeRootNode;
         private TgcBoundingAxisAlignBox sceneBounds;
 
@@ -28,22 +28,18 @@ namespace TGC.Group.Model
             builder = new QuadTreeBuilder();
         }
 
-        public void create(List<GameObject> gameObjects, TgcBoundingAxisAlignBox sceneBounds)
+        public void create(List<StaticObject> staticObjects, TgcBoundingAxisAlignBox sceneBounds)
         {
-
-            gameObjects.ForEach(el => {
-                this.modelos.AddRange(el.Meshes);
-            });
-
+            objetos = staticObjects;
             //Deshabilitar todos los mesh inicialmente
-            foreach (var mesh in modelos)
+            foreach (var objeto in staticObjects)
             {
-                mesh.Enabled = false;
+                objeto.Enabled = false;
             }
             this.sceneBounds = sceneBounds;
 
             //Crear QuadTree
-            QuadTreeRootNode = builder.crearQuadTree(modelos, sceneBounds);
+            QuadTreeRootNode = builder.crearQuadTree(objetos, sceneBounds);
         }
 
         /// <summary>
@@ -66,12 +62,12 @@ namespace TGC.Group.Model
                 pMax.X, pMax.Y, pMax.Z);
 
             //Renderizar
-            foreach (var mesh in modelos)
+            foreach (var objeto in objetos)
             {
-                if (mesh.Enabled)
+                if (objeto.Enabled)
                 {
-                    mesh.Render();
-                    mesh.Enabled = false;
+                    objeto.Render();
+                    objeto.Enabled = false;
                 }
             }
 
@@ -175,10 +171,10 @@ namespace TGC.Group.Model
         /// </summary>
         private void selectLeafMeshes(QuadTreeNode node)
         {
-            var models = node.models;
-            foreach (var m in models)
+            var objects = node.objects;
+            foreach (var o in objects)
             {
-                m.Enabled = true;
+                o.Enabled = true;
             }
         }
     }

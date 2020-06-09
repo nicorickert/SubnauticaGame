@@ -21,6 +21,7 @@ namespace TGC.Group.Model
         private readonly int  nearObjectsRange = 2000;
 
         #region PROPERTIES
+        public bool Enabled = true;
         public Subnautica GameInstance { get; protected set; }
         public string Name { get; protected set; }
         public ECollisionStatus CollisionStatus { get; protected set; } = ECollisionStatus.COLLISIONABLE;
@@ -60,7 +61,7 @@ namespace TGC.Group.Model
 
         public virtual void Render()
         {
-            foreach (TgcMesh mesh in MeshesToRender())
+            foreach (TgcMesh mesh in Meshes) //MeshesToRender())
             {
                 mesh.Render();
                 //mesh.BoundingBox.Render(); // Borrar para no mostrar los bounding box
@@ -100,7 +101,13 @@ namespace TGC.Group.Model
         #region PROTECTED
         protected List<GameObject> NearObjects() => ObjectsWithinRange(nearObjectsRange);
 
-        protected List<GameObject> ObjectsWithinRange(int range) => GameInstance.SceneObjects.FindAll(obj => obj != this && IsWithinRange(range, obj));
+        protected List<GameObject> ObjectsWithinRange(int range)
+        {
+            var sceneObjects = GameInstance.SceneObjects.FindAll(obj => obj != this && IsWithinRange(range, obj));
+            var staticSceneObjects = GameInstance.StaticSceneObjects.FindAll(obj => obj != this && IsWithinRange(range, obj));
+            sceneObjects.AddRange(staticSceneObjects);
+            return sceneObjects;
+        }
 
         protected bool IsWithinRange(int range, GameObject obj) => TGCVector3.Length(obj.Position - Position) <= range;
 

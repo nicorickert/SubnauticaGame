@@ -33,7 +33,7 @@ namespace TGC.Group.Model
         protected TgcTexture terrainTexture;
         protected int totalVertices;
         protected VertexBuffer vbTerrain;
-        protected TGCVector3 centre;
+        public TGCVector3 centre;
         public string name;
         public float time;
         protected List<CustomVertex.PositionNormalTextured> vertices; // TODO hacer el toArray al usarlo para el setData
