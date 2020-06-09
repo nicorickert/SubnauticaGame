@@ -90,6 +90,8 @@ namespace TGC.Group.Model
             PreUpdate();
             escapeDelay += ElapsedTime;
 
+            UpdateHUD();
+
             if (Input.keyDown(Key.Escape) && escapeDelay > 0.5f) { // uso el delay porque no me funciona el keyUp o keyPressed
                 escapeDelay = 0;
                 FocusInGame = !FocusInGame;
@@ -115,8 +117,6 @@ namespace TGC.Group.Model
                 // Muevo el centro del skybox para que sea inalcanzable
                 skyBox.Center = new TGCVector3(Camera.Position.X, 0, Camera.Position.Z);
             }
-
-            UpdateHUD();
 
             time += ElapsedTime;
             PostUpdate();
@@ -214,6 +214,11 @@ namespace TGC.Group.Model
             }
             else
             {
+                if (MouseEnabled)
+                {
+                    Player.CloseInventory();
+                    Ship.CloseCraftingMenu();
+                }
                 MouseEnable();
             }
         }
@@ -244,9 +249,9 @@ namespace TGC.Group.Model
 
         private void LoadTerrain()
         {
-            SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMFondo-x64.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx");
+            SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMFondo-x64.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx", 1000f,25f);
             heightMaps.Add(SueloDelMar);
-            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
+            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx", 1000f, 1f));
 
             foreach (HeightMapTextured hm in heightMaps)
             {

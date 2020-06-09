@@ -46,25 +46,26 @@ namespace TGC.Group.Model
 
         public Subnautica GameInstance { get; private set; }
 
-        public HeightMapTextured(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect)
+        public HeightMapTextured(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect, float scaleXZ, float scaleY)
         {
             GameInstance = gameInstance;
             centre = centreP;
             currentHeightmap = heightMap;
             currentTexture = texture;
             currentEffect = effect;
+            currentScaleXZ = scaleXZ;
+            currentScaleY = scaleY;
         }
 
-        public HeightMapTextured(Subnautica gameInstance, string name, string heightMap, string texture, string effect)
-            :this(gameInstance, name, TGCVector3.Empty, heightMap, texture, effect) { }
+        public HeightMapTextured(Subnautica gameInstance, string name, string heightMap, string texture, string effect, float scaleXZ, float scaleY)
+            :this(gameInstance, name, TGCVector3.Empty, heightMap, texture, effect, scaleXZ, scaleY) { }
 
         public virtual void Init()
         {
 
             time = 0;
             //Modifiers para variar escala del mapa
-            currentScaleXZ = 500f;
-            currentScaleY = 20f;
+            
             createHeightMapMesh(D3DDevice.Instance.Device, currentHeightmap, currentScaleXZ, currentScaleY);
 
             loadTerrainTexture(D3DDevice.Instance.Device, currentTexture);

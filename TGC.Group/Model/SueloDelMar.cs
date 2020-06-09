@@ -15,8 +15,9 @@ namespace TGC.Group.Model
 
         private List<TgcMesh> meshesPlantas = new List<TgcMesh>();
         private List<GameObject> instancesPlantas = new List<GameObject>();
+        private QuadTree quadtree;
 
-        public SueloDelMar(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect) : base(gameInstance, name, centreP, heightMap, texture, effect)
+        public SueloDelMar(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect, float scaleXZ, float scaleY) : base(gameInstance, name, centreP, heightMap, texture, effect, scaleXZ, scaleY)
         {
             
         }
