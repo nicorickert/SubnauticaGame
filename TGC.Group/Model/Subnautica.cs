@@ -103,6 +103,8 @@ namespace TGC.Group.Model
                 UpdateInstantiatedObjects();
                 spawnManager.Update();
 
+                ScenesQuadTree.UpdateVisibleObjects(Frustum);
+
                 // Todos los objetos (estaticos y no estaticos)
                 foreach (GameObject o in SceneObjects)
                     o.Update();
@@ -198,11 +200,6 @@ namespace TGC.Group.Model
             Cursor.Show();
 
             showCrosshair = false;
-        }
-
-        public bool StaticSceneObjectIsVisible(StaticObject obj)
-        {
-            return ScenesQuadTree.VisibleStaticSceneObjects(Frustum).Contains(obj);
         }
 
         #endregion

@@ -22,7 +22,6 @@ namespace TGC.Group.Model
         private List<StaticObject> objetos;
         private QuadTreeNode QuadTreeRootNode;
         private TgcBoundingAxisAlignBox sceneBounds;
-        private List<StaticObject> objectsToBeRendered = new List<StaticObject>();
 
         public QuadTree()
         {
@@ -32,6 +31,11 @@ namespace TGC.Group.Model
         public void create(List<StaticObject> staticObjects, TgcBoundingAxisAlignBox sceneBounds)
         {
             objetos = staticObjects;
+            //Deshabilitar todos los mesh inicialmente
+            foreach (var objeto in staticObjects)
+            {
+                objeto.Enabled = false;
+            }
             this.sceneBounds = sceneBounds;
 
             //Crear QuadTree
@@ -46,22 +50,24 @@ namespace TGC.Group.Model
             debugQuadTreeBoxes = builder.createDebugQuadTreeMeshes(QuadTreeRootNode, sceneBounds);
         }
 
-        /// <summary>
-        ///     Renderizar en forma optimizado utilizando el QuadTree para hacer FrustumCulling
-        /// </summary>
-        public List<StaticObject> VisibleStaticSceneObjects(TgcFrustum frustum)
+
+        public void UpdateVisibleObjects(TgcFrustum frustum)
         {
-            objectsToBeRendered.Clear();
+            foreach (var objeto in objetos)
+            {
+                objeto.Enabled = false;
+            } //???
 
             var pMax = sceneBounds.PMax;
             var pMin = sceneBounds.PMin;
             findVisibleMeshes(frustum, QuadTreeRootNode,
                 pMin.X, pMin.Y, pMin.Z,
                 pMax.X, pMax.Y, pMax.Z);
-
-            return objectsToBeRendered;
         }
 
+        /// <summary>
+        ///     Renderizar en forma optimizado utilizando el QuadTree para hacer FrustumCulling
+        /// </summary>
         public void RenderDebugBoxes()
         {
             foreach (var debugBox in debugQuadTreeBoxes)
@@ -79,11 +85,13 @@ namespace TGC.Group.Model
         {
             var children = node.children;
 
-            // es hoja, cargar todos los meshes
-            if (node.esHoja())
+            //es hoja, cargar todos los meshes
+            if (children == null)
             {
-                objectsToBeRendered.AddRange(node.objects); //selectLeafMeshes(node);
+                selectLeafMeshes(node);
             }
+
+            //recursividad sobre hijos
             else
             {
                 var midX = FastMath.Abs((boxUpperX - boxLowerX) / 2);
@@ -122,7 +130,7 @@ namespace TGC.Group.Model
             //complementamente adentro: cargar todos los hijos directamente, sin testeos
             if (c == TgcCollisionUtils.FrustumResult.INSIDE)
             {
-                objectsToBeRendered.AddRange(childNode.objects);//addAllLeafMeshes(childNode);
+                addAllLeafMeshes(childNode);
             }
 
             //parte adentro: seguir haciendo testeos con hijos
@@ -132,38 +140,38 @@ namespace TGC.Group.Model
             }
         }
 
-        ///// <summary>
-        /////     Hacer visibles todas las meshes de un nodo, buscando recursivamente sus hojas
-        ///// </summary>
-        //private void addAllLeafMeshes(QuadTreeNode node)
-        //{
-        //    var children = node.children;
+        /// <summary>
+        ///     Hacer visibles todas las meshes de un nodo, buscando recursivamente sus hojas
+        /// </summary>
+        private void addAllLeafMeshes(QuadTreeNode node)
+        {
+            var children = node.children;
 
-        //    //es hoja, cargar todos los meshes
-        //    if (children == null)
-        //    {
-        //        selectLeafMeshes(node);
-        //    }
-        //    //pedir hojas a hijos
-        //    else
-        //    {
-        //        for (var i = 0; i < children.Length; i++)
-        //        {
-        //            addAllLeafMeshes(children[i]);
-        //        }
-        //    }
-        //}
+            //es hoja, cargar todos los meshes
+            if (children == null)
+            {
+                selectLeafMeshes(node);
+            }
+            //pedir hojas a hijos
+            else
+            {
+                for (var i = 0; i < children.Length; i++)
+                {
+                    addAllLeafMeshes(children[i]);
+                }
+            }
+        }
 
-        ///// <summary>
-        /////     Hacer visibles todas las meshes de un nodo
-        ///// </summary>
-        //private void selectLeafMeshes(QuadTreeNode node)
-        //{
-        //    var objects = node.objects;
-        //    foreach (var o in objects)
-        //    {
-        //        o.Enabled = true;
-        //    }
-        //}
+        /// <summary>
+        ///     Hacer visibles todas las meshes de un nodo
+        /// </summary>
+        private void selectLeafMeshes(QuadTreeNode node)
+        {
+            var objects = node.objects;
+            foreach (var o in objects)
+            {
+                o.Enabled = true;
+            }
+        }
     }
 }
