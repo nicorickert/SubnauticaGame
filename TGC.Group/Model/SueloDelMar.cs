@@ -14,9 +14,10 @@ namespace TGC.Group.Model
     {
 
         private List<TgcMesh> meshesPlantas = new List<TgcMesh>();
+        private List<GameObject> instancesPlantas = new List<GameObject>();
+        private QuadTree quadtree;
 
-        public int XZRadius { get => (int)currentScaleXZ * verticesWidth / 2; }
-        public int YMax { get => (int)GameInstance.FloorLevelToWorldHeight(0) + 1500; } // Mas o menos para no calcularlo
+        
 
 
         public SueloDelMar(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect) : base(gameInstance, name, centreP, heightMap, texture, effect)
@@ -28,8 +29,18 @@ namespace TGC.Group.Model
         public override void Init()
         {
             base.Init();
+
             InitMainMeshes();
-            CrearObjetosEnElEscenario(vertices);
+            CrearObjetosEnElEscenario(vertices.ToArray());
+            quadtree = new QuadTree();
+            quadtree.create(instancesPlantas, new Core.BoundingVolumes.TgcBoundingAxisAlignBox(centre - new TGCVector3(XZRadius, 3000, XZRadius), centre + new TGCVector3(XZRadius, 5000, XZRadius)));
+            quadtree.createDebugQuadTreeMeshes();
+        }
+
+        public override void Render()
+        {
+            base.Render();
+            quadtree.render(GameInstance.Frustum, false);
         }
 
         #region PRIVATE METHODS
@@ -48,21 +59,21 @@ namespace TGC.Group.Model
         private void CrearObjetosEnElEscenario(CustomVertex.PositionNormalTextured[] vertices)
         {
             Random random = new Random();
-            int posicionesTotales = (verticesWidth - 2) * (verticesHeight - 2); // Le resto 2 para que no tener en cuenta los bordes del mapa
+            int posicionesTotales = vertices.Length; // Le resto 2 para que no tener en cuenta los bordes del mapa
             int posicionesASaltear = 1; // Este valor se cambia adentro del for con un random
-            int minSalto = 5; // Valores para usar en el next del random para saltear
-            int maxSalto = 10;
+            int minSalto = 20; // Valores para usar en el next del random para saltear
+            int maxSalto = 40;
             
             for (int i = verticesWidth; i < posicionesTotales; i += posicionesASaltear)
             {
-                CustomVertex.PositionNormalTextured verticeActual = vertices[i * 6 + 1]; // Cada 6 es un vértice de otro triángulo
+                CustomVertex.PositionNormalTextured verticeActual = vertices[i];
                 TGCVector3 rotation = TGCVector3.Up * random.Next(10);
                 int scale = random.Next(10, 30);
                 TGCVector3 position = MathExtended.Vector3ToTGCVector3(verticeActual.Position);
                 TgcMesh mesh = meshesPlantas[random.Next(meshesPlantas.Count)];
 
-
-                GameInstance.InstanceObject(new Collectable(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation, Items.EItemID.CORAL_PIECE));
+                //GameInstance.InstanceObject(new Collectable(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation, Items.EItemID.CORAL_PIECE));
+                instancesPlantas.Add(new Collectable(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation, Items.EItemID.CORAL_PIECE));
                 posicionesASaltear = random.Next(minSalto, maxSalto);
             }
         }

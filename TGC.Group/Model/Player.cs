@@ -19,7 +19,7 @@ namespace TGC.Group.Model
         private float timeSinceLastInteraction = 0f;
         private readonly float inventoryMenuUsageCooldown = 0.3f;
         private float timeSinceLastInventoryMenuUsage = 0f;
-        private bool godMode = false;
+        private bool godMode = true;
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private TGCVector3 nextPosition;
 
@@ -41,7 +41,7 @@ namespace TGC.Group.Model
         public bool IsOutOfTheWater { get { return Position.Y > GameInstance.WaterLevelToWorldHeight(0); } }
         public bool IsInSafeZone { get => IsWithinRange(interactionRange, GameInstance.Ship); }
 
-        private readonly float movementSpeed = 1000f;
+        private readonly float movementSpeed = 2000f;
         private readonly int baseMaxHealth = 100;
         private readonly int baseOxygenCapacity = 100;
         private int maxHealth;

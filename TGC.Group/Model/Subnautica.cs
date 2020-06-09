@@ -33,7 +33,7 @@ namespace TGC.Group.Model
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
         private readonly float waterY = 0f;
-        private readonly float floorY = -4000;
+        private readonly float floorY = -6500;
         private float escapeDelay = 0;
 
         public bool MouseEnabled { get; private set; } = false;
@@ -118,6 +118,7 @@ namespace TGC.Group.Model
             PreRender();
 
             RenderHUD();
+            skyBox.Render();
 
             foreach (GameObject o in SceneObjects)
                 o.Render();
@@ -126,7 +127,6 @@ namespace TGC.Group.Model
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Render();
 
-            skyBox.Render();
 
             PostRender();
         }
@@ -224,7 +224,7 @@ namespace TGC.Group.Model
 
         private void LoadTerrain()
         {
-            SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMInclinado.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx");
+            SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMFondo-x128.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx");
             heightMaps.Add(SueloDelMar);
             heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
 

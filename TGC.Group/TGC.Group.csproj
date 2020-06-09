@@ -135,6 +135,9 @@
     <Compile Include="Model\Utils\HeightMapTextured.cs" />
     <Compile Include="Model\Utils\FPSCamera.cs" />
     <Compile Include="Model\Utils\MathExtended.cs" />
+    <Compile Include="Model\Utils\QuadTree\QuadTree.cs" />
+    <Compile Include="Model\Utils\QuadTree\QuadTreeBuilder.cs" />
+    <Compile Include="Model\Utils\QuadTree\QuadTreeNode.cs" />
     <Compile Include="Model\Utils\SpawnManager.cs" />
     <Compile Include="Model\Utils\Sprites\CustomBitmap.cs" />
     <Compile Include="Model\Utils\Sprites\CustomSprite.cs" />
