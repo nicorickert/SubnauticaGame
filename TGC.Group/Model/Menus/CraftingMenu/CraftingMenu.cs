@@ -10,115 +10,53 @@ using TGC.Group.Model.Utils.Sprites;
 
 namespace TGC.Group.Model.Menus.CraftingMenu
 {
-    class CraftingMenu
+    class CraftingMenu : Menu
     {
-        private TGCVector2 position;
-        private List<CraftingSlot> craftingSlots = new List<CraftingSlot>();
-        private readonly float craftingCooldown = 0.3f;
-        private float timeSinceLastCraft = 0f;
         private bool craftingCooldownEnabled = false;
 
-        private Player _owner = null;
-        public Player Owner
-        {
-            get => _owner;
+        public Player Owner => owner;
 
-            set
-            {
-                _owner = value;
+        public CraftingMenu() 
+            : base() { }
 
-                craftingSlots.Clear();
-
-                if(_owner != null)
-                {
-                    TGCVector2 nextPosition = position;
-                    foreach (var bp in _owner.AvailableBluePrints)
-                    {
-                        CraftingSlot craftingSlot = new CraftingSlot(nextPosition, bp);
-                        craftingSlots.Add(craftingSlot);
-                        nextPosition.Y += craftingSlot.Size.Height + 30;
-
-                        // TODO ver si necesito hacer dos columnas
-                    }
-                }
-            }
-        }
-        public bool IsBeingUsed { get => Owner != null; }
-
-        public CraftingMenu()
-        {
-            float deviceHeight = D3DDevice.Instance.Height;
-            float deviceWidth = D3DDevice.Instance.Width;
-
-            position = new TGCVector2(deviceWidth * 0.3f, deviceHeight * 0.1f);
-        }
-
-        public void Update(float elapsedTime)
+        public override void Update(float elapsedTime)
         {
             if (craftingCooldownEnabled)
-                timeSinceLastCraft += elapsedTime;
+                timeSinceLastClick += elapsedTime;
 
             if (IsBeingUsed)
             {
-                TgcD3dInput input = Owner.GameInstance.Input;
-                if (input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT) && timeSinceLastCraft >= craftingCooldown)
-                {
-                    TGCVector2 clickPosition = new TGCVector2(input.Xpos, input.Ypos);
-
-                    CraftingSlot selectedSlot = craftingSlots.Find(slot => slot.IsSelected(clickPosition));
-
-                    if (selectedSlot != null)
-                        selectedSlot.OnClick(Owner);
-                    else
-                        Close();
-
-                    timeSinceLastCraft = 0;
-                }
+                CheckClicks();
             }
         }
 
-        public void Render()
+        public override void Open(Player crafter)
         {
-            Drawer2D drawer = new Drawer2D();
+            base.Open(crafter);
 
-            drawer.BeginDrawSprite();
-
-            foreach (var slot in craftingSlots)
-                slot.RenderSprites(drawer);
-
-            drawer.EndDrawSprite();
-
-            foreach (var slot in craftingSlots)
-                slot.RenderText();
-        }
-
-        public void Dispose()
-        {
-            foreach (var slot in craftingSlots)
-                slot.Dispose();
-        }
-
-        public void Open(Player crafter)
-        {
-            if (IsBeingUsed)
-                Close();
-
-            Owner = crafter;
-            Owner.GameInstance.MouseEnable();
-
-            timeSinceLastCraft = 0f;
+            UpdateSlotDisplay();
+            timeSinceLastClick = 0f;
             craftingCooldownEnabled = true;
         }
 
-        public void Close()
+        public override void Close()
         {
-            if (Owner == null)
-                throw new Exception("Menu can't be opened for null owner.");
-
-            Owner.GameInstance.MouseDisable();
-            Owner = null;
+            base.Close();
 
             craftingCooldownEnabled = false;
+        }
+
+        protected override void UpdateSlotDisplay()
+        {
+            slots.Clear();
+
+            TGCVector2 nextPosition = position;
+            foreach (var bp in owner.AvailableBluePrints)
+            {
+                CraftingSlot craftingSlot = new CraftingSlot(nextPosition, bp);
+                slots.Add(craftingSlot);
+                nextPosition.Y += craftingSlot.Size.Height + 30;
+            }
         }
     }
 }

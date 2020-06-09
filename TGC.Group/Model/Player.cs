@@ -238,7 +238,7 @@ namespace TGC.Group.Model
                 if(inventoryMenu.IsBeingUsed)
                     inventoryMenu.Close();
                 else
-                    inventoryMenu.Open();
+                    inventoryMenu.Open(this);
 
                 timeSinceLastInventoryMenuUsage = 0f;
             }

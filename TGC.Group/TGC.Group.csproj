@@ -122,6 +122,7 @@
     <Compile Include="Model\Menus\CraftingMenu\CraftingSlot.cs" />
     <Compile Include="Model\Menus\Inventory\InventoryMenu.cs" />
     <Compile Include="Model\Menus\Inventory\InventorySlot.cs" />
+    <Compile Include="Model\Menus\Menu.cs" />
     <Compile Include="Model\Menus\MenuSlot.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Roamer.cs" />
