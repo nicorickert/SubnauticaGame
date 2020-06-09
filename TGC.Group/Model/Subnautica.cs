@@ -27,8 +27,6 @@ namespace TGC.Group.Model
         #region SETTINGS
 
         private TGCVector3 skyBoxDimensions = new TGCVector3(65000, 20000, 65000);
-        public SueloDelMar SueloDelMar { get; private set; }
-        public List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
@@ -36,12 +34,15 @@ namespace TGC.Group.Model
         private readonly float floorY = -6500;
         private float escapeDelay = 0;
 
+        public SueloDelMar SueloDelMar { get; private set; }
+        public List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         public bool MouseEnabled { get; private set; } = false;
         public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
 
         #endregion
 
         #region OBJECTS
+        public List<StaticObject> StaticSceneObjects { get; private set; } = new List<StaticObject>();
         public List<GameObject> SceneObjects { get; private set; } = new List<GameObject>();
         public Player Player { get; private set; }
         public Ship Ship { get; private set; }
@@ -155,6 +156,11 @@ namespace TGC.Group.Model
         public void InstanceObject(GameObject obj)
         {
             SceneObjects.Add(obj);
+        }
+
+        public void InstanceStaticSceneObject(StaticObject obj)
+        {
+            StaticSceneObjects.Add(obj);
         }
 
         public void DestroyObject(GameObject obj)
@@ -325,6 +331,7 @@ namespace TGC.Group.Model
         private void UpdateInstantiatedObjects()
         {
             SceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
+            StaticSceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
             removedObjects.Clear();
         }
 
