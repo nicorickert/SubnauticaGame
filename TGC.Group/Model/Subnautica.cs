@@ -30,6 +30,7 @@ namespace TGC.Group.Model
         public SueloDelMar SueloDelMar { get; private set; }
         public List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
+        public QuadTree ScenesQuadTree = new QuadTree();
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
         private readonly float waterY = 0f;
@@ -42,7 +43,8 @@ namespace TGC.Group.Model
         #endregion
 
         #region OBJECTS
-        public List<GameObject> SceneObjects { get; private set; } = new List<GameObject>();
+        public List<StaticObject> StaticSceneObjects { get; private set; } = new List<StaticObject>();
+        public List<GameObject> NonStaticSceneObjects { get; private set; } = new List<GameObject>();
         public Player Player { get; private set; }
         public Ship Ship { get; private set; }
 
@@ -78,6 +80,7 @@ namespace TGC.Group.Model
             ManageFocus();
             spawnManager = new SpawnManager(this);
             SetCamera();
+            //ScenesQuadTree.create(StaticSceneObjects, );
         }
 
         public override void Update()
@@ -97,7 +100,7 @@ namespace TGC.Group.Model
                 spawnManager.Update();
 
                 // Objetos
-                foreach (GameObject o in SceneObjects)
+                foreach (GameObject o in NonStaticSceneObjects)
                     o.Update();
 
                 // HeightMaps
@@ -121,7 +124,7 @@ namespace TGC.Group.Model
             RenderHUD();
             skyBox.Render();
 
-            foreach (GameObject o in SceneObjects)
+            foreach (GameObject o in NonStaticSceneObjects)
                 o.Render();
 
             // HeightMaps
@@ -137,7 +140,7 @@ namespace TGC.Group.Model
             DisposeHUD();
             spawnManager.Dispose();
 
-            foreach (GameObject o in SceneObjects)
+            foreach (GameObject o in NonStaticSceneObjects)
                 o.Dispose();
 
             // HeightMaps
@@ -154,12 +157,17 @@ namespace TGC.Group.Model
 
         public void InstanceObject(GameObject obj)
         {
-            SceneObjects.Add(obj);
+            NonStaticSceneObjects.Add(obj);
         }
 
         public void DestroyObject(GameObject obj)
         {
             removedObjects.Add(obj);
+        }
+
+        public void InstanceStaticSceneObject(StaticObject obj)
+        {
+            StaticSceneObjects.Add(obj);
         }
 
         // heightmaps: 0 = piso, 1 = agua
@@ -324,7 +332,8 @@ namespace TGC.Group.Model
 
         private void UpdateInstantiatedObjects()
         {
-            SceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
+            StaticSceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
+            NonStaticSceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
             removedObjects.Clear();
         }
 
