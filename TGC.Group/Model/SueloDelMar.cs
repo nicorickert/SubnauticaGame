@@ -10,20 +10,12 @@ using TGC.Core.SceneLoader;
 
 namespace TGC.Group.Model
 {
-    public class SueloDelMar : HeightMapTextured 
+    public class SueloDelMar : HeightMapTextured
     {
-
         private List<TgcMesh> meshesPlantas = new List<TgcMesh>();
-        private List<GameObject> instancesPlantas = new List<GameObject>();
-        private QuadTree quadtree;
 
-        
-
-
-        public SueloDelMar(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect) : base(gameInstance, name, centreP, heightMap, texture, effect)
-        {
-            
-        }
+        public SueloDelMar(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect, float scaleXZ, float scaleY)
+            : base(gameInstance, name, centreP, heightMap, texture, effect, scaleXZ, scaleY) { }
 
         // agarrar los vertices y utilizarlos para agregar los elementos del terreno
         public override void Init()
@@ -32,14 +24,6 @@ namespace TGC.Group.Model
 
             InitMainMeshes();
             CrearObjetosEnElEscenario(vertices.ToArray());
-            quadtree = new QuadTree();
-            quadtree.create(instancesPlantas, new Core.BoundingVolumes.TgcBoundingAxisAlignBox(centre - new TGCVector3(XZRadius, 3000, XZRadius), centre + new TGCVector3(XZRadius, 5000, XZRadius)));
-            quadtree.createDebugQuadTreeMeshes();
-        }
-
-        public override void Render()
-        {
-            base.Render();
         }
 
         #region PRIVATE METHODS
@@ -60,9 +44,9 @@ namespace TGC.Group.Model
             Random random = new Random();
             int posicionesTotales = vertices.Length; // Le resto 2 para que no tener en cuenta los bordes del mapa
             int posicionesASaltear = 1; // Este valor se cambia adentro del for con un random
-            int minSalto = 20; // Valores para usar en el next del random para saltear
-            int maxSalto = 40;
-            
+            int minSalto = 25; // Valores para usar en el next del random para saltear
+            int maxSalto = 50;
+
             for (int i = verticesWidth; i < posicionesTotales; i += posicionesASaltear)
             {
                 CustomVertex.PositionNormalTextured verticeActual = vertices[i];
@@ -72,7 +56,7 @@ namespace TGC.Group.Model
                 TgcMesh mesh = meshesPlantas[random.Next(meshesPlantas.Count)];
 
                 //GameInstance.InstanceObject(new Collectable(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation, Items.EItemID.CORAL_PIECE));
-                instancesPlantas.Add(new Collectable(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation, Items.EItemID.CORAL_PIECE));
+                GameInstance.InstanceStaticSceneObject(new Collectable(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation, Items.EItemID.CORAL_PIECE));
                 posicionesASaltear = random.Next(minSalto, maxSalto);
             }
         }
