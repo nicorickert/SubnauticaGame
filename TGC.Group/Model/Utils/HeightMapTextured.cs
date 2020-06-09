@@ -266,9 +266,9 @@ namespace TGC.Group.Model
 
         public float CalcularAltura(float x, float z)
         {
-            var largo = currentScaleXZ * 64;  // 64 es el ancho del bitmap
-            var pos_i = 64f * (0.5f + x / largo);
-            var pos_j = 64f * (0.5f + z / largo);
+            var largo = currentScaleXZ * verticesWidth;  // 64 es el ancho del bitmap
+            var pos_i = verticesWidth * (0.5f + x / largo);
+            var pos_j = verticesHeight * (0.5f + z / largo);
 
             var pi = (int)pos_i;
             var fracc_i = pos_i - pi;
@@ -277,20 +277,18 @@ namespace TGC.Group.Model
 
             if (pi < 0)
                 pi = 0;
-            else if (pi > 63)
-                pi = 63;
+            else if (pi > verticesWidth -1)
+                pi = verticesWidth -1;
 
             if (pj < 0)
                 pj = 0;
-            else if (pj > 63)
-                pj = 63;
+            else if (pj > verticesWidth-1)
+                pj = verticesWidth-1;
 
-            var pi1 = pi + 1;
-            var pj1 = pj + 1;
-            if (pi1 > 63)
-                pi1 = 63;
-            if (pj1 > 63)
-                pj1 = 63;
+            var pi1 = FastMath.Min(pi + 1, verticesWidth - 1); // pi + 1; 
+            var pj1 = FastMath.Min(pj + 1, verticesHeight - 1); ;
+            //if (pi1 > verticesWidth-1)
+            //    pi1 = verticesWidth-1;
 
             // 2x2 percent closest filtering usual:
             var H0 = heightmapData[pi, pj] * currentScaleY;
