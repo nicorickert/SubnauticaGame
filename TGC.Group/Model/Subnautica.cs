@@ -53,7 +53,8 @@ namespace TGC.Group.Model
 
         private TgcText2D healthTextBox = new TgcText2D();
         private TgcText2D oxygenTextBox = new TgcText2D();
-        private TgcText2D screenCenter = new TgcText2D();
+        private bool showCrosshair = true;
+        private TgcText2D crossHair = new TgcText2D();
         private TgcText2D gameTimer = new TgcText2D();
 
         #endregion
@@ -173,6 +174,8 @@ namespace TGC.Group.Model
             int deviceHeight = D3DDevice.Instance.Height;
             Cursor.Clip = new Rectangle(deviceWidth / 2, deviceHeight / 2, 1, 1); // El cursor se queda quieto en un punto y permite que se pueda mover la camara infinitamente
             Cursor.Hide();
+
+            showCrosshair = true;
         }
 
         public void MouseEnable()
@@ -180,6 +183,8 @@ namespace TGC.Group.Model
             MouseEnabled = true;
             Cursor.Clip = new Rectangle(); // libero el mouse
             Cursor.Show();
+
+            showCrosshair = false;
         }
 
         #endregion
@@ -253,12 +258,12 @@ namespace TGC.Group.Model
             oxygenTextBox.changeFont(new Font("TimesNewRoman", 25, FontStyle.Bold));
             oxygenTextBox.Align = TgcText2D.TextAlign.LEFT;
 
-            screenCenter.Text = "+";
-            screenCenter.Color = Color.White;
-            screenCenter.Position = new Point(deviceWidth/2 - 8, deviceHeight/2 - 40);
-            screenCenter.Size = new Size(600, 200);
-            screenCenter.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
-            screenCenter.Align = TgcText2D.TextAlign.LEFT;
+            crossHair.Text = "+";
+            crossHair.Color = Color.White;
+            crossHair.Position = new Point(deviceWidth/2 - 8, deviceHeight/2 - 40);
+            crossHair.Size = new Size(600, 200);
+            crossHair.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
+            crossHair.Align = TgcText2D.TextAlign.LEFT;
 
             gameTimer.Text = "Time: ";
             gameTimer.Color = Color.DarkOrange;
@@ -279,7 +284,10 @@ namespace TGC.Group.Model
         {
             healthTextBox.render();
             oxygenTextBox.render();
-            screenCenter.render();
+
+            if(showCrosshair)
+                crossHair.render();
+
             gameTimer.render();
         }
 
