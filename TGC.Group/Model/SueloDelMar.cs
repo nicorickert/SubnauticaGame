@@ -50,8 +50,8 @@ namespace TGC.Group.Model
             Random random = new Random();
             int posicionesTotales = vertices.Length; // Le resto 2 para que no tener en cuenta los bordes del mapa
             int posicionesASaltear = 1; // Este valor se cambia adentro del for con un random
-            int minSalto = 20; // Valores para usar en el next del random para saltear
-            int maxSalto = 40;
+            int minSalto = 25; // Valores para usar en el next del random para saltear
+            int maxSalto = 50;
             
             for (int i = verticesWidth; i < posicionesTotales; i += posicionesASaltear)
             {
