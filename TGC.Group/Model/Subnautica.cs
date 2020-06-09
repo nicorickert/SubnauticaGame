@@ -83,7 +83,7 @@ namespace TGC.Group.Model
             spawnManager = new SpawnManager(this);
             SetCamera();
 
-            ScenesQuadTree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(new TGCVector3(0,floorY,0) - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), new TGCVector3(0, floorY, 0) + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
+            ScenesQuadTree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(SueloDelMar.centre - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), SueloDelMar.centre + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
             ScenesQuadTree.createDebugQuadTreeMeshes();
         }
 
@@ -135,6 +135,7 @@ namespace TGC.Group.Model
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Render();
 
+            ScenesQuadTree.RenderDebugBoxes();
 
             PostRender();
         }
@@ -246,9 +247,9 @@ namespace TGC.Group.Model
 
         private void LoadTerrain()
         {
-            SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMFondo-x128.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx");
+            SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMFondo-x128.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx", 500f, 20f);
             heightMaps.Add(SueloDelMar);
-            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx"));
+            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx", 1000f, 1f));
 
             foreach (HeightMapTextured hm in heightMaps)
             {

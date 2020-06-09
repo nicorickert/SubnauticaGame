@@ -62,7 +62,7 @@ namespace TGC.Group.Model
             return objectsToBeRendered;
         }
 
-        public void Render()
+        public void RenderDebugBoxes()
         {
             foreach (var debugBox in debugQuadTreeBoxes)
             {
