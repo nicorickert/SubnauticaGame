@@ -33,7 +33,7 @@ namespace TGC.Group.Model
         protected TgcTexture terrainTexture;
         protected int totalVertices;
         protected VertexBuffer vbTerrain;
-        protected TGCVector3 centre;
+        public TGCVector3 centre;
         public string name;
         public float time;
         protected List<CustomVertex.PositionNormalTextured> vertices; // TODO hacer el toArray al usarlo para el setData
@@ -46,25 +46,26 @@ namespace TGC.Group.Model
 
         public Subnautica GameInstance { get; private set; }
 
-        public HeightMapTextured(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect)
+        public HeightMapTextured(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect, float scaleXZ, float scaleY)
         {
             GameInstance = gameInstance;
             centre = centreP;
             currentHeightmap = heightMap;
             currentTexture = texture;
             currentEffect = effect;
+            currentScaleXZ = scaleXZ;
+            currentScaleY = scaleY;
         }
 
-        public HeightMapTextured(Subnautica gameInstance, string name, string heightMap, string texture, string effect)
-            :this(gameInstance, name, TGCVector3.Empty, heightMap, texture, effect) { }
+        public HeightMapTextured(Subnautica gameInstance, string name, string heightMap, string texture, string effect, float scaleXZ, float scaleY)
+            : this(gameInstance, name, TGCVector3.Empty, heightMap, texture, effect, scaleXZ, scaleY) { }
 
         public virtual void Init()
         {
 
             time = 0;
             //Modifiers para variar escala del mapa
-            currentScaleXZ = 500f;
-            currentScaleY = 20f;
+
             createHeightMapMesh(D3DDevice.Instance.Device, currentHeightmap, currentScaleXZ, currentScaleY);
 
             loadTerrainTexture(D3DDevice.Instance.Device, currentTexture);
@@ -103,7 +104,7 @@ namespace TGC.Group.Model
             verticesHeight = heightmapData.GetLength(1);
 
             // Vector para mover los vertices respecto del centro
-            var vectorCenter = centre - new TGCVector3(verticesWidth / 2 * scaleXZ, 0 , verticesHeight / 2 * scaleXZ);
+            var vectorCenter = centre - new TGCVector3(verticesWidth / 2 * scaleXZ, 0, verticesHeight / 2 * scaleXZ);
 
             //Iterar sobre toda la matriz del Heightmap y crear los triangulos necesarios para el terreno
             for (var i = 0; i < verticesWidth - 1; i++)
@@ -112,7 +113,7 @@ namespace TGC.Group.Model
                 {
                     var v1 = new TGCVector3(i * scaleXZ, heightmapData[i, j] * scaleY, j * scaleXZ) + vectorCenter;
                     var v3 = new TGCVector3((i + 1) * scaleXZ, heightmapData[i + 1, j] * scaleY, j * scaleXZ) + vectorCenter;
-                    
+
                     var t1 = new TGCVector2(i / (float)heightmapData.GetLength(0), j / (float)heightmapData.GetLength(1));
                     var t3 = new TGCVector2((i + 1) / (float)heightmapData.GetLength(0), j / (float)heightmapData.GetLength(1));
 
@@ -170,7 +171,7 @@ namespace TGC.Group.Model
             if (!esBordeDer)
             {
                 var vDer = new TGCVector3((i + 1) * scaleXZ, heightmapData[(i + 1), j] * scaleY, j * scaleXZ) + vectorCenter;
-                vectDer= vDer - verticeActual;
+                vectDer = vDer - verticeActual;
             }
             if (!esBordeSup)
             {
@@ -201,8 +202,8 @@ namespace TGC.Group.Model
         private void loadTerrainTexture(Device d3dDevice, string path)
         {
             terrainTexture = TgcTexture.createTexture(path);
-            
-            
+
+
             //Rotar e invertir textura
             //var b = (Bitmap)Image.FromFile(path);
             //b.RotateFlip(RotateFlipType.Rotate90FlipX);
@@ -228,7 +229,7 @@ namespace TGC.Group.Model
                     //Obtener color
                     //(j, i) invertido para primero barrer filas y despues columnas
                     var pixel = bitmap.GetPixel(j, i);
-                    
+
 
                     //Calcular intensidad en escala de grises
                     var intensity = pixel.R * 0.299f + pixel.G * 0.587f + pixel.B * 0.114f;
@@ -321,7 +322,7 @@ namespace TGC.Group.Model
                 for (var n = 0; n < numPasses; n++)
                 {
                     effect.BeginPass(n);
-                    device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, totalVertices-2 );
+                    device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, totalVertices - 2);
                     effect.EndPass();
                 }
                 effect.End();
@@ -346,4 +347,3 @@ namespace TGC.Group.Model
         }
     }
 }
- 
