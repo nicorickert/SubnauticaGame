@@ -100,7 +100,7 @@ namespace TGC.Group.Model
         #region PROTECTED
         protected List<GameObject> NearObjects() => ObjectsWithinRange(nearObjectsRange);
 
-        protected List<GameObject> ObjectsWithinRange(int range) => GameInstance.NonStaticSceneObjects.FindAll(obj => obj != this && IsWithinRange(range, obj));
+        protected List<GameObject> ObjectsWithinRange(int range) => GameInstance.SceneObjects.FindAll(obj => obj != this && IsWithinRange(range, obj));
 
         protected bool IsWithinRange(int range, GameObject obj) => TGCVector3.Length(obj.Position - Position) <= range;
 
