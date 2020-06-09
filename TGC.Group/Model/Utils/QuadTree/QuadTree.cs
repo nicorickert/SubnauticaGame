@@ -34,7 +34,7 @@ namespace TGC.Group.Model
             //Deshabilitar todos los mesh inicialmente
             foreach (var objeto in staticObjects)
             {
-                objeto.Enabled = false;
+                objeto.RenderEnabled = false;
             }
             this.sceneBounds = sceneBounds;
 
@@ -55,7 +55,7 @@ namespace TGC.Group.Model
         {
             foreach (var objeto in objetos)
             {
-                objeto.Enabled = false;
+                objeto.RenderEnabled = false;
             } //???
 
             var pMax = sceneBounds.PMax;
@@ -170,7 +170,7 @@ namespace TGC.Group.Model
             var objects = node.objects;
             foreach (var o in objects)
             {
-                o.Enabled = true;
+                o.RenderEnabled = true;
             }
         }
     }

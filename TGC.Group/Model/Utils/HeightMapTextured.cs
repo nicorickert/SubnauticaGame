@@ -42,7 +42,7 @@ namespace TGC.Group.Model
         protected int[,] heightmapData;
 
         public int XZRadius { get => (int)currentScaleXZ * verticesWidth / 2; }
-        public int YMax { get => (int)GameInstance.FloorLevelToWorldHeight(0) + 2000; } // Mas o menos para no calcularlo
+        public int YMax { get => (int)GameInstance.FloorLevelToWorldHeight(0) + 3000; } // Mas o menos para no calcularlo
 
         public Subnautica GameInstance { get; private set; }
 

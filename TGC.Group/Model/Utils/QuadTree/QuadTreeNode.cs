@@ -10,8 +10,6 @@ namespace TGC.Group.Model
     {
         public QuadTreeNode[] children;
         public StaticObject[] objects;
-        public List<CustomVertex.PositionNormalTextured> vertices;
-        public bool Enabled;
 
         public bool esHoja()
         {
