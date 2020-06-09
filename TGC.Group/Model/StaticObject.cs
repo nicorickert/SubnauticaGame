@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace TGC.Group.Model
 {
-    class StaticObject : GameObject
+    public class StaticObject : GameObject
     {
         public StaticObject(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 position, TGCVector3 scale, TGCVector3 rotation) : base(gameInstance, name, meshes)
         {

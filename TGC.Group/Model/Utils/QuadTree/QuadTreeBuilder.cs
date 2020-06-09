@@ -20,7 +20,7 @@ namespace TGC.Group.Model
 
         private readonly int MIN_MESH_PER_LEAVE_THRESHOLD = 5;
 
-        public QuadTreeNode crearQuadTree(List<TgcMesh> TgcMeshs, TgcBoundingAxisAlignBox sceneBounds)
+        public QuadTreeNode crearQuadTree(List<Collectable> Collectables, TgcBoundingAxisAlignBox sceneBounds)
         {
             var rootNode = new QuadTreeNode();
 
@@ -29,7 +29,7 @@ namespace TGC.Group.Model
             var center = sceneBounds.calculateBoxCenter();
 
             //iniciar generacion recursiva de octree
-            doSectorQuadTreeX(rootNode, center, midSize, 0, TgcMeshs);
+            doSectorQuadTreeX(rootNode, center, midSize, 0, Collectables);
 
             return rootNode;
         }
@@ -38,13 +38,13 @@ namespace TGC.Group.Model
         ///     Corte con plano X
         /// </summary>
         private void doSectorQuadTreeX(QuadTreeNode parent, TGCVector3 center, TGCVector3 size,
-            int step, List<TgcMesh> meshes)
+            int step, List<Collectable> meshes)
         {
             var x = center.X;
 
             //Crear listas para realizar corte
-            var possitiveList = new List<TgcMesh>();
-            var negativeList = new List<TgcMesh>();
+            var possitiveList = new List<Collectable>();
+            var negativeList = new List<Collectable>();
 
             //X-cut
             var xCutPlane = new TGCPlane(1, 0, 0, -x);
@@ -65,13 +65,13 @@ namespace TGC.Group.Model
         ///     Corte de plano Z
         /// </summary>
         private void doSectorQuadTreeZ(QuadTreeNode parent, TGCVector3 center, TGCVector3 size, int step,
-            List<TgcMesh> meshes, int childIndex)
+            List<Collectable> meshes, int childIndex)
         {
             var z = center.Z;
 
             //Crear listas para realizar corte
-            var possitiveList = new List<TgcMesh>();
-            var negativeList = new List<TgcMesh>();
+            var possitiveList = new List<Collectable>();
+            var negativeList = new List<Collectable>();
 
             //Z-cut
             var zCutPlane = new TGCPlane(0, 0, 1, -z);
@@ -95,10 +95,10 @@ namespace TGC.Group.Model
             if (step > MAX_SECTOR_QuadTree_RECURSION || meshes.Count < MIN_MESH_PER_LEAVE_THRESHOLD)
             {
                 //cargar hijos de nodo positivo
-                posNode.models = possitiveList.ToArray();
+                posNode.collectables = possitiveList.ToArray();
 
                 //cargar hijos de nodo negativo
-                negNode.models = negativeList.ToArray();
+                negNode.collectables = negativeList.ToArray();
 
                 //seguir recursividad
             }
@@ -119,33 +119,33 @@ namespace TGC.Group.Model
         }
 
         /// <summary>
-        ///     Separa los modelos en dos listas, segun el testo contra el plano de corte
+        ///     Separa los collectables en dos listas, segun el testo contra el plano de corte
         /// </summary>
-        private void splitByPlane(TGCPlane cutPlane, List<TgcMesh> modelos,
-            List<TgcMesh> possitiveList, List<TgcMesh> negativeList)
+        private void splitByPlane(TGCPlane cutPlane, List<Collectable> collectables,
+            List<Collectable> possitiveList, List<Collectable> negativeList)
         {
             TgcCollisionUtils.PlaneBoxResult c;
-            foreach (var modelo in modelos)
+            foreach (var collectable in collectables)
             {
-                c = TgcCollisionUtils.classifyPlaneAABB(cutPlane, modelo.BoundingBox);
+                c = TgcCollisionUtils.classifyPlaneAABB(cutPlane, collectable.Meshes[0].BoundingBox);
 
                 //possitive side
                 if (c == TgcCollisionUtils.PlaneBoxResult.IN_FRONT_OF)
                 {
-                    possitiveList.Add(modelo);
+                    possitiveList.Add(collectable);
                 }
 
                 //negative side
                 else if (c == TgcCollisionUtils.PlaneBoxResult.BEHIND)
                 {
-                    negativeList.Add(modelo);
+                    negativeList.Add(collectable);
                 }
 
                 //both sides
                 else
                 {
-                    possitiveList.Add(modelo);
-                    negativeList.Add(modelo);
+                    possitiveList.Add(collectable);
+                    negativeList.Add(collectable);
                 }
             }
         }
@@ -167,7 +167,7 @@ namespace TGC.Group.Model
                 if (childNodeChildren != null && hasEmptyChilds(childNode))
                 {
                     childNode.children = null;
-                    childNode.models = new TgcMesh[0];
+                    childNode.collectables = new Collectable[0];
                 }
                 else
                 {
@@ -185,24 +185,13 @@ namespace TGC.Group.Model
             for (var i = 0; i < children.Length; i++)
             {
                 var childNode = children[i];
-                if (childNode.children != null || childNode.models.Length > 0)
+                if (childNode.children != null || childNode.collectables.Length > 0)
                 {
                     return false;
                 }
             }
 
             return true;
-        }
-
-        /// <summary>
-        ///     Imprime por consola la generacion del Octree
-        /// </summary>
-        private void printDebugQuadTree(QuadTreeNode rootNode)
-        {
-            Console.WriteLine("########## QuadTree DEBUG ##########");
-            var sb = new StringBuilder();
-            Console.WriteLine(sb.ToString());
-            Console.WriteLine("########## FIN QuadTree DEBUG ##########");
         }
 
         /// <summary>

@@ -14,11 +14,8 @@ namespace TGC.Group.Model
     {
 
         private List<TgcMesh> meshesPlantas = new List<TgcMesh>();
-        private List<GameObject> instancesPlantas = new List<GameObject>();
+        private List<Collectable> instancesPlantas = new List<Collectable>();
         private QuadTree quadtree;
-
-        
-
 
         public SueloDelMar(Subnautica gameInstance, string name, TGCVector3 centreP, string heightMap, string texture, string effect) : base(gameInstance, name, centreP, heightMap, texture, effect)
         {
@@ -72,8 +69,9 @@ namespace TGC.Group.Model
                 TGCVector3 position = MathExtended.Vector3ToTGCVector3(verticeActual.Position);
                 TgcMesh mesh = meshesPlantas[random.Next(meshesPlantas.Count)];
 
-                //GameInstance.InstanceObject(new Collectable(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation, Items.EItemID.CORAL_PIECE));
-                instancesPlantas.Add(new Collectable(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation, Items.EItemID.CORAL_PIECE));
+                var newPlant = new Collectable(GameInstance, "coral", new List<TgcMesh>(new TgcMesh[] { mesh.createMeshInstance("coral") }), position, scale, rotation, Items.EItemID.CORAL_PIECE);
+                GameInstance.InstanceObject(newPlant);
+                instancesPlantas.Add(newPlant);
                 posicionesASaltear = random.Next(minSalto, maxSalto);
             }
         }

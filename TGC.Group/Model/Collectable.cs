@@ -9,12 +9,13 @@ using TGC.Group.Model.Items;
 
 namespace TGC.Group.Model
 {
-    class Collectable : StaticObject
+    public class Collectable : StaticObject
     {
         private EItemID resourceID;
         private readonly float regenerationCooldown = 20f;
         private float timeSinceInactive = 0f;
         private bool isActive = true;
+        public bool Enabled = true; // para el quadtree
 
         #region CONSTRUCTORES
         public Collectable(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 position, TGCVector3 scale, TGCVector3 rotation, EItemID resourceID) 
@@ -50,13 +51,20 @@ namespace TGC.Group.Model
 
         public override void Render()
         {
-            if(isActive)
-                base.Render();
+            if(isActive && Enabled)
+            {
+                foreach (TgcMesh mesh in Meshes)    // no hago frustum culling ya que se hace el quadtree
+                {
+                    mesh.Render();
+                    //mesh.BoundingBox.Render(); // Borrar para no mostrar los bounding box
+                }
+                Enabled = false;
+            }
         }
 
         public override void Interact(Player interactor)
         {
-            if (isActive)
+            if (isActive && Enabled)
             {
                 interactor.CollectItem(ItemDatabase.Instance.Generate(resourceID));
 
@@ -67,11 +75,13 @@ namespace TGC.Group.Model
         private void Activate()
         {
             isActive = true;
+            Enabled = true;
         }
 
         private void Deactivate()
         {
             isActive = false;
+            Enabled = false;
             timeSinceInactive = 0f;
         }
     }

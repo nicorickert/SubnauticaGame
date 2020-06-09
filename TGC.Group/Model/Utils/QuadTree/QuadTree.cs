@@ -19,7 +19,7 @@ namespace TGC.Group.Model
     {
         private readonly QuadTreeBuilder builder;
         private List<TgcBoxDebug> debugQuadTreeBoxes;
-        private List<TgcMesh> modelos = new List<TgcMesh>();
+        private List<Collectable> collectables;
         private QuadTreeNode QuadTreeRootNode;
         private TgcBoundingAxisAlignBox sceneBounds;
 
@@ -28,22 +28,21 @@ namespace TGC.Group.Model
             builder = new QuadTreeBuilder();
         }
 
-        public void create(List<GameObject> gameObjects, TgcBoundingAxisAlignBox sceneBounds)
+        public void create(List<Collectable> collectables, TgcBoundingAxisAlignBox sceneBounds)
         {
 
-            gameObjects.ForEach(el => {
-                this.modelos.AddRange(el.Meshes);
-            });
+            
+            this.collectables = collectables;
 
             //Deshabilitar todos los mesh inicialmente
-            foreach (var mesh in modelos)
+            foreach (var collect in collectables)
             {
-                mesh.Enabled = false;
+                collect.Enabled = false;
             }
             this.sceneBounds = sceneBounds;
 
             //Crear QuadTree
-            QuadTreeRootNode = builder.crearQuadTree(modelos, sceneBounds);
+            QuadTreeRootNode = builder.crearQuadTree(collectables, sceneBounds);
         }
 
         /// <summary>
@@ -66,14 +65,14 @@ namespace TGC.Group.Model
                 pMax.X, pMax.Y, pMax.Z);
 
             //Renderizar
-            foreach (var mesh in modelos)
+            /*foreach (var coll in collectables)
             {
-                if (mesh.Enabled)
+                if (coll.Enabled)
                 {
-                    mesh.Render();
-                    mesh.Enabled = false;
+                    coll.Render();
+                    coll.Enabled = false;
                 }
-            }
+            }*/
 
             if (debugEnabled)
             {
@@ -175,10 +174,10 @@ namespace TGC.Group.Model
         /// </summary>
         private void selectLeafMeshes(QuadTreeNode node)
         {
-            var models = node.models;
-            foreach (var m in models)
+            var collectables = node.collectables;
+            foreach (var c in collectables)
             {
-                m.Enabled = true;
+                c.Enabled = true;
             }
         }
     }
