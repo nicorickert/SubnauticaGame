@@ -80,7 +80,9 @@ namespace TGC.Group.Model
             ManageFocus();
             spawnManager = new SpawnManager(this);
             SetCamera();
-            //ScenesQuadTree.create(StaticSceneObjects, );
+
+            ScenesQuadTree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(SueloDelMar.centre - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), SueloDelMar.centre + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
+            ScenesQuadTree.createDebugQuadTreeMeshes();
         }
 
         public override void Update()
