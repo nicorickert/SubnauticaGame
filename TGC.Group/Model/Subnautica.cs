@@ -137,7 +137,7 @@ namespace TGC.Group.Model
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Render();
 
-            ScenesQuadTree.RenderDebugBoxes();
+            //ScenesQuadTree.RenderDebugBoxes();
 
             PostRender();
         }
@@ -214,6 +214,8 @@ namespace TGC.Group.Model
             }
             else
             {
+                Player.CloseInventory();
+                Ship.CloseCraftingMenu();
                 MouseEnable();
             }
         }

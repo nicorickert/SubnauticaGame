@@ -19,7 +19,7 @@ namespace TGC.Group.Model
         private float timeSinceLastInteraction = 0f;
         private readonly float inventoryMenuUsageCooldown = 0.3f;
         private float timeSinceLastInventoryMenuUsage = 0f;
-        private bool godMode = true;
+        private bool godMode = false;
         private TGCMatrix nextTransform = TGCMatrix.Identity;
         private TGCVector3 nextPosition;
 
@@ -243,6 +243,16 @@ namespace TGC.Group.Model
                 timeSinceLastInventoryMenuUsage = 0f;
             }
         }
+        #endregion
+
+        #region public_methods
+        
+        public void CloseInventory()
+        {
+            if (inventoryMenu.IsBeingUsed)
+                inventoryMenu.Close();
+        }
+
         #endregion
 
         #region INTERFACE
