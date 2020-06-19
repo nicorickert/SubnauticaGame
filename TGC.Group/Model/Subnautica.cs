@@ -15,6 +15,11 @@ using TGC.Core.Input;
 using TGC.Group.Model.Items;
 using TGC.Core.BoundingVolumes;
 using System.Linq;
+using Microsoft.DirectX.Direct3D;
+using Font = System.Drawing.Font;
+using Effect = Microsoft.DirectX.Direct3D.Effect;
+using TGC.Core.Shaders;
+using TGC.Core.Textures;
 
 namespace TGC.Group.Model
 {
@@ -23,6 +28,14 @@ namespace TGC.Group.Model
         #region MESHES
         private List<TgcMesh> playerMeshes;
         private List<TgcMesh> shipMeshes;
+        #endregion
+
+        #region RENDER
+        private Effect gogleViewEffect;
+        private Texture gogleViewTexture;
+        private VertexBuffer fullQuadVertexBuffer;
+        private Texture auxRenderTarget;
+        private Surface auxDepthStencil;
         #endregion
 
         #region SETTINGS
@@ -85,6 +98,9 @@ namespace TGC.Group.Model
 
             ScenesQuadTree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(SueloDelMar.centre - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), SueloDelMar.centre + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
             ScenesQuadTree.createDebugQuadTreeMeshes();
+
+            InitFullQuadVB();
+            InitAuxRenderTarget();
         }
 
         public override void Update()
@@ -125,21 +141,27 @@ namespace TGC.Group.Model
 
         public override void Render()
         {
-            PreRender();
+            //PreRender();
+            ClearTextures();
 
-            RenderHUD();
-            skyBox.Render();
+            var screenRenderTarget = D3DDevice.Instance.Device.GetRenderTarget(0);
+            var screenDepthStencil = D3DDevice.Instance.Device.DepthStencilSurface;
 
-            foreach (GameObject o in SceneObjects)
-                o.Render();
+            var surf = auxRenderTarget.GetSurfaceLevel(0);
+            D3DDevice.Instance.Device.SetRenderTarget(0, surf);
+            D3DDevice.Instance.Device.DepthStencilSurface = auxDepthStencil;
+            D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
 
-            // HeightMaps
-            foreach (HeightMapTextured hm in heightMaps)
-                hm.Render();
+            RenderMainScene();
 
-            //ScenesQuadTree.RenderDebugBoxes();
+            surf.Dispose();
 
-            PostRender();
+            D3DDevice.Instance.Device.SetRenderTarget(0, screenRenderTarget);
+            D3DDevice.Instance.Device.DepthStencilSurface = screenDepthStencil;
+
+            RenderPostProcess();
+
+            D3DDevice.Instance.Device.Present();
         }
 
         public override void Dispose()
@@ -156,6 +178,10 @@ namespace TGC.Group.Model
 
             ItemDatabase.Instance.Dispose();
             skyBox.Dispose();
+
+            fullQuadVertexBuffer.Dispose();
+            auxRenderTarget.Dispose();
+            auxDepthStencil.Dispose();
         }
 
         #endregion
@@ -344,6 +370,82 @@ namespace TGC.Group.Model
             StaticSceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
             NonStaticSceneObjects.RemoveAll(obj => removedObjects.Contains(obj));
             removedObjects.Clear();
+        }
+
+        private void InitFullQuadVB()
+        {
+            CustomVertex.PositionTextured[] vertices =
+            {
+                new CustomVertex.PositionTextured(-1, 1, 1, 0, 0),
+                new CustomVertex.PositionTextured(1, 1, 1, 1, 0),
+                new CustomVertex.PositionTextured(-1, -1, 1, 0, 1),
+                new CustomVertex.PositionTextured(1, -1, 1, 1, 1)
+            };
+
+            fullQuadVertexBuffer = new VertexBuffer(typeof(CustomVertex.PositionTextured), 4, D3DDevice.Instance.Device, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionTextured.Format, Pool.Default);
+            fullQuadVertexBuffer.SetData(vertices, 0, LockFlags.None);
+        }
+
+        private void InitAuxRenderTarget()
+        {
+            //Creamos un Render Targer sobre el cual se va a dibujar la pantalla
+            auxRenderTarget = new Texture(D3DDevice.Instance.Device, D3DDevice.Instance.Device.PresentationParameters.BackBufferWidth,
+                D3DDevice.Instance.Device.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget, Format.X8R8G8B8, Pool.Default);
+
+            //Creamos un DepthStencil que debe ser compatible con nuestra definicion de renderTarget2D.
+            auxDepthStencil = D3DDevice.Instance.Device.CreateDepthStencilSurface(D3DDevice.Instance.Device.PresentationParameters.BackBufferWidth,
+                    D3DDevice.Instance.Device.PresentationParameters.BackBufferHeight, DepthFormat.D24S8, MultiSampleType.None, 0, true);
+        }
+
+
+        private void RenderMainScene()
+        {
+            D3DDevice.Instance.Device.BeginScene();
+
+            RenderHUD();
+            skyBox.Render();
+
+            foreach (GameObject o in SceneObjects)
+                o.Render();
+
+            // HeightMaps
+            foreach (HeightMapTextured hm in heightMaps)
+                hm.Render();
+
+            //ScenesQuadTree.RenderDebugBoxes();
+
+            D3DDevice.Instance.Device.EndScene();
+        }
+
+        private void RenderPostProcess()
+        {
+            D3DDevice.Instance.Device.BeginScene();
+
+            D3DDevice.Instance.Device.VertexFormat = CustomVertex.PositionTextured.Format;
+            D3DDevice.Instance.Device.SetStreamSource(0, fullQuadVertexBuffer, 0);
+
+            D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+
+            /*
+            Effect effect;
+
+            effect.Begin(FX.None);
+            effect.BeginPass(0);
+            D3DDevice.Instance.Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            effect.EndPass();
+            effect.End();
+            */
+
+            RenderFPS();
+            RenderAxis();
+
+            D3DDevice.Instance.Device.EndScene();
+        }
+
+        private void InitGogleViewEffectResources()
+        {
+            gogleViewEffect = TGCShaders.Instance.LoadEffect(ShadersDir + "PostProcess.fx");
+            gogleViewTexture = TgcTexture.createTexture(MediaDir + "gogleView.png").D3dTexture;
         }
 
         #endregion
