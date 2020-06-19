@@ -81,6 +81,8 @@ namespace TGC.Group.Model
 
         public override void Update()
         {
+            base.Update();
+
             // Para modo god
             if (GameInstance.Input.keyDown(Key.G))
                 godMode = true;
@@ -154,7 +156,7 @@ namespace TGC.Group.Model
                 movementDirection += new TGCVector3(0, -1, 0);
             }
 
-            if ((!IsInTheWater && movementDirection.Y > 0))
+            if (!IsInTheWater && movementDirection.Y > 0 && !godMode)
                 movementDirection.Y = 0;
 
             if((CollidingWithFloor))

@@ -33,6 +33,8 @@ namespace TGC.Group.Model
 
         public override void Update()
         {
+            base.Update();
+
             craftingMenu.Update(GameInstance.ElapsedTime);
 
             if (craftingMenu.IsBeingUsed && !craftingMenu.Owner.CanReach(this))

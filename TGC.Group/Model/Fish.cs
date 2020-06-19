@@ -23,7 +23,7 @@ namespace TGC.Group.Model
         }
 
         #region TGC
-        public override void Update() { }
+        public override void Update() { base.Update(); }
 
         public override void Render()
         {

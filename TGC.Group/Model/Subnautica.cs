@@ -15,6 +15,7 @@ using TGC.Core.Input;
 using TGC.Group.Model.Items;
 using TGC.Core.BoundingVolumes;
 using System.Linq;
+using TGC.Core.Geometry;
 
 namespace TGC.Group.Model
 {
@@ -27,6 +28,7 @@ namespace TGC.Group.Model
 
         #region SETTINGS
 
+        private TGCBox lightBox;
         private TGCVector3 skyBoxDimensions = new TGCVector3(65000, 20000, 65000);
         public SueloDelMar SueloDelMar { get; private set; }
         public List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
@@ -40,7 +42,7 @@ namespace TGC.Group.Model
 
         public bool MouseEnabled { get; private set; } = false;
         public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
-
+        public TGCVector3 LightPosition { get; private set; }
         #endregion
 
         #region OBJECTS
@@ -82,6 +84,10 @@ namespace TGC.Group.Model
             ManageFocus();
             spawnManager = new SpawnManager(this);
             SetCamera();
+
+            LightPosition = new TGCVector3(0, 8000, -3 * heightMaps[0].XZRadius);
+            lightBox = TGCBox.fromSize(TGCVector3.One * 500, Color.Red);
+            lightBox.Transform = TGCMatrix.Translation(LightPosition);
 
             ScenesQuadTree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(SueloDelMar.centre - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), SueloDelMar.centre + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
             ScenesQuadTree.createDebugQuadTreeMeshes();
@@ -137,6 +143,7 @@ namespace TGC.Group.Model
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Render();
 
+            lightBox.Render();
             //ScenesQuadTree.RenderDebugBoxes();
 
             PostRender();
@@ -153,6 +160,8 @@ namespace TGC.Group.Model
             // HeightMaps
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Dispose();
+
+            lightBox.Dispose();
 
             ItemDatabase.Instance.Dispose();
             skyBox.Dispose();
