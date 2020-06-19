@@ -101,6 +101,7 @@ namespace TGC.Group.Model
 
             InitFullQuadVB();
             InitAuxRenderTarget();
+            InitGogleViewEffectResources();
         }
 
         public override void Update()
@@ -144,7 +145,7 @@ namespace TGC.Group.Model
             //PreRender();
             ClearTextures();
 
-            var screenRenderTarget = D3DDevice.Instance.Device.GetRenderTarget(0);
+            var screenRenderTargetSurface = D3DDevice.Instance.Device.GetRenderTarget(0);
             var screenDepthStencil = D3DDevice.Instance.Device.DepthStencilSurface;
 
             var surf = auxRenderTarget.GetSurfaceLevel(0);
@@ -155,8 +156,10 @@ namespace TGC.Group.Model
             RenderMainScene();
 
             surf.Dispose();
+            // Para guardar una imagen
+            //TextureLoader.Save(ShadersDir + "main_scene.bmp", ImageFileFormat.Bmp, auxRenderTarget);
 
-            D3DDevice.Instance.Device.SetRenderTarget(0, screenRenderTarget);
+            D3DDevice.Instance.Device.SetRenderTarget(0, screenRenderTargetSurface);
             D3DDevice.Instance.Device.DepthStencilSurface = screenDepthStencil;
 
             RenderPostProcess();
@@ -182,6 +185,8 @@ namespace TGC.Group.Model
             fullQuadVertexBuffer.Dispose();
             auxRenderTarget.Dispose();
             auxDepthStencil.Dispose();
+            gogleViewEffect.Dispose();
+            gogleViewTexture.Dispose();
         }
 
         #endregion
@@ -402,7 +407,6 @@ namespace TGC.Group.Model
         {
             D3DDevice.Instance.Device.BeginScene();
 
-            RenderHUD();
             skyBox.Render();
 
             foreach (GameObject o in SceneObjects)
@@ -424,18 +428,26 @@ namespace TGC.Group.Model
             D3DDevice.Instance.Device.VertexFormat = CustomVertex.PositionTextured.Format;
             D3DDevice.Instance.Device.SetStreamSource(0, fullQuadVertexBuffer, 0);
 
+            gogleViewEffect.SetValue("mainSceneTexture", auxRenderTarget);
+
             D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
 
-            /*
-            Effect effect;
+            if (Player.IsSubmerged)
+            {
+                gogleViewEffect.Technique = "GogleView";
+            }
+            else
+            {
+                gogleViewEffect.Technique = "NoGogles";
+            }
 
-            effect.Begin(FX.None);
-            effect.BeginPass(0);
+            gogleViewEffect.Begin(FX.None);
+            gogleViewEffect.BeginPass(0);
             D3DDevice.Instance.Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
-            effect.EndPass();
-            effect.End();
-            */
+            gogleViewEffect.EndPass();
+            gogleViewEffect.End();
 
+            RenderHUD();
             RenderFPS();
             RenderAxis();
 
@@ -444,8 +456,10 @@ namespace TGC.Group.Model
 
         private void InitGogleViewEffectResources()
         {
-            gogleViewEffect = TGCShaders.Instance.LoadEffect(ShadersDir + "PostProcess.fx");
+            gogleViewEffect = TGCShaders.Instance.LoadEffect(ShadersDir + "Varios.fx");
+            
             gogleViewTexture = TgcTexture.createTexture(MediaDir + "gogleView.png").D3dTexture;
+            gogleViewEffect.SetValue("gogleViewTexture", gogleViewTexture);
         }
 
         #endregion
