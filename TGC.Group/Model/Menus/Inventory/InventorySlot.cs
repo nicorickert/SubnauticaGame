@@ -18,12 +18,13 @@ namespace TGC.Group.Model.Menus.Inventory
 
         private TgcText2D itemName = new TgcText2D();
         private CustomSprite itemSprite;
+        private CustomSprite slotBackground;
         private TgcText2D itemDescription = new TgcText2D();
         private TgcText2D itemAmount = new TgcText2D();
 
 
-        public InventorySlot(TGCVector2 position, EItemID itemID, int amount)
-            : base(position)
+        public InventorySlot(TGCVector2 position, EItemID itemID, int amount, Menu menu, CustomBitmap bitmapBackground)
+            : base(position, menu)
         {
             itemSample = ItemDatabase.Instance.Generate(itemID);
             this.amount = amount;
@@ -52,11 +53,18 @@ namespace TGC.Group.Model.Menus.Inventory
             itemAmount.changeFont(new Font("TimesNewRoman", 14, FontStyle.Bold));
             itemAmount.Color = Color.White;
 
-            Size = new Size((int)(itemSprite.Bitmap.Size.Width * scalingFactor + itemDescription.Size.Width + 30), (int)(itemSprite.Bitmap.Height * scalingFactor + 20));
+            Size = new Size((int)(itemSprite.Bitmap.Size.Width * scalingFactor + itemDescription.Size.Width + 180), (int)(itemSprite.Bitmap.Height * scalingFactor + 30));
+
+            slotBackground = new CustomSprite();
+            slotBackground.Bitmap = bitmapBackground;
+            slotBackground.Position = new TGCVector2(Position.X - 25, Position.Y - 15);
+            // slotBackground.SrcRect = new Rectangle((int)position.X, (int)position.Y, Size.Width, Size.Height);
+            slotBackground.SrcRect = new Rectangle(0, 0, Size.Width, Size.Height);
         }
 
         public override void RenderSprites(Drawer2D drawer)
         {
+            drawer.DrawSprite(slotBackground);
             drawer.DrawSprite(itemSprite);
         }
 
@@ -69,6 +77,8 @@ namespace TGC.Group.Model.Menus.Inventory
 
         public override void Dispose()
         {
+            slotBackground.Dispose();
+            itemSprite.Dispose();
             itemName.Dispose();
             itemDescription.Dispose();
             itemAmount.Dispose();
@@ -77,6 +87,7 @@ namespace TGC.Group.Model.Menus.Inventory
         public override void OnClick(Player clicker)
         {
             clicker.Inventory.GetItem(itemSample.ID).Use(clicker);
+            menu.UpdateSlotDisplay();
         }
     }
 }

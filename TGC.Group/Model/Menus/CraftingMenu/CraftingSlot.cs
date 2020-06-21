@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using TGC.Core.Direct3D;
 using TGC.Core.Mathematica;
 using TGC.Core.Text;
 using TGC.Group.Model.Items;
@@ -16,14 +17,15 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         private TgcText2D title = new TgcText2D();
         private TgcText2D description = new TgcText2D();
 
-        public CraftingSlot(TGCVector2 position, BluePrint bluePrint)
-           : base(position)
+        public CraftingSlot(TGCVector2 position, BluePrint bluePrint, Menu menu, CustomBitmap bitmapBackground, CustomBitmap bitmapProduct)
+           : base(position, menu)
         {
             Item productSample = ItemDatabase.Instance.Generate(bluePrint.ProductId);
 
             this.bluePrint = bluePrint;
 
-            productSlot = new CustomSprite(Game.Default.MediaDirectory + "cajaMadera4.jpg");
+            productSlot = new CustomSprite();
+            productSlot.Bitmap = bitmapProduct;
             productSlot.Position = new TGCVector2(position.X + 10, position.Y + 10);
             float slotScalingFactor = 0.5f;
             productSlot.Scaling = TGCVector2.One * slotScalingFactor;
@@ -47,9 +49,12 @@ namespace TGC.Group.Model.Menus.CraftingMenu
 
             Size = new Size((int)(productSlot.Bitmap.Size.Width * slotScalingFactor + description.Size.Width + 30), (int)(productSlot.Bitmap.Height * slotScalingFactor + 20));
 
-            slotBackground = new CustomSprite(Game.Default.MediaDirectory + "craftingSlotBackground.jpg");
+            slotBackground = new CustomSprite();
+            slotBackground.Bitmap = bitmapBackground;
             slotBackground.Position = Position;
-            slotBackground.SrcRect = new Rectangle((int)position.X, (int)position.Y, Size.Width, Size.Height);
+            // slotBackground.SrcRect = new Rectangle((int)position.X, (int)position.Y, Size.Width, Size.Height);
+            slotBackground.SrcRect = new Rectangle(0, 0, Size.Width, Size.Height);
+
         }
 
 
@@ -69,6 +74,8 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         public override void Dispose()
         {
             productSlot.Dispose();
+            slotBackground.Dispose();
+            productSprite.Dispose();
             title.Dispose();
             description.Dispose();
         }

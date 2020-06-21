@@ -13,11 +13,17 @@ namespace TGC.Group.Model.Menus.CraftingMenu
     class CraftingMenu : Menu
     {
         private bool craftingCooldownEnabled = false;
+        private CustomBitmap bitmapSlotBackground;
+        private CustomBitmap bitmapSlotProduct;
 
         public Player Owner => owner;
 
         public CraftingMenu() 
-            : base() { }
+            : base() {
+            // Imagenes para los slots
+            bitmapSlotBackground = new CustomBitmap(Game.Default.MediaDirectory + "craftingSlotBackground.jpg", D3DDevice.Instance.Device);
+            bitmapSlotProduct = new CustomBitmap(Game.Default.MediaDirectory + "cajaMadera4.jpg", D3DDevice.Instance.Device);
+        }
 
         public override void Update(float elapsedTime)
         {
@@ -46,14 +52,14 @@ namespace TGC.Group.Model.Menus.CraftingMenu
             craftingCooldownEnabled = false;
         }
 
-        protected override void UpdateSlotDisplay()
+        public override void UpdateSlotDisplay()
         {
             slots.Clear();
 
             TGCVector2 nextPosition = position;
             foreach (var bp in owner.AvailableBluePrints)
             {
-                CraftingSlot craftingSlot = new CraftingSlot(nextPosition, bp);
+                CraftingSlot craftingSlot = new CraftingSlot(nextPosition, bp, this, bitmapSlotBackground, bitmapSlotProduct);
                 slots.Add(craftingSlot);
                 nextPosition.Y += craftingSlot.Size.Height + 30;
             }

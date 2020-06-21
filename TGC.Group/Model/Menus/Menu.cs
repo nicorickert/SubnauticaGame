@@ -1,4 +1,5 @@
-﻿using Microsoft.DirectX.DirectInput;
+﻿using Microsoft.DirectX.Direct3D;
+using Microsoft.DirectX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace TGC.Group.Model.Menus
         protected List<MenuSlot> slots = new List<MenuSlot>();
         protected float timeSinceLastClick = 0f;
         protected float clickCooldown = 0.3f;
+        protected TgcD3dInput input;
 
         public virtual bool IsBeingUsed => owner != null;
 
@@ -25,6 +27,7 @@ namespace TGC.Group.Model.Menus
         {
             float deviceHeight = D3DDevice.Instance.Height;
             float deviceWidth = D3DDevice.Instance.Width;
+            
 
             position = new TGCVector2(deviceWidth * 0.3f, deviceHeight * 0.1f);
         }
@@ -52,11 +55,10 @@ namespace TGC.Group.Model.Menus
                 slot.Dispose();
         }
 
-        protected abstract void UpdateSlotDisplay();
+        public abstract void UpdateSlotDisplay();
 
         protected void CheckClicks()
         {
-            TgcD3dInput input = owner.GameInstance.Input;
             if (input.buttonDown(TgcD3dInput.MouseButtons.BUTTON_LEFT) && timeSinceLastClick >= clickCooldown)
             {
                 TGCVector2 clickPosition = new TGCVector2(input.Xpos, input.Ypos);
@@ -79,6 +81,7 @@ namespace TGC.Group.Model.Menus
 
             owner = user;
             owner.GameInstance.MouseEnable();
+            input = owner.GameInstance.Input;
         }
 
         public virtual void Close()
@@ -87,6 +90,7 @@ namespace TGC.Group.Model.Menus
                 throw new Exception("The menu doesn´t have an owner.");
 
             owner.GameInstance.MouseDisable();
+            input = null;
             owner = null;
         }
     }
