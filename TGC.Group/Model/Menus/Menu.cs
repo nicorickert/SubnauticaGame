@@ -34,7 +34,7 @@ namespace TGC.Group.Model.Menus
 
         public abstract void Update(float elapsedTime);
 
-        public void Render()
+        public virtual void Render()
         {
             Drawer2D drawer = new Drawer2D();
 
@@ -49,7 +49,7 @@ namespace TGC.Group.Model.Menus
                 slot.RenderText();
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             foreach (var slot in slots)
                 slot.Dispose();

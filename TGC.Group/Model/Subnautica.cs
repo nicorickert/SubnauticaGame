@@ -20,6 +20,7 @@ using Font = System.Drawing.Font;
 using Effect = Microsoft.DirectX.Direct3D.Effect;
 using TGC.Core.Shaders;
 using TGC.Core.Textures;
+using TGC.Group.Model.Menus.PauseMenu;
 
 namespace TGC.Group.Model
 {
@@ -74,6 +75,8 @@ namespace TGC.Group.Model
         private TgcText2D crossHair = new TgcText2D();
         private TgcText2D gameTimer = new TgcText2D();
 
+        private PauseMenu pauseMenu;
+
         #endregion
 
 
@@ -102,7 +105,7 @@ namespace TGC.Group.Model
             InitFullQuadVB();
             InitAuxRenderTarget();
             InitGogleViewEffectResources();
-        }
+    }
 
         public override void Update()
         {
@@ -319,6 +322,8 @@ namespace TGC.Group.Model
             gameTimer.Size = new Size(300, 600);
             gameTimer.changeFont(new Font("TimesNewRoman", 12, FontStyle.Regular));
             gameTimer.Align = TgcText2D.TextAlign.LEFT;
+
+            pauseMenu = new PauseMenu(this);
         }
 
         private void UpdateHUD()
@@ -332,6 +337,7 @@ namespace TGC.Group.Model
         {
             healthTextBox.render();
             oxygenTextBox.render();
+            pauseMenu.Render();
 
             if(showCrosshair)
                 crossHair.render();
@@ -341,6 +347,7 @@ namespace TGC.Group.Model
 
         private void DisposeHUD()
         {
+            pauseMenu.Dispose();
             healthTextBox.Dispose();
             oxygenTextBox.Dispose();
             gameTimer.Dispose();
