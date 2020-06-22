@@ -76,6 +76,7 @@ namespace TGC.Group.Model
                 effect = TGCShaders.Instance.LoadEffect(currentEffect);
                 effect.Technique = "Default";
                 effect.SetValue("textureExample", terrainTexture.D3dTexture);
+                GameInstance.loadEffectWithFogValues(effect);
             }
         }
 
@@ -85,7 +86,6 @@ namespace TGC.Group.Model
             {
                 time += GameInstance.ElapsedTime;
                 effect.SetValue("time", time);
-                GameInstance.loadEffectWithFogValues(effect);
             }
         }
 

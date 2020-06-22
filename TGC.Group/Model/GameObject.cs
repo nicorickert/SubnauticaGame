@@ -58,6 +58,7 @@ namespace TGC.Group.Model
             {
                 //mesh.Effect = effect;
                 mesh.Effect.SetValue("lightPosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.LightPosition));
+                GameInstance.loadEffectWithFogValues(mesh.Effect);
                 mesh.Technique = "BlinnPhongTextured";
             }
 

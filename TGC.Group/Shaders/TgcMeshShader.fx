@@ -238,6 +238,10 @@ float ks = 1000000;
 float3 lightPosition;
 float3 eyePosition;
 
+// variable de fogs
+float4 ColorFog;
+float StartFogDistance;
+float EndFogDistance;
 
 struct VS_INPUT_BlinnPhong
 {
@@ -252,6 +256,7 @@ struct VS_OUTPUT_BlinnPhong
     float2 TextureCoordinates : TEXCOORD0;
     float4 WorldPosition : TEXCOORD1;
     float3 WorldNormal : TEXCOORD2;
+    float3 ViewPosition : TEXCOORD3;
 };
 
 VS_OUTPUT_BlinnPhong vs_BlinnPhong(VS_INPUT_BlinnPhong input)
@@ -266,7 +271,8 @@ VS_OUTPUT_BlinnPhong vs_BlinnPhong(VS_INPUT_BlinnPhong input)
     
     output.WorldNormal = mul(input.Normal, matInverseTransposeWorld).xyz;
     
-    
+    output.ViewPosition = mul(input.Position, matWorldView);
+	
     return output;
 }
 
@@ -292,6 +298,19 @@ float4 ps_BlinnPhong(VS_OUTPUT_BlinnPhong input) : COLOR0
 	
     float3 finalColorRGB = saturate(ambientLight + diffuseLight) * texelColor.rgb + specularLight;
     float4 finalColor = float4(finalColorRGB, texelColor.a);
+	
+	// FOG
+    
+	float zNear = StartFogDistance;
+    float zFar = EndFogDistance;
+    float zPos = input.ViewPosition.z; // Distancia relativa a la camara
+	
+    float distPlanes = zFar - zNear;
+    float distPosToNear = zPos - zNear;
+	
+    float proportion = clamp(distPosToNear / distPlanes, 0, 1); // clamp = minimo 0 maximo 1 o sino la division
+	
+    finalColor = lerp(finalColor, ColorFog, proportion);
 	
     return finalColor;
 }

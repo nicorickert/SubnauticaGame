@@ -216,6 +216,7 @@
   <ItemGroup>
     <Content Include="Media\cajaMadera4.jpg" />
     <Content Include="Media\LogoTGC-TgcScene.xml" />
+    <Content Include="Shaders\SkyboxShader.fx" />
     <Content Include="Shaders\SeaFloorShader.fx" />
     <Content Include="Shaders\WaterShader.fx" />
   </ItemGroup>
