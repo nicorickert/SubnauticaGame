@@ -11,6 +11,11 @@ float4x4 matInverseTransposeWorld; //Matriz Transpose(Invert(World))
 
 float time = 0;
 
+// variable de fogs
+float4 ColorFog;
+float StartFogDistance;
+float EndFogDistance;
+
 //Textura
 texture textureExample;
 sampler2D textureSampler = sampler_state

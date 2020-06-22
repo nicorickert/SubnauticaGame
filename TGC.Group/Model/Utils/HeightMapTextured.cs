@@ -85,6 +85,7 @@ namespace TGC.Group.Model
             {
                 time += GameInstance.ElapsedTime;
                 effect.SetValue("time", time);
+                GameInstance.loadEffectWithFogValues(effect);
             }
         }
 

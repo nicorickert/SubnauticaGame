@@ -21,6 +21,7 @@ using Effect = Microsoft.DirectX.Direct3D.Effect;
 using TGC.Core.Shaders;
 using TGC.Core.Textures;
 using TGC.Group.Model.Menus.PauseMenu;
+using TGC.Core.Fog;
 
 namespace TGC.Group.Model
 {
@@ -32,6 +33,7 @@ namespace TGC.Group.Model
         #endregion
 
         #region RENDER
+        private TgcFog fog;
         private Effect gogleViewEffect;
         private Texture gogleViewTexture;
         private VertexBuffer fullQuadVertexBuffer;
@@ -105,7 +107,8 @@ namespace TGC.Group.Model
             InitFullQuadVB();
             InitAuxRenderTarget();
             InitGogleViewEffectResources();
-    }
+            InitFog();
+        }
 
         public override void Update()
         {
@@ -311,7 +314,7 @@ namespace TGC.Group.Model
 
             crossHair.Text = "+";
             crossHair.Color = Color.White;
-            crossHair.Position = new Point(deviceWidth/2 - 8, deviceHeight/2 - 40);
+            crossHair.Position = new Point(deviceWidth / 2 - 8, deviceHeight / 2 - 40);
             crossHair.Size = new Size(600, 200);
             crossHair.changeFont(new Font("TimesNewRoman", 25, FontStyle.Regular));
             crossHair.Align = TgcText2D.TextAlign.LEFT;
@@ -339,7 +342,7 @@ namespace TGC.Group.Model
             oxygenTextBox.render();
             pauseMenu.Render();
 
-            if(showCrosshair)
+            if (showCrosshair)
                 crossHair.render();
 
             gameTimer.render();
@@ -464,9 +467,29 @@ namespace TGC.Group.Model
         private void InitGogleViewEffectResources()
         {
             gogleViewEffect = TGCShaders.Instance.LoadEffect(ShadersDir + "Varios.fx");
-            
+
             gogleViewTexture = TgcTexture.createTexture(MediaDir + "gogleView.png").D3dTexture;
             gogleViewEffect.SetValue("gogleViewTexture", gogleViewTexture);
+        }
+
+        private void InitFog()
+        {
+            fog = new TgcFog();
+            fog.StartDistance = 5000f;
+            fog.EndDistance = 12000f;
+            fog.Color = Color.FromArgb(255, 11, 36, 74);
+        }
+
+        #endregion
+
+        #region PUBLIC_METHODS
+
+        public void loadEffectWithFogValues(Effect effect)
+        {
+            effect.SetValue("ColorFog", fog.Color.ToArgb());
+            //effect.SetValue("CameraPos", TGCVector3.TGCVector3ToFloat4Array(Camera.Position));
+            effect.SetValue("StartFogDistance", fog.StartDistance);
+            effect.SetValue("EndFogDistance", fog.EndDistance);
         }
 
         #endregion
