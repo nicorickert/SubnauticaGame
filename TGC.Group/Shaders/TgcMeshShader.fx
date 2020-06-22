@@ -225,3 +225,83 @@ technique DIFFUSE_MAP_AND_LIGHTMAP
 		PixelShader = compile ps_3_0 ps_diffuseMapAndLightmap();
 	}
 }
+
+
+/* ---------------------------------------*/
+/*              Blinn-Phong               */
+/* ---------------------------------------*/
+
+float ka = 1;
+float kd = 1;
+float ks = 1000000;
+    
+float3 lightPosition;
+float3 eyePosition;
+
+
+struct VS_INPUT_BlinnPhong
+{
+    float4 Position : POSITION0;
+    float2 TextureCoordinates : TEXCOORD0;
+    float3 Normal : NORMAL0;
+};
+
+struct VS_OUTPUT_BlinnPhong
+{
+    float4 Position : POSITION0;
+    float2 TextureCoordinates : TEXCOORD0;
+    float4 WorldPosition : TEXCOORD1;
+    float3 WorldNormal : TEXCOORD2;
+};
+
+VS_OUTPUT_BlinnPhong vs_BlinnPhong(VS_INPUT_BlinnPhong input)
+{
+    VS_OUTPUT_BlinnPhong output;
+    
+    output.Position = mul(input.Position, matWorldViewProj);
+    
+    output.TextureCoordinates = input.TextureCoordinates;
+    
+    output.WorldPosition = mul(input.Position, matWorld);
+    
+    output.WorldNormal = mul(input.Normal, matInverseTransposeWorld).xyz;
+    
+    
+    return output;
+}
+
+float4 ps_BlinnPhong(VS_OUTPUT_BlinnPhong input) : COLOR0
+{
+    float4 texelColor = tex2D(diffuseMap, input.TextureCoordinates);
+    
+    float3 ambientColor = float3(1, 1, 1);
+    float3 diffuseColor = texelColor.xyz;
+    float3 specularColor = float3(1, 1, 1);
+    float shininess = 10;
+    
+    float3 l = normalize(lightPosition - input.WorldPosition.xyz);
+    float3 v = normalize(eyePosition - input.WorldPosition.xyz);
+    float3 h = normalize(v + l);
+    
+    float n_dot_l = max(0, dot(input.WorldNormal, l));
+    float n_dot_h = max(0, dot(input.WorldNormal, h));
+    
+    float3 ambientLight = ambientColor * ka;
+    float3 diffuseLight = diffuseColor * kd * n_dot_l;
+    float3 specularLight = ks * specularColor * pow(n_dot_h, shininess);
+	
+    float3 finalColorRGB = saturate(ambientLight + diffuseLight) * texelColor.rgb + specularLight;
+    float4 finalColor = float4(finalColorRGB, texelColor.a);
+	
+    return finalColor;
+}
+
+
+technique BlinnPhongTextured
+{
+    pass Pass_0
+    {
+        VertexShader = compile vs_3_0 vs_BlinnPhong();
+        PixelShader = compile ps_3_0 ps_BlinnPhong();
+    }
+}

@@ -39,6 +39,8 @@ namespace TGC.Group.Model
 
         public override void Update()
         {
+            base.Update();
+
             if (!isActive)
             {
                 timeSinceInactive += GameInstance.ElapsedTime;

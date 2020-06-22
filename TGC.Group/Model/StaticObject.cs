@@ -41,7 +41,7 @@ namespace TGC.Group.Model
 
         #region TGC
 
-        public override void Update() { /* No tienen logica */ }
+        public override void Update() { base.Update(); }
 
         #endregion
 

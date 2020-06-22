@@ -22,6 +22,7 @@ using TGC.Core.Shaders;
 using TGC.Core.Textures;
 using TGC.Group.Model.Menus.PauseMenu;
 using TGC.Core.Fog;
+using TGC.Core.Geometry;
 
 namespace TGC.Group.Model
 {
@@ -33,7 +34,6 @@ namespace TGC.Group.Model
         #endregion
 
         #region RENDER
-        private TgcFog fog;
         private Effect gogleViewEffect;
         private Texture gogleViewTexture;
         private VertexBuffer fullQuadVertexBuffer;
@@ -43,20 +43,22 @@ namespace TGC.Group.Model
 
         #region SETTINGS
 
+        private TGCBox lightBox;
         private TGCVector3 skyBoxDimensions = new TGCVector3(65000, 20000, 65000);
         public SueloDelMar SueloDelMar { get; private set; }
         public List<HeightMapTextured> heightMaps = new List<HeightMapTextured>();
         private TgcSkyBox skyBox;
+        private TgcFog fog;
         public QuadTree ScenesQuadTree = new QuadTree();
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
         private readonly float waterY = 0f;
-        private readonly float floorY = -6500;
+        private readonly float floorY = -7000;
         private float escapeDelay = 0;
 
         public bool MouseEnabled { get; private set; } = false;
         public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
-
+        public TGCVector3 LightPosition { get; private set; }
         #endregion
 
         #region OBJECTS
@@ -94,6 +96,7 @@ namespace TGC.Group.Model
 
         public override void Init()
         {
+            InitFog();
             InitMainMeshes();
             InitHUD();
             LoadMainScene();
@@ -101,13 +104,16 @@ namespace TGC.Group.Model
             spawnManager = new SpawnManager(this);
             SetCamera();
 
+            LightPosition = new TGCVector3(0, 8000, -3 * heightMaps[0].XZRadius);
+            lightBox = TGCBox.fromSize(TGCVector3.One * 500, Color.Red);
+            lightBox.Transform = TGCMatrix.Translation(LightPosition);
+
             ScenesQuadTree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(SueloDelMar.centre - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), SueloDelMar.centre + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
             ScenesQuadTree.createDebugQuadTreeMeshes();
 
             InitFullQuadVB();
             InitAuxRenderTarget();
             InitGogleViewEffectResources();
-            InitFog();
         }
 
         public override void Update()
@@ -169,6 +175,8 @@ namespace TGC.Group.Model
             D3DDevice.Instance.Device.DepthStencilSurface = screenDepthStencil;
 
             RenderPostProcess();
+            lightBox.Render();
+            //ScenesQuadTree.RenderDebugBoxes();
 
             D3DDevice.Instance.Device.Present();
         }
@@ -184,6 +192,8 @@ namespace TGC.Group.Model
             // HeightMaps
             foreach (HeightMapTextured hm in heightMaps)
                 hm.Dispose();
+
+            lightBox.Dispose();
 
             ItemDatabase.Instance.Dispose();
             skyBox.Dispose();
@@ -378,6 +388,17 @@ namespace TGC.Group.Model
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, MediaDir + "Skybox\\back.jpg");
 
             skyBox.Init();
+
+            foreach (var face in skyBox.Faces)
+            {
+                var effect = TGCShaders.Instance.LoadEffect(ShadersDir + "SkyboxShader.fx");
+                effect.SetValue("ColorFog", fog.Color.ToArgb());
+                effect.SetValue("WaterLevel", waterY);
+                face.Effect = effect;
+                face.Technique = "Default";
+            }
+
+            skyBox.AlphaBlendEnable = true;
         }
 
         private void UpdateInstantiatedObjects()
@@ -475,8 +496,8 @@ namespace TGC.Group.Model
         private void InitFog()
         {
             fog = new TgcFog();
-            fog.StartDistance = 5000f;
-            fog.EndDistance = 12000f;
+            fog.StartDistance = 3500f;
+            fog.EndDistance = 10000f;
             fog.Color = Color.FromArgb(255, 11, 36, 74);
         }
 

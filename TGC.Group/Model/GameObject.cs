@@ -9,6 +9,7 @@ using System.Linq;
 using System.Drawing;
 using TGC.Group.Model.Utils;
 using TGC.Core.BoundingVolumes;
+using TGC.Core.Shaders;
 
 namespace TGC.Group.Model
 {
@@ -51,12 +52,27 @@ namespace TGC.Group.Model
             GameInstance = gameInstance;
             Name = name;
             Meshes = meshes;
+
+            //var effect = TGCShaders.Instance.LoadEffect("TgcMeshShader.fx");
+            foreach (var mesh in Meshes)
+            {
+                //mesh.Effect = effect;
+                mesh.Effect.SetValue("lightPosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.LightPosition));
+                mesh.Technique = "BlinnPhongTextured";
+            }
+
             LookDirection = InitialLookDirection;
         }
 
         #region TGC
 
-        public abstract void Update();
+        public virtual void Update()
+        {
+            foreach (TgcMesh mesh in MeshesToRender())
+            {
+                mesh.Effect.SetValue("eyePosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.Camera.Position));
+            }
+        }
 
         public virtual void Render()
         {
