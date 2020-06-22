@@ -11,12 +11,14 @@ namespace TGC.Group.Model.Menus
 {
     public abstract class MenuSlot
     {
+        protected Menu menu;
         public Size Size { get; protected set; }
         public TGCVector2 Position { get; protected set; }
 
-        public MenuSlot(TGCVector2 position)
+        public MenuSlot(TGCVector2 position, Menu menu)
         {
             Position = position;
+            this.menu = menu;
         }
 
         public abstract void RenderText();

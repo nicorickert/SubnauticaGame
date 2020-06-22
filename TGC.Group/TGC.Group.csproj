@@ -124,6 +124,7 @@
     <Compile Include="Model\Menus\Inventory\InventorySlot.cs" />
     <Compile Include="Model\Menus\Menu.cs" />
     <Compile Include="Model\Menus\MenuSlot.cs" />
+    <Compile Include="Model\Menus\PauseMenu\PauseMenu.cs" />
     <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Roamer.cs" />
     <Compile Include="Model\Ship.cs" />

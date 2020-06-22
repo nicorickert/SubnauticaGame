@@ -51,7 +51,6 @@ namespace TGC.Group.Model.Menus.PauseMenu
             drawer.EndDrawSprite();
             pauseText.render();
         }
-        
         public override void Dispose()
         {
             background.Dispose();
