@@ -48,7 +48,7 @@ struct VS_OUTPUT
 VS_OUTPUT vsDefault(VS_INPUT input)
 {
 	VS_OUTPUT output;
-
+    
     output.Position = mul(input.Position, matWorldViewProj);
 	output.Texcoord = input.Texcoord;
 	output.MeshPosition = input.Position;

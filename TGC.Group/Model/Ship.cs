@@ -7,16 +7,20 @@ using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
 using TGC.Core.Text;
 using TGC.Group.Model.Items;
+using TGC.Group.Model.Materials;
 using TGC.Group.Model.Menus.CraftingMenu;
 
 namespace TGC.Group.Model
 {
     public class Ship : GameObject
     {
+        public override Material MaterialInfo => Material.Metalic;
+
         private CraftingMenu craftingMenu = new CraftingMenu();
 
 
-        public Ship(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
+        public Ship(Subnautica gameInstance, string name, List<TgcMesh> meshes) 
+            : base(gameInstance, name, meshes)
         {
             Position = new TGCVector3(3500, 60, 0);   // seteo la posicion del barco
             scale *= 4;
@@ -49,6 +53,8 @@ namespace TGC.Group.Model
 
             if (craftingMenu.IsBeingUsed)
                 craftingMenu.Render();
+
+            Console.WriteLine(Meshes[0].Effect.GetValueFloat("ks"));
         }
 
         public override void Dispose()

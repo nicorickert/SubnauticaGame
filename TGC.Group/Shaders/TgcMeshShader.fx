@@ -231,9 +231,9 @@ technique DIFFUSE_MAP_AND_LIGHTMAP
 /*              Blinn-Phong               */
 /* ---------------------------------------*/
 
-float ka = 1;
-float kd = 1;
-float ks = 1000000;
+float ka;
+float kd;
+float ks;
     
 float3 lightPosition;
 float3 eyePosition;

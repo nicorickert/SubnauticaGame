@@ -10,6 +10,7 @@ using System.Drawing;
 using TGC.Group.Model.Utils;
 using TGC.Core.BoundingVolumes;
 using TGC.Core.Shaders;
+using TGC.Group.Model.Materials;
 
 namespace TGC.Group.Model
 {
@@ -24,6 +25,7 @@ namespace TGC.Group.Model
         #region PROPERTIES
         public Subnautica GameInstance { get; protected set; }
         public string Name { get; protected set; }
+        public virtual Material MaterialInfo => Material.Opaque;
         public ECollisionStatus CollisionStatus { get; protected set; } = ECollisionStatus.COLLISIONABLE;
         public bool Collisionable { get { return CollisionStatus == ECollisionStatus.COLLISIONABLE; } }
         public List<TgcMesh> Meshes { get; protected set; }
@@ -53,10 +55,8 @@ namespace TGC.Group.Model
             Name = name;
             Meshes = meshes;
 
-            //var effect = TGCShaders.Instance.LoadEffect("TgcMeshShader.fx");
             foreach (var mesh in Meshes)
             {
-                //mesh.Effect = effect;
                 mesh.Effect.SetValue("lightPosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.LightPosition));
                 GameInstance.loadEffectWithFogValues(mesh.Effect);
                 mesh.Technique = "BlinnPhongTextured";
@@ -67,18 +67,16 @@ namespace TGC.Group.Model
 
         #region TGC
 
-        public virtual void Update()
-        {
-            foreach (TgcMesh mesh in MeshesToRender())
-            {
-                mesh.Effect.SetValue("eyePosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.Camera.Position));
-            }
-        }
+        public virtual void Update() { }
 
         public virtual void Render()
         {
             foreach (TgcMesh mesh in MeshesToRender())
             {
+                mesh.Effect.SetValue("eyePosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.Camera.Position));
+                mesh.Effect.SetValue("ka", MaterialInfo.Ka);
+                mesh.Effect.SetValue("kd", MaterialInfo.Kd);
+                mesh.Effect.SetValue("ks", MaterialInfo.Ks);
                 mesh.Render();
                 //mesh.BoundingBox.Render(); // Borrar para no mostrar los bounding box
             }

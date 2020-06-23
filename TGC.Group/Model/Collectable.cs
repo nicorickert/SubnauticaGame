@@ -17,6 +17,7 @@ namespace TGC.Group.Model
         private bool isActive = true;
 
         #region CONSTRUCTORES
+
         public Collectable(Subnautica gameInstance, string name, List<TgcMesh> meshes, TGCVector3 position, TGCVector3 scale, TGCVector3 rotation, EItemID resourceID) 
             : base(gameInstance, name, meshes, position, scale, rotation)
         {

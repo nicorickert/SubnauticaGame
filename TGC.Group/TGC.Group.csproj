@@ -118,6 +118,7 @@
     <Compile Include="Model\Items\Effects\ItemEffect.cs" />
     <Compile Include="Model\Items\ItemDatabase.cs" />
     <Compile Include="Model\LivingNPC.cs" />
+    <Compile Include="Model\Materials\Material.cs" />
     <Compile Include="Model\Menus\CraftingMenu\CraftingMenu.cs" />
     <Compile Include="Model\Menus\CraftingMenu\CraftingSlot.cs" />
     <Compile Include="Model\Menus\Inventory\InventoryMenu.cs" />

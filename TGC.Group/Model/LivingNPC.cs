@@ -17,7 +17,8 @@ namespace TGC.Group.Model
 
         protected bool IsAlive { get { return health != 0; } }
 
-        public LivingNPC(Subnautica gameInstance, string name, List<TgcMesh> meshes, int maxHealth) : base(gameInstance, name, meshes)
+        public LivingNPC(Subnautica gameInstance, string name, List<TgcMesh> meshes, int maxHealth) 
+            : base(gameInstance, name, meshes)
         {
             this.maxHealth = maxHealth;
             health = maxHealth;

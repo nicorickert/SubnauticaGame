@@ -1,64 +1,98 @@
-﻿//Textura
+﻿/* POSTPROCESS */
+
+
+/**************************************************************************************/
+/* Variables comunes */
+/**************************************************************************************/
+
+//Matrices de transformacion
+float4x4 matWorld; //Matriz de transformacion World
+float4x4 matWorldView; //Matriz World * View
+float4x4 matWorldViewProj; //Matriz World * View * Projection
+float4x4 matInverseTransposeWorld; //Matriz Transpose(Invert(World))
+
+float time = 0;
+
+//Textura
 texture mainSceneTexture;
-sampler2D mainSceneSampler = sampler_state
+sampler mainSceneSampler = sampler_state
 {
     Texture = (mainSceneTexture);
-    ADDRESSU = MIRROR;
-    ADDRESSV = WRAP;
-	MINFILTER = LINEAR;
-    MAGFILTER = LINEAR;
-	MIPFILTER = LINEAR;
+    MipFilter = NONE;
+    MinFilter = NONE;
+    MagFilter = NONE;
 };
 
 texture gogleViewTexture;
-sampler2D gogleViewSampler = sampler_state
+sampler gogleViewSampler = sampler_state
 {
-    Texture = (mainSceneTexture);
-    ADDRESSU = MIRROR;
-    ADDRESSV = WRAP;
-    MINFILTER = LINEAR;
-    MAGFILTER = LINEAR;
-    MIPFILTER = LINEAR;
+    Texture = (gogleViewTexture);
 };
 
 
 //Input del Vertex Shader
-struct VS_INPUT
+struct VS_INPUT_GOGLEVIEW
 {
-	float4 Position : POSITION0;
-	float2 Texcoord : TEXCOORD0;
+    float4 Position : POSITION0;
+    float2 Texcoord : TEXCOORD0;
 };
 
 //Output del Vertex Shader
-struct VS_OUTPUT
+struct VS_OUTPUT_GOGLEVIEW
 {
-	float2 Texcoord : TEXCOORD0;
+    float4 Position : POSITION0;
+    float2 Texcoord : TEXCOORD0;
 };
 
 //Vertex Shader
-VS_OUTPUT vsDefault(VS_INPUT input)
+VS_OUTPUT_GOGLEVIEW vsGogleView(VS_INPUT_GOGLEVIEW input)
 {
-	VS_OUTPUT output;
+    VS_OUTPUT_GOGLEVIEW output;
 
-	output.Texcoord = input.Texcoord;
+    output.Position = float4(input.Position.xy, 0, 1);
+	
+    output.Texcoord = input.Texcoord;
 
-	return output;
+    return output;
 }
 
+struct PS_INPUT_GOGLEVIEW
+{
+    float2 Texcoord : TEXCOORD0;
+};
+
 //Pixel Shader
-float4 psDefault(VS_OUTPUT input) : COLOR0
+float4 psGogleView(PS_INPUT_GOGLEVIEW input) : COLOR0
 {
     float4 mainSceneColor = tex2D(mainSceneSampler, input.Texcoord);
     float4 gogleViewColor = tex2D(gogleViewSampler, input.Texcoord);
-    return mainSceneColor + gogleViewColor;
+	
+    float4 finalColor = (gogleViewColor.a <= 0.005) ? mainSceneColor : gogleViewColor;
+    return finalColor;
 }
 
 
-technique Default
+technique GogleView
 {
-	pass Pass_0
-	{
-		VertexShader = compile vs_3_0 vsDefault();
-		PixelShader = compile ps_3_0 psDefault();
-	}
+    pass Pass_0
+    {
+        VertexShader = compile vs_3_0 vsGogleView();
+        PixelShader = compile ps_3_0 psGogleView();
+    }
+}
+
+
+float4 psNoGogles(PS_INPUT_GOGLEVIEW input) : COLOR0
+{
+    return tex2D(mainSceneSampler, input.Texcoord);
+}
+
+
+technique NoGogles
+{
+    pass Pass_0
+    {
+        VertexShader = compile vs_3_0 vsGogleView();
+        PixelShader = compile ps_3_0 psNoGogles();
+    }
 }

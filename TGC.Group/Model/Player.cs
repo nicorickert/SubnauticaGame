@@ -7,6 +7,7 @@ using TGC.Core.SceneLoader;
 using TGC.Group.Model.Utils;
 using TGC.Group.Model.Items;
 using TGC.Group.Model.Menus.Inventory;
+using TGC.Group.Model.Materials;
 
 namespace TGC.Group.Model
 {
@@ -40,6 +41,7 @@ namespace TGC.Group.Model
         public bool CollidingWithFloor { get { return Position.Y <= GameInstance.FloorLevelToWorldHeight(0); } }
         public bool IsOutOfTheWater { get { return Position.Y > GameInstance.WaterLevelToWorldHeight(0); } }
         public bool IsInSafeZone { get => IsWithinRange(interactionRange, GameInstance.Ship); }
+        public override Material MaterialInfo => Material.Metalic;
 
         private readonly float movementSpeed = 2000f;
         private readonly int baseMaxHealth = 100;
@@ -52,7 +54,8 @@ namespace TGC.Group.Model
         private bool IsOutOfOxygen { get { return Oxygen == 0; } }
         #endregion
 
-        public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) : base(gameInstance, name, meshes)
+        public Player(Subnautica gameInstance, string name, List<TgcMesh> meshes) 
+            : base(gameInstance, name, meshes)
         {
             maxHealth = baseMaxHealth;
             oxygenCapacity = baseOxygenCapacity;

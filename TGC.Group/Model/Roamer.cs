@@ -17,7 +17,8 @@ namespace TGC.Group.Model
 
         protected float roamingSpeed;
 
-        public Roamer(Subnautica gameInstance, string name, List<TgcMesh> meshes, int maxHealth, float roamingSpeed) : base(gameInstance, name, meshes, maxHealth)
+        public Roamer(Subnautica gameInstance, string name, List<TgcMesh> meshes, int maxHealth, float roamingSpeed) 
+            : base(gameInstance, name, meshes, maxHealth)
         {
             this.roamingSpeed = roamingSpeed;
         }
