@@ -57,7 +57,6 @@ namespace TGC.Group.Model
 
             foreach (var mesh in Meshes)
             {
-                mesh.Effect.SetValue("lightPosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.LightPosition));
                 GameInstance.loadEffectWithFogValues(mesh.Effect);
                 mesh.Technique = "BlinnPhongTextured";
             }
@@ -73,6 +72,7 @@ namespace TGC.Group.Model
         {
             foreach (TgcMesh mesh in MeshesToRender())
             {
+                mesh.Effect.SetValue("lightPosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.LightPosition));
                 mesh.Effect.SetValue("eyePosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.Camera.Position));
                 mesh.Effect.SetValue("ka", MaterialInfo.Ka);
                 mesh.Effect.SetValue("kd", MaterialInfo.Kd);

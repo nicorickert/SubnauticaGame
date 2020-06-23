@@ -355,100 +355,100 @@ technique NoGogles
 
 
 
-/* ---------------------------------------*/
-/*              Blinn-Phong               */
-/* ---------------------------------------*/
+///* ---------------------------------------*/
+///*              Blinn-Phong               */
+///* ---------------------------------------*/
 
-float ka;
-float kd;
-float ks;
+//float ka;
+//float kd;
+//float ks;
     
-float3 lightPosition;
-float3 eyePosition;
+//float3 lightPosition;
+//float3 eyePosition;
 
-// variable de fogs
-float4 ColorFog;
-float StartFogDistance;
-float EndFogDistance;
+//// variable de fogs
+//float4 ColorFog;
+//float StartFogDistance;
+//float EndFogDistance;
 
-struct VS_INPUT_BlinnPhong
-{
-    float4 Position : POSITION0;
-    float2 TextureCoordinates : TEXCOORD0;
-    float3 Normal : NORMAL0;
-};
+//struct VS_INPUT_BlinnPhong
+//{
+//    float4 Position : POSITION0;
+//    float2 TextureCoordinates : TEXCOORD0;
+//    float3 Normal : NORMAL0;
+//};
 
-struct VS_OUTPUT_BlinnPhong
-{
-    float4 Position : POSITION0;
-    float2 TextureCoordinates : TEXCOORD0;
-    float4 WorldPosition : TEXCOORD1;
-    float3 WorldNormal : TEXCOORD2;
-    float3 ViewPosition : TEXCOORD3;
-};
+//struct VS_OUTPUT_BlinnPhong
+//{
+//    float4 Position : POSITION0;
+//    float2 TextureCoordinates : TEXCOORD0;
+//    float4 WorldPosition : TEXCOORD1;
+//    float3 WorldNormal : TEXCOORD2;
+//    float3 ViewPosition : TEXCOORD3;
+//};
 
-VS_OUTPUT_BlinnPhong vs_BlinnPhong(VS_INPUT_BlinnPhong input)
-{
-    VS_OUTPUT_BlinnPhong output;
+//VS_OUTPUT_BlinnPhong vs_BlinnPhong(VS_INPUT_BlinnPhong input)
+//{
+//    VS_OUTPUT_BlinnPhong output;
     
-    output.Position = mul(input.Position, matWorldViewProj);
+//    output.Position = mul(input.Position, matWorldViewProj);
     
-    output.TextureCoordinates = input.TextureCoordinates;
+//    output.TextureCoordinates = input.TextureCoordinates;
     
-    output.WorldPosition = mul(input.Position, matWorld);
+//    output.WorldPosition = mul(input.Position, matWorld);
     
-    output.WorldNormal = mul(input.Normal, matInverseTransposeWorld).xyz;
+//    output.WorldNormal = mul(input.Normal, matInverseTransposeWorld).xyz;
     
-    output.ViewPosition = mul(input.Position, matWorldView);
+//    output.ViewPosition = mul(input.Position, matWorldView);
 	
-    return output;
-}
+//    return output;
+//}
 
-float4 ps_BlinnPhong(VS_OUTPUT_BlinnPhong input) : COLOR0
-{
-    float4 texelColor = tex2D(diffuseMap, input.TextureCoordinates);
+//float4 ps_BlinnPhong(VS_OUTPUT_BlinnPhong input) : COLOR0
+//{
+//    float4 texelColor = tex2D(diffuseMap, input.TextureCoordinates);
     
-    float3 ambientColor = float3(1, 1, 1);
-    float3 diffuseColor = texelColor.xyz;
-    float3 specularColor = float3(1, 1, 1);
-    float shininess = 10;
+//    float3 ambientColor = float3(1, 1, 1);
+//    float3 diffuseColor = texelColor.xyz;
+//    float3 specularColor = float3(1, 1, 1);
+//    float shininess = 10;
     
-    float3 l = normalize(lightPosition - input.WorldPosition.xyz);
-    float3 v = normalize(eyePosition - input.WorldPosition.xyz);
-    float3 h = normalize(v + l);
+//    float3 l = normalize(lightPosition - input.WorldPosition.xyz);
+//    float3 v = normalize(eyePosition - input.WorldPosition.xyz);
+//    float3 h = normalize(v + l);
     
-    float n_dot_l = max(0, dot(input.WorldNormal, l));
-    float n_dot_h = max(0, dot(input.WorldNormal, h));
+//    float n_dot_l = max(0, dot(input.WorldNormal, l));
+//    float n_dot_h = max(0, dot(input.WorldNormal, h));
     
-    float3 ambientLight = ambientColor * ka;
-    float3 diffuseLight = diffuseColor * kd * n_dot_l;
-    float3 specularLight = ks * specularColor * pow(n_dot_h, shininess);
+//    float3 ambientLight = ambientColor * ka;
+//    float3 diffuseLight = diffuseColor * kd * n_dot_l;
+//    float3 specularLight = ks * specularColor * pow(n_dot_h, shininess);
 	
-    float3 finalColorRGB = saturate(ambientLight + diffuseLight) * texelColor.rgb + specularLight;
-    float4 finalColor = float4(finalColorRGB, texelColor.a);
+//    float3 finalColorRGB = saturate(ambientLight + diffuseLight) * texelColor.rgb + specularLight;
+//    float4 finalColor = float4(finalColorRGB, texelColor.a);
 	
-	// FOG
+//	// FOG
     
-    float zNear = StartFogDistance;
-    float zFar = EndFogDistance;
-    float zPos = input.ViewPosition.z; // Distancia relativa a la camara
+//    float zNear = StartFogDistance;
+//    float zFar = EndFogDistance;
+//    float zPos = input.ViewPosition.z; // Distancia relativa a la camara
 	
-    float distPlanes = zFar - zNear;
-    float distPosToNear = zPos - zNear;
+//    float distPlanes = zFar - zNear;
+//    float distPosToNear = zPos - zNear;
 	
-    float proportion = clamp(distPosToNear / distPlanes, 0, 1); // clamp = minimo 0 maximo 1 o sino la division
+//    float proportion = clamp(distPosToNear / distPlanes, 0, 1); // clamp = minimo 0 maximo 1 o sino la division
 	
-    finalColor = lerp(finalColor, ColorFog, proportion);
+//    finalColor = lerp(finalColor, ColorFog, proportion);
 	
-    return finalColor;
-}
+//    return finalColor;
+//}
 
 
-technique BlinnPhongTextured
-{
-    pass Pass_0
-    {
-        VertexShader = compile vs_3_0 vs_BlinnPhong();
-        PixelShader = compile ps_3_0 ps_BlinnPhong();
-    }
-}
+//technique BlinnPhongTextured
+//{
+//    pass Pass_0
+//    {
+//        VertexShader = compile vs_3_0 vs_BlinnPhong();
+//        PixelShader = compile ps_3_0 ps_BlinnPhong();
+//    }
+//}

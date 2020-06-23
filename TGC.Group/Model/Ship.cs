@@ -53,8 +53,6 @@ namespace TGC.Group.Model
 
             if (craftingMenu.IsBeingUsed)
                 craftingMenu.Render();
-
-            Console.WriteLine(Meshes[0].Effect.GetValueFloat("ks"));
         }
 
         public override void Dispose()
