@@ -110,9 +110,9 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 
     float3 position = input.Position.xyz;
     
-    position += waveGenerator(position, tangentX, tangentZ, float2(1, 0), 50.4, 0.25, 20);
-    position += waveGenerator(position, tangentX, tangentZ, float2(0, 1), 25.2, 0.5, 20);
-    //position += waveGenerator(position, tangentX, tangentZ, float2(1, 0), 30, 0.5, 20);
+    position += waveGenerator(position, tangentX, tangentZ, float2(1, 1), 25, 0.01, 40);
+    position += waveGenerator(position, tangentX, tangentZ, float2(1, 1.4), 30, 0.01, 40);
+    position += waveGenerator(position, tangentX, tangentZ, float2(1, 0.8), 15, 0.02, 20);
     
     input.Position.xyz = position;
     input.Normal = normalize(cross(tangentX, tangentZ));
@@ -123,7 +123,6 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 	output.MeshPosition = input.Position;
     
     output.WorldNormal = mul(float4(input.Normal, 1.0), matInverseTransposeWorld);
-    output.WorldNormal = input.Normal;
 	return output;
 }
 
@@ -137,7 +136,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
     float3 ambientColor = float3(1, 1, 1);
     float3 diffuseColor = texelColor.xyz;
     float3 specularColor = float3(1, 1, 1);
-    float shininess = 8;
+    float shininess = 15;
     
     float3 l = normalize(lightPosition - input.WorldPosition.xyz);
     float3 v = normalize(eyePosition - input.WorldPosition.xyz);
@@ -153,7 +152,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
     float3 finalColorRGB = saturate(ambientLight + diffuseLight) * texelColor.rgb + specularLight;
     float4 finalColor = float4(finalColorRGB, texelColor.a);
 	
-    //return float4(n_dot_h, 0, 0, 1);
+    //return float4(n_dot_l, 0, 0, 1);
     //return float4((input.WorldNormal.x),0,input.WorldNormal.z, 1);
     return finalColor;
 }

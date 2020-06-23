@@ -96,7 +96,7 @@ namespace TGC.Group.Model
 
         public override void Init()
         {
-            LightPosition = new TGCVector3(0,8000, -3 * skyBoxDimensions.X);
+            LightPosition = new TGCVector3(0,80000, -3 * skyBoxDimensions.X);
             lightBox = TGCBox.fromSize(TGCVector3.One * 500, Color.Red);
             lightBox.Transform = TGCMatrix.Translation(LightPosition);
 
@@ -296,7 +296,7 @@ namespace TGC.Group.Model
         {
             SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMFondo-x128.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx", 500f, 20f);
             heightMaps.Add(SueloDelMar);
-            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlanox256.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx", 250, 1f));
+            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlanox1024.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx", 62.5f, 1f));
 
             foreach (HeightMapTextured hm in heightMaps)
             {
