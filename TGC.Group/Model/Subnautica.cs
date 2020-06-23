@@ -96,6 +96,10 @@ namespace TGC.Group.Model
 
         public override void Init()
         {
+            LightPosition = new TGCVector3(0,8000, -3 * skyBoxDimensions.X);
+            lightBox = TGCBox.fromSize(TGCVector3.One * 500, Color.Red);
+            lightBox.Transform = TGCMatrix.Translation(LightPosition);
+
             InitFog();
             InitMainMeshes();
             InitHUD();
@@ -103,10 +107,7 @@ namespace TGC.Group.Model
             ManageFocus();
             spawnManager = new SpawnManager(this);
             SetCamera();
-
-            LightPosition = new TGCVector3(0, 8000, -3 * heightMaps[0].XZRadius);
-            lightBox = TGCBox.fromSize(TGCVector3.One * 500, Color.Red);
-            lightBox.Transform = TGCMatrix.Translation(LightPosition);
+            
 
             ScenesQuadTree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(SueloDelMar.centre - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), SueloDelMar.centre + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
             ScenesQuadTree.createDebugQuadTreeMeshes();
@@ -295,7 +296,7 @@ namespace TGC.Group.Model
         {
             SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMFondo-x128.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx", 500f, 20f);
             heightMaps.Add(SueloDelMar);
-            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlano.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx", 1000f, 1f));
+            heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlanox256.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx", 250, 1f));
 
             foreach (HeightMapTextured hm in heightMaps)
             {
@@ -389,11 +390,13 @@ namespace TGC.Group.Model
 
             skyBox.Init();
 
+            var effect = TGCShaders.Instance.LoadEffect(ShadersDir + "SkyboxShader.fx");
+            effect.SetValue("ColorFog", fog.Color.ToArgb());
+            effect.SetValue("WaterLevel", waterY);
+
             foreach (var face in skyBox.Faces)
             {
-                var effect = TGCShaders.Instance.LoadEffect(ShadersDir + "SkyboxShader.fx");
-                effect.SetValue("ColorFog", fog.Color.ToArgb());
-                effect.SetValue("WaterLevel", waterY);
+               
                 face.Effect = effect;
                 face.Technique = "Default";
             }

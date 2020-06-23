@@ -76,6 +76,7 @@ namespace TGC.Group.Model
                 effect = TGCShaders.Instance.LoadEffect(currentEffect);
                 effect.Technique = "Default";
                 effect.SetValue("textureExample", terrainTexture.D3dTexture);
+                effect.SetValue("lightPosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.LightPosition));
                 GameInstance.loadEffectWithFogValues(effect);
             }
         }
@@ -86,6 +87,7 @@ namespace TGC.Group.Model
             {
                 time += GameInstance.ElapsedTime;
                 effect.SetValue("time", time);
+                effect.SetValue("eyePosition", TGCVector3.TGCVector3ToFloat3Array(GameInstance.Camera.Position));
             }
         }
 
