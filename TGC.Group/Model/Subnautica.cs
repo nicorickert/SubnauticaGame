@@ -104,6 +104,8 @@ namespace TGC.Group.Model
             spawnManager = new SpawnManager(this);
             SetCamera();
 
+            DirectSound.ListenerTracking = Player.Meshes[0]; // Alguno de los meshes del player, cumplen con la interfaz ITransformObject
+
             LightPosition = new TGCVector3(0, 8000, -3 * heightMaps[0].XZRadius);
             lightBox = TGCBox.fromSize(TGCVector3.One * 500, Color.Red);
             lightBox.Transform = TGCMatrix.Translation(LightPosition);
