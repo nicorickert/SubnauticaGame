@@ -133,7 +133,12 @@ namespace TGC.Group.Model
                 UpdateInstantiatedObjects();
                 spawnManager.Update();
 
+
+                // Actualizo el frustum para que solo tome hasta la fog distance asi no manda a renderizar items del quadtree que estén por detras
+                var projectionMatrixFog = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio, D3DDevice.Instance.ZNearPlaneDistance, FastMath.Abs(fog.EndDistance));
+                Frustum.updateVolume(TGCMatrix.FromMatrix(D3DDevice.Instance.Device.Transform.View), projectionMatrixFog);
                 ScenesQuadTree.UpdateVisibleObjects(Frustum);
+
 
                 // Todos los objetos (estaticos y no estaticos)
                 foreach (GameObject o in SceneObjects)
@@ -145,11 +150,15 @@ namespace TGC.Group.Model
 
                 // Muevo el centro del skybox para que sea inalcanzable
                 skyBox.Center = new TGCVector3(Camera.Position.X, 0, Camera.Position.Z);
+
+
             }
 
             UpdateHUD();
 
             time += ElapsedTime;
+
+
             PostUpdate();
         }
 
@@ -157,16 +166,16 @@ namespace TGC.Group.Model
         {
             //PreRender();
             ClearTextures();
-
             var screenRenderTargetSurface = D3DDevice.Instance.Device.GetRenderTarget(0);
             var screenDepthStencil = D3DDevice.Instance.Device.DepthStencilSurface;
 
             var surf = auxRenderTarget.GetSurfaceLevel(0);
             D3DDevice.Instance.Device.SetRenderTarget(0, surf);
             D3DDevice.Instance.Device.DepthStencilSurface = auxDepthStencil;
-            D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, fog.Color, 1.0f, 0);
 
             RenderMainScene();
+
 
             surf.Dispose();
             // Para guardar una imagen
@@ -177,7 +186,6 @@ namespace TGC.Group.Model
 
             RenderPostProcess();
             lightBox.Render();
-            //ScenesQuadTree.RenderDebugBoxes();
 
             D3DDevice.Instance.Device.Present();
         }
@@ -464,7 +472,7 @@ namespace TGC.Group.Model
 
             gogleViewEffect.SetValue("mainSceneTexture", auxRenderTarget);
 
-            D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, fog.Color, 1.0f, 0);
 
             if (Player.IsSubmerged)
             {
