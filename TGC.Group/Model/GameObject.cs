@@ -95,8 +95,8 @@ namespace TGC.Group.Model
 
         public void Destroy()
         {
-            Dispose();
             GameInstance.DestroyObject(this);
+            Dispose();
         }
 
         #region COLLISIONS

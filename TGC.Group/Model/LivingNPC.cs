@@ -49,7 +49,7 @@ namespace TGC.Group.Model
         public override void Interact(Player interactor)
         {
             AddHealth(-1 * interactor.AttackDamage);
-            onHitSounds[MathExtended.GetRandomNumberBetween(0, onHitSounds.Count + 1)].play();
+            onHitSounds[MathExtended.GetRandomNumberBetween(0, onHitSounds.Count)].play();
 
             if (!IsAlive)
             {
@@ -63,13 +63,6 @@ namespace TGC.Group.Model
             }
         }
 
-        public override void Dispose()
-        {
-            base.Dispose();
-
-            foreach (var sound in onHitSounds)
-                sound.dispose();
-        }
         #endregion
 
         protected void AddHealth(int quantity)
