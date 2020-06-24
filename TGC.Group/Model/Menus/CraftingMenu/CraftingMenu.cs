@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TGC.Core.Direct3D;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
+using TGC.Core.Sound;
 using TGC.Group.Model.Utils.Sprites;
 
 namespace TGC.Group.Model.Menus.CraftingMenu
@@ -15,6 +16,7 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         private bool craftingCooldownEnabled = false;
         private CustomBitmap bitmapSlotBackground;
         private CustomBitmap bitmapSlotProduct;
+        private TgcStaticSound openSound = new TgcStaticSound();
 
         public Player Owner => owner;
 
@@ -39,6 +41,9 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         public override void Open(Player crafter)
         {
             base.Open(crafter);
+
+            openSound.loadSound(crafter.GameInstance.MediaDir + "//Sounds//AbrirMenuCrafteo.wav", crafter.GameInstance.DirectSound.DsDevice);
+            openSound.play();
 
             UpdateSlotDisplay();
             timeSinceLastClick = 0f;

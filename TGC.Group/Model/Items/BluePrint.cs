@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TGC.Core.Sound;
 
 namespace TGC.Group.Model.Items
 {
@@ -21,6 +22,7 @@ namespace TGC.Group.Model.Items
 
     public class BluePrint
     {
+        private TgcStaticSound craftingSound = new TgcStaticSound();
         private readonly List<ItemAmount> requirements;
 
         public EItemID ProductId { get; private set; }
@@ -57,6 +59,10 @@ namespace TGC.Group.Model.Items
                 Item craftedItem = ItemDatabase.Instance.Generate(ProductId);
                 RemoveRequirementsFrom(crafter);
                 crafter.CollectItem(craftedItem);
+
+                var soundNumber = MathExtended.GetRandomNumberBetween(1, 3);
+                craftingSound.loadSound(crafter.GameInstance.MediaDir + "//Sounds//Construir"+soundNumber+".wav", crafter.GameInstance.DirectSound.DsDevice);
+                craftingSound.play();
             }
         }
 

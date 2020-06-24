@@ -8,6 +8,7 @@ using TGC.Group.Model.Utils;
 using TGC.Group.Model.Items;
 using TGC.Group.Model.Menus.Inventory;
 using TGC.Group.Model.Materials;
+using TGC.Core.Sound;
 
 namespace TGC.Group.Model
 {
@@ -27,6 +28,8 @@ namespace TGC.Group.Model
         public int SelectedItem { get; private set; } = 0;
         public TGCVector3 RelativeEyePosition { get; } = new TGCVector3(0, 120, 30);
         private InventoryMenu inventoryMenu;
+        private TgcStaticSound onHitSound = new TgcStaticSound();
+        private TgcStaticSound outOfOxygenSound = new TgcStaticSound();
         #endregion
 
         #region STATS
@@ -78,6 +81,9 @@ namespace TGC.Group.Model
                 CollectItem(ItemDatabase.Instance.Generate(EItemID.RAW_FISH));
                 CollectItem(ItemDatabase.Instance.Generate(EItemID.RAW_SHARK));
             }
+            
+            onHitSound.loadSound(GameInstance.MediaDir + "//Sounds//Golpe4.wav", GameInstance.DirectSound.DsDevice);
+            outOfOxygenSound.loadSound(GameInstance.MediaDir + "//Sounds//Burbujas.wav", GameInstance.DirectSound.DsDevice);
         }
 
         #region TGC
@@ -116,6 +122,13 @@ namespace TGC.Group.Model
             }
 
             base.Render();
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            onHitSound.dispose();
+            outOfOxygenSound.dispose();
         }
 
         #endregion
@@ -268,6 +281,15 @@ namespace TGC.Group.Model
                 return;
 
             Health = FastMath.Clamp(Health + quantity, 0, maxHealth);
+
+            if (quantity < 0)
+            {
+                if (IsOutOfOxygen)
+                    outOfOxygenSound.play();
+                else
+                    onHitSound.play();
+            }
+                
         }
 
         public void IncreaseMaxHealth(int quantity)

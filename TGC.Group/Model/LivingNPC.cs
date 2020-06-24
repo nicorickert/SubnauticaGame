@@ -16,7 +16,7 @@ namespace TGC.Group.Model
         protected readonly int maxHealth = 10;
         protected int health = 10;
 
-        private List<Tgc3dSound> onHitSounds = new List<Tgc3dSound>();
+        private List<TgcStaticSound> onHitSounds = new List<TgcStaticSound>();
 
         protected bool IsAlive { get { return health != 0; } }
 
@@ -26,23 +26,30 @@ namespace TGC.Group.Model
             this.maxHealth = maxHealth;
             health = maxHealth;
 
-            Tgc3dSound hit1 = new Tgc3dSound(GameInstance.MediaDir + "//Sounds//Golpe1.wav", Position, GameInstance.DirectSound.DsDevice);
-            Tgc3dSound hit2 = new Tgc3dSound(GameInstance.MediaDir + "//Sounds//Golpe2.wav", Position, GameInstance.DirectSound.DsDevice);
-            Tgc3dSound hit3 = new Tgc3dSound(GameInstance.MediaDir + "//Sounds//Golpe3.wav", Position, GameInstance.DirectSound.DsDevice);
+            LoadOnHitSounds();
+        }
+
+        private void LoadOnHitSounds()
+        {
+            TgcStaticSound hit1 = new TgcStaticSound();
+            hit1.loadSound(GameInstance.MediaDir + "//Sounds//Golpe1.wav", GameInstance.DirectSound.DsDevice);
+
+            TgcStaticSound hit2 = new TgcStaticSound();
+            hit2.loadSound(GameInstance.MediaDir + "//Sounds//Golpe2.wav", GameInstance.DirectSound.DsDevice);
+
+            TgcStaticSound hit3 = new TgcStaticSound();
+            hit3.loadSound(GameInstance.MediaDir + "//Sounds//Golpe3.wav", GameInstance.DirectSound.DsDevice);
 
             onHitSounds.Add(hit1);
             onHitSounds.Add(hit2);
             onHitSounds.Add(hit3);
-
-            foreach (var sound in onHitSounds)
-                sound.MinDistance = 50f;
         }
 
         #region GAME_OBJECT
         public override void Interact(Player interactor)
         {
             AddHealth(-1 * interactor.AttackDamage);
-            onHitSounds[MathExtended.GetRandomNumberBetween(0, onHitSounds.Count)].play();
+            onHitSounds[MathExtended.GetRandomNumberBetween(0, onHitSounds.Count + 1)].play();
 
             if (!IsAlive)
             {
@@ -54,6 +61,14 @@ namespace TGC.Group.Model
                     
                 Destroy();
             }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            foreach (var sound in onHitSounds)
+                sound.dispose();
         }
         #endregion
 
