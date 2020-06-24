@@ -61,41 +61,27 @@ struct VS_OUTPUT
 
 // Funciones adicionales
 
-float3 waveGenerator(float3 p, inout float3 tangentX, inout float3 tangentZ, float2 direction, float waveLenght, float stepness, float heightFactor)
+float waveGenerator(float3 p, inout float derivadaX, inout float derivadaZ, float2 direction, float waveLenght, float k, float amplitude)
 {
+    float speed = 500;
     
     float2 d = normalize(direction);
-    float k = 2 * PI / waveLenght;
-    
-    
-    float c = sqrt(9.8 / k);
-    float f = k * (dot(d, p.xz) - c * time);    // f = k (d.x * p.x + d.y * p.z - c * time)
-    float amp = stepness / k * heightFactor;
-    
-    float cosF = cos(f);
-    float sinF = sin(f);
+    float w = 2 / waveLenght;
+    float phase = speed * w;
 
+    float F = dot(d, p.xz) * w + time * phase ;
+    float G = (sin(F) + 1) / 2;
     // ola
-    p.x = d.x * sinF * amp; // X(p.x, p.y)
-    p.y = cosF * amp; // Y(p.x, p.y)
-    p.z = d.y * sinF * amp; // Z(p.x, p.y)
+    //p.x = d.x * sinF * amp; // X(p.x, p.y)
+    float y = 2 * amplitude * pow(G, k); // Y(p.x, p.y)
+    //p.z = d.y * sinF * amp; // Z(p.x, p.y)
 	
-    // tangentes
-    // f'x = k * d.x                f'z= k * d.z                amp * k = stepness
-    tangentX += float3(
-                    d.x * d.x * cosF * stepness * heightFactor,
-                    - d.x * sinF * stepness * heightFactor,
-                    d.x * d.y * cosF * stepness * heightFactor
-                );
+    float derivada = k * w * amplitude * pow(G, k - 1) * cos(F);
     
+    derivadaX += d.x * derivada;
+    derivadaZ += d.y * derivada;
     
-    tangentZ += float3(
-				d.x * d.y * cosF * stepness,
-				- d.y * sinF * stepness,
-				d.y * d.y * cosF * stepness
-			);
-    
-    return p;
+    return y;
 }
 
 
@@ -105,19 +91,26 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 	VS_OUTPUT output;
 	
     output.WorldPosition = mul(input.Position, matWorld);
-    float3 tangentX = float3(1, 0, 0);
-    float3 tangentZ = float3(0,0, -1);
+    float derivadaX = 0;
+    float derivadaZ = 0;
 
     float3 position = input.Position.xyz;
-    float3 p = position;
-    p += waveGenerator(position, tangentX, tangentZ, float2(1, 1), 25, 0.01, 40);
-    input.Normal += normalize(cross(tangentX, tangentZ));
-    p += waveGenerator(position, tangentX, tangentZ, float2(1, 1.4), 30, 0.01, 40);
-    input.Normal = normalize(cross(tangentX, tangentZ));
-    p += waveGenerator(position, tangentX, tangentZ, float2(1, 0.8), 15, 0.02, 20);
+    float y = position.y;
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(1, -1), 1200, 2, 50);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(3,5), 2000, 1.8, 50);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(-5, 1.7), 800, 2.3, 50);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(-1, -2), 700, 2, 50);
     
-    input.Position.xyz = p;
-    input.Normal = normalize(cross(tangentX, tangentZ));
+    
+    
+    //y += waveGenerator(position, derivadaX, derivadaZ, float2(0, 1), 1200, 600, 1000);
+    //input.Normal += normalize(cross(tangentX, tangentZ));
+    //p += waveGenerator(position, tangentX, tangentZ, float2(1, 1.4), 30, 0.1, 40);
+    //input.Normal += normalize(cross(tangentX, tangentZ));
+    //p += waveGenerator(position, tangentX, tangentZ, float2(1, 0.8), 15, 0.02, 20);
+    
+    input.Position.y = y;
+    input.Normal = normalize(float3(-derivadaX, 1, -derivadaZ));
 
     output.Position = mul(input.Position, matWorldViewProj);
 	
@@ -132,13 +125,13 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 float4 psDefault(VS_OUTPUT input) : COLOR0
 {
 	
-	float textureScale = 60;
+	float textureScale = 100;
     float4 texelColor = tex2D(textureSampler, textureScale * input.Texcoord);
 	
     float3 ambientColor = float3(1, 1, 1);
     float3 diffuseColor = texelColor.xyz;
     float3 specularColor = float3(1, 1, 1);
-    float shininess = 20;
+    float shininess = 50;
     
     float3 l = normalize(lightPosition - input.WorldPosition.xyz);
     float3 v = normalize(eyePosition - input.WorldPosition.xyz);
@@ -155,7 +148,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
     float4 finalColor = float4(finalColorRGB, texelColor.a);
 	
     //return float4(n_dot_l, 0, 0, 1);
-    //return float4((input.WorldNormal.x),0,input.WorldNormal.z, 1);
+    //return float4(abs(input.WorldNormal), 1);
     return finalColor;
 }
 
