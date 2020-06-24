@@ -55,11 +55,6 @@ namespace TGC.Group.Model.Items
             this.onUseEffects = onUseEffects;
         }
 
-        public void Render(Point position)
-        {
-            // Renderizar el sprite en la posicion dada
-        }
-
         #region INTERFACE
         public virtual void Use(Player user) // Template method
         {

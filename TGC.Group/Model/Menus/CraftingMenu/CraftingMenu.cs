@@ -16,7 +16,6 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         private bool craftingCooldownEnabled = false;
         private CustomBitmap bitmapSlotBackground;
         private CustomBitmap bitmapSlotProduct;
-        private TgcStaticSound openSound = new TgcStaticSound();
 
         public Player Owner => owner;
 
@@ -42,8 +41,7 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         {
             base.Open(crafter);
 
-            openSound.loadSound(crafter.GameInstance.MediaDir + "//Sounds//AbrirMenuCrafteo.wav", crafter.GameInstance.DirectSound.DsDevice);
-            openSound.play();
+            crafter.GameInstance.OpenCraftingMenu.play();
 
             UpdateSlotDisplay();
             timeSinceLastClick = 0f;

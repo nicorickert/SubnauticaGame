@@ -22,7 +22,6 @@ namespace TGC.Group.Model.Items
 
     public class BluePrint
     {
-        private TgcStaticSound craftingSound = new TgcStaticSound();
         private readonly List<ItemAmount> requirements;
 
         public EItemID ProductId { get; private set; }
@@ -60,9 +59,12 @@ namespace TGC.Group.Model.Items
                 RemoveRequirementsFrom(crafter);
                 crafter.CollectItem(craftedItem);
 
-                var soundNumber = MathExtended.GetRandomNumberBetween(1, 3);
-                craftingSound.loadSound(crafter.GameInstance.MediaDir + "//Sounds//Construir"+soundNumber+".wav", crafter.GameInstance.DirectSound.DsDevice);
-                craftingSound.play();
+                var craftingSounds = crafter.GameInstance.CraftingSounds;
+                craftingSounds[MathExtended.GetRandomNumberBetween(0, craftingSounds.Count)].play();
+            }
+            else
+            {
+                crafter.GameInstance.CraftingFailSound.play();
             }
         }
 

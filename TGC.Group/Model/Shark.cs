@@ -93,7 +93,7 @@ namespace TGC.Group.Model
             if (playerDistance <= attackRange && timeSinceLastAttack >= attackCooldown)
             {
                 GameInstance.Player.AddHealth(-1 * attackDamage);
-                Console.WriteLine("Player hit by: " + attackDamage);
+                GameInstance.OnHitPlayerSound.play();
                 timeSinceLastAttack = 0f;
             }
         }

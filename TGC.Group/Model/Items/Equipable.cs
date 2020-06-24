@@ -26,6 +26,7 @@ namespace TGC.Group.Model.Items
         public override void Use(Player user)
         {
             base.Use(user);
+            user.GameInstance.EquipItemSound.play();
             user.Equipment.Equip(this);
         }
     }
