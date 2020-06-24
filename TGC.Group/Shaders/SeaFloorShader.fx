@@ -11,6 +11,9 @@ float4x4 matInverseTransposeWorld; //Matriz Transpose(Invert(World))
 
 float time = 0;
 
+float3 lightPosition;
+float3 eyePosition;
+
 // variable de fogs
 float4 ColorFog;
 float StartFogDistance;
