@@ -109,12 +109,14 @@ VS_OUTPUT vsDefault(VS_INPUT input)
     float3 tangentZ = float3(0,0, -1);
 
     float3 position = input.Position.xyz;
+    float3 p = position;
+    p += waveGenerator(position, tangentX, tangentZ, float2(1, 1), 25, 0.01, 40);
+    input.Normal += normalize(cross(tangentX, tangentZ));
+    p += waveGenerator(position, tangentX, tangentZ, float2(1, 1.4), 30, 0.01, 40);
+    input.Normal = normalize(cross(tangentX, tangentZ));
+    p += waveGenerator(position, tangentX, tangentZ, float2(1, 0.8), 15, 0.02, 20);
     
-    position += waveGenerator(position, tangentX, tangentZ, float2(1, 1), 25, 0.01, 40);
-    position += waveGenerator(position, tangentX, tangentZ, float2(1, 1.4), 30, 0.01, 40);
-    position += waveGenerator(position, tangentX, tangentZ, float2(1, 0.8), 15, 0.02, 20);
-    
-    input.Position.xyz = position;
+    input.Position.xyz = p;
     input.Normal = normalize(cross(tangentX, tangentZ));
 
     output.Position = mul(input.Position, matWorldViewProj);
@@ -136,7 +138,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
     float3 ambientColor = float3(1, 1, 1);
     float3 diffuseColor = texelColor.xyz;
     float3 specularColor = float3(1, 1, 1);
-    float shininess = 15;
+    float shininess = 20;
     
     float3 l = normalize(lightPosition - input.WorldPosition.xyz);
     float3 v = normalize(eyePosition - input.WorldPosition.xyz);
