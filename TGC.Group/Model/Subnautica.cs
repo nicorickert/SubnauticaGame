@@ -642,7 +642,8 @@ namespace TGC.Group.Model
 
         private void RenderBubbles()
         {
-            bubbleParticleEmitter.render(ElapsedTime);
+            if(Player.IsSubmerged)
+                bubbleParticleEmitter.render(ElapsedTime);
         }
 
         private void InitBubbleEmitter()
