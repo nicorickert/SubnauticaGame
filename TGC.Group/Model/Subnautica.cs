@@ -44,6 +44,7 @@ namespace TGC.Group.Model
         public TgcStaticSound CraftingFailSound { get; private set; } = new TgcStaticSound();
         public TgcStaticSound BreathingSound { get; private set; } = new TgcStaticSound();
         public TgcStaticSound BoublesSound { get; private set; } = new TgcStaticSound();
+        public TgcStaticSound CoralpickupSound { get; private set; } = new TgcStaticSound();
         #endregion
 
         #region MESHES
@@ -556,6 +557,9 @@ namespace TGC.Group.Model
 
             BoublesSound.loadSound(MediaDir + "//Sounds//Burbujas.wav", DirectSound.DsDevice);
             sounds.Add(BoublesSound);
+
+            CoralpickupSound.loadSound(MediaDir + "//Sounds//RecolectarCoral.wav", DirectSound.DsDevice);
+            sounds.Add(CoralpickupSound);
 
 
             TgcStaticSound hit1 = new TgcStaticSound();
