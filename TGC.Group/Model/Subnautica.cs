@@ -24,6 +24,7 @@ using TGC.Group.Model.Menus.PauseMenu;
 using TGC.Core.Fog;
 using TGC.Core.Geometry;
 using TGC.Core.Sound;
+using TGC.Core.Particle;
 
 namespace TGC.Group.Model
 {
@@ -75,6 +76,9 @@ namespace TGC.Group.Model
         private readonly float floorY = -7000;
         private float escapeDelay = 0;
         private bool playerWasSubmerged = false;
+        private ParticleEmitter bubbleParticleEmitter;
+        private float timeSinceLastBubblesReposition = 0f;
+        private float bubblesRepositionCooldown = 2f;
 
         public bool MouseEnabled { get; private set; } = false;
         public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
@@ -137,6 +141,7 @@ namespace TGC.Group.Model
             InitAuxRenderTarget();
             InitGogleViewEffectResources();
             InitSounds();
+            InitBubbleEmitter();
         }
 
         public override void Update()
@@ -172,6 +177,7 @@ namespace TGC.Group.Model
             }
 
             UpdateHUD();
+            UpdateParticleEmitter();
 
             time += ElapsedTime;
             PostUpdate();
@@ -462,6 +468,8 @@ namespace TGC.Group.Model
         private void RenderMainScene()
         {
             D3DDevice.Instance.Device.BeginScene();
+            D3DDevice.Instance.ParticlesEnabled = true;
+            D3DDevice.Instance.EnableParticles();
 
             skyBox.Render();
 
@@ -473,6 +481,8 @@ namespace TGC.Group.Model
                 hm.Render();
 
             //ScenesQuadTree.RenderDebugBoxes();
+
+            RenderBubbles();
 
             D3DDevice.Instance.Device.EndScene();
         }
@@ -611,6 +621,39 @@ namespace TGC.Group.Model
                     playerWasSubmerged = false;
                 }
             }
+        }
+
+        private void UpdateParticleEmitter()
+        {
+            timeSinceLastBubblesReposition += ElapsedTime;
+
+            if (timeSinceLastBubblesReposition >= bubblesRepositionCooldown)
+            {
+                int relativeXPosition = MathExtended.GetRandomNumberBetween(-600, 600);
+                int relativeYPosition = MathExtended.GetRandomNumberBetween(-100, 300);
+                int relativeZPosition = MathExtended.GetRandomNumberBetween(700, 2000);
+
+                TGCVector3 particlesRelativePosition = Player.RelativeRightDirection * relativeXPosition + Player.RelativeUpDirection * relativeYPosition + Player.LookDirection * relativeZPosition;
+                bubbleParticleEmitter.Position = Player.Position + particlesRelativePosition;
+
+                timeSinceLastBubblesReposition = 0f;
+            }
+        }
+
+        private void RenderBubbles()
+        {
+            bubbleParticleEmitter.render(ElapsedTime);
+        }
+
+        private void InitBubbleEmitter()
+        {
+            bubbleParticleEmitter = new ParticleEmitter(MediaDir + "//Sprites//burbujas.png", 10);
+            bubbleParticleEmitter.MinSizeParticle = 1;
+            bubbleParticleEmitter.MaxSizeParticle = 5;
+            bubbleParticleEmitter.ParticleTimeToLive = 3;
+            bubbleParticleEmitter.CreationFrecuency = 0.5f;
+            bubbleParticleEmitter.Dispersion = 10;
+            bubbleParticleEmitter.Speed = TGCVector3.One * 5;
         }
         #endregion
 
