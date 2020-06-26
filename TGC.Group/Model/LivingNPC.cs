@@ -16,8 +16,6 @@ namespace TGC.Group.Model
         protected readonly int maxHealth = 10;
         protected int health = 10;
 
-        private List<TgcStaticSound> onHitSounds = new List<TgcStaticSound>();
-
         protected bool IsAlive { get { return health != 0; } }
 
         public LivingNPC(Subnautica gameInstance, string name, List<TgcMesh> meshes, int maxHealth) 
@@ -25,31 +23,14 @@ namespace TGC.Group.Model
         {
             this.maxHealth = maxHealth;
             health = maxHealth;
-
-            LoadOnHitSounds();
-        }
-
-        private void LoadOnHitSounds()
-        {
-            TgcStaticSound hit1 = new TgcStaticSound();
-            hit1.loadSound(GameInstance.MediaDir + "//Sounds//Golpe1.wav", GameInstance.DirectSound.DsDevice);
-
-            TgcStaticSound hit2 = new TgcStaticSound();
-            hit2.loadSound(GameInstance.MediaDir + "//Sounds//Golpe2.wav", GameInstance.DirectSound.DsDevice);
-
-            TgcStaticSound hit3 = new TgcStaticSound();
-            hit3.loadSound(GameInstance.MediaDir + "//Sounds//Golpe3.wav", GameInstance.DirectSound.DsDevice);
-
-            onHitSounds.Add(hit1);
-            onHitSounds.Add(hit2);
-            onHitSounds.Add(hit3);
         }
 
         #region GAME_OBJECT
         public override void Interact(Player interactor)
         {
             AddHealth(-1 * interactor.AttackDamage);
-            onHitSounds[MathExtended.GetRandomNumberBetween(0, onHitSounds.Count)].play();
+
+            GameInstance.OnHitNpcSounds[MathExtended.GetRandomNumberBetween(0, GameInstance.OnHitNpcSounds.Count)].play();
 
             if (!IsAlive)
             {
