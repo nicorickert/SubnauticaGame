@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TGC.Core.Direct3D;
 using TGC.Core.Input;
 using TGC.Core.Mathematica;
+using TGC.Core.Sound;
 using TGC.Group.Model.Utils.Sprites;
 
 namespace TGC.Group.Model.Menus.CraftingMenu
@@ -39,6 +40,8 @@ namespace TGC.Group.Model.Menus.CraftingMenu
         public override void Open(Player crafter)
         {
             base.Open(crafter);
+
+            crafter.GameInstance.OpenCraftingMenu.play();
 
             UpdateSlotDisplay();
             timeSinceLastClick = 0f;

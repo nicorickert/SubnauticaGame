@@ -23,11 +23,31 @@ using TGC.Core.Textures;
 using TGC.Group.Model.Menus.PauseMenu;
 using TGC.Core.Fog;
 using TGC.Core.Geometry;
+using TGC.Core.Sound;
+using TGC.Core.Particle;
 
 namespace TGC.Group.Model
 {
     public class Subnautica : TGCExample
     {
+        #region SOUNDS
+        private List<TgcStaticSound> sounds = new List<TgcStaticSound>();
+
+        public TgcStaticSound OnHitPlayerSound { get; private set; } = new TgcStaticSound();
+        public TgcStaticSound OutOfOxygenSound { get; private set; } = new TgcStaticSound();
+        public List<TgcStaticSound> OnHitNpcSounds { get; private set; } = new List<TgcStaticSound>();
+        public List<TgcStaticSound> CraftingSounds { get; private set; } = new List<TgcStaticSound>();
+        public TgcStaticSound OpenCraftingMenu { get; private set; } = new TgcStaticSound();
+        public TgcStaticSound EatingSound { get; private set; } = new TgcStaticSound();
+        public TgcStaticSound EquipItemSound { get; private set; } = new TgcStaticSound();
+        public TgcStaticSound UnderwaterAmbience { get; private set; } = new TgcStaticSound();
+        public TgcStaticSound SurfaceAmbience { get; private set; } = new TgcStaticSound();
+        public TgcStaticSound CraftingFailSound { get; private set; } = new TgcStaticSound();
+        public TgcStaticSound BreathingSound { get; private set; } = new TgcStaticSound();
+        public TgcStaticSound BoublesSound { get; private set; } = new TgcStaticSound();
+        public TgcStaticSound CoralpickupSound { get; private set; } = new TgcStaticSound();
+        #endregion
+
         #region MESHES
         private List<TgcMesh> playerMeshes;
         private List<TgcMesh> shipMeshes;
@@ -55,6 +75,10 @@ namespace TGC.Group.Model
         private readonly float waterY = 0f;
         private readonly float floorY = -7000;
         private float escapeDelay = 0;
+        private bool playerWasSubmerged = false;
+        private ParticleEmitter bubbleParticleEmitter;
+        private float timeSinceLastBubblesReposition = 0f;
+        private float bubblesRepositionCooldown = 2f;
 
         public bool MouseEnabled { get; private set; } = false;
         public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
@@ -107,7 +131,12 @@ namespace TGC.Group.Model
             ManageFocus();
             spawnManager = new SpawnManager(this);
             SetCamera();
-            
+
+            //DirectSound.ListenerTracking = Player.Meshes[0]; // Alguno de los meshes del player, cumplen con la interfaz ITransformObject
+
+            LightPosition = new TGCVector3(0, 8000, -3 * heightMaps[0].XZRadius);
+            lightBox = TGCBox.fromSize(TGCVector3.One * 500, Color.Red);
+            lightBox.Transform = TGCMatrix.Translation(LightPosition);
 
             ScenesQuadTree.create(StaticSceneObjects, new TgcBoundingAxisAlignBox(SueloDelMar.centre - new TGCVector3(SueloDelMar.XZRadius, 3000, SueloDelMar.XZRadius), SueloDelMar.centre + new TGCVector3(SueloDelMar.XZRadius, 5000, SueloDelMar.XZRadius)));
             ScenesQuadTree.createDebugQuadTreeMeshes();
@@ -115,6 +144,8 @@ namespace TGC.Group.Model
             InitFullQuadVB();
             InitAuxRenderTarget();
             InitGogleViewEffectResources();
+            InitSounds();
+            InitBubbleEmitter();
         }
 
         public override void Update()
@@ -148,6 +179,8 @@ namespace TGC.Group.Model
                 foreach (HeightMapTextured hm in heightMaps)
                     hm.Update();
 
+                PlayAmbienceSound();
+
                 // Muevo el centro del skybox para que sea inalcanzable
                 skyBox.Center = new TGCVector3(Camera.Position.X, 0, Camera.Position.Z);
 
@@ -155,6 +188,7 @@ namespace TGC.Group.Model
             }
 
             UpdateHUD();
+            UpdateParticleEmitter();
 
             time += ElapsedTime;
 
@@ -212,6 +246,7 @@ namespace TGC.Group.Model
             auxDepthStencil.Dispose();
             gogleViewEffect.Dispose();
             gogleViewTexture.Dispose();
+            DisposeSounds();
         }
 
         #endregion
@@ -444,10 +479,11 @@ namespace TGC.Group.Model
                     D3DDevice.Instance.Device.PresentationParameters.BackBufferHeight, DepthFormat.D24S8, MultiSampleType.None, 0, true);
         }
 
-
         private void RenderMainScene()
         {
             D3DDevice.Instance.Device.BeginScene();
+            D3DDevice.Instance.ParticlesEnabled = true;
+            D3DDevice.Instance.EnableParticles();
 
             skyBox.Render();
 
@@ -459,6 +495,8 @@ namespace TGC.Group.Model
                 hm.Render();
 
             //ScenesQuadTree.RenderDebugBoxes();
+
+            RenderBubbles();
 
             D3DDevice.Instance.Device.EndScene();
         }
@@ -512,6 +550,126 @@ namespace TGC.Group.Model
             fog.Color = Color.FromArgb(255, 11, 36, 74);
         }
 
+        private void InitSounds()
+        {
+            OnHitPlayerSound.loadSound(MediaDir + "//Sounds//GolpeAPlayer.wav", DirectSound.DsDevice);
+            sounds.Add(OnHitPlayerSound);
+
+            OutOfOxygenSound.loadSound(MediaDir + "//Sounds//SinOxigeno.wav", DirectSound.DsDevice);
+            sounds.Add(OutOfOxygenSound);
+
+            OpenCraftingMenu.loadSound(MediaDir + "//Sounds//AbrirMenuCrafteo.wav", DirectSound.DsDevice);
+            sounds.Add(OpenCraftingMenu);
+
+            EatingSound.loadSound(MediaDir + "//Sounds//Comer.wav", DirectSound.DsDevice);
+            sounds.Add(EatingSound);
+
+            EquipItemSound.loadSound(MediaDir + "//Sounds//EquiparItem.wav", DirectSound.DsDevice);
+            sounds.Add(EquipItemSound);
+
+            UnderwaterAmbience.loadSound(MediaDir + "//Sounds//AmbienteBajoElAgua.wav", DirectSound.DsDevice);
+            sounds.Add(UnderwaterAmbience);
+
+            SurfaceAmbience.loadSound(MediaDir + "//Sounds//AmbienteFueraDelAgua.wav", DirectSound.DsDevice);
+            sounds.Add(SurfaceAmbience);
+
+            CraftingFailSound.loadSound(MediaDir + "//Sounds//ErrorConstruccion.wav", DirectSound.DsDevice);
+            sounds.Add(CraftingFailSound);
+
+            BreathingSound.loadSound(MediaDir + "//Sounds//RespiracionProfunda.wav", DirectSound.DsDevice);
+            sounds.Add(BreathingSound);
+
+            BoublesSound.loadSound(MediaDir + "//Sounds//Burbujas.wav", DirectSound.DsDevice);
+            sounds.Add(BoublesSound);
+
+            CoralpickupSound.loadSound(MediaDir + "//Sounds//RecolectarCoral.wav", DirectSound.DsDevice);
+            sounds.Add(CoralpickupSound);
+
+
+            TgcStaticSound hit1 = new TgcStaticSound();
+            hit1.loadSound(MediaDir + "//Sounds//Golpe1.wav", DirectSound.DsDevice);
+
+            TgcStaticSound hit2 = new TgcStaticSound();
+            hit2.loadSound(MediaDir + "//Sounds//Golpe2.wav", DirectSound.DsDevice);
+
+            OnHitNpcSounds.Add(hit1);
+            OnHitNpcSounds.Add(hit2);
+
+            sounds.AddRange(OnHitNpcSounds);
+
+
+            TgcStaticSound crafting1 = new TgcStaticSound();
+            crafting1.loadSound(MediaDir + "//Sounds//Construir1.wav", DirectSound.DsDevice);
+
+            TgcStaticSound crafting2 = new TgcStaticSound();
+            crafting2.loadSound(MediaDir + "//Sounds//Construir2.wav", DirectSound.DsDevice);
+
+            CraftingSounds.Add(crafting1);
+            CraftingSounds.Add(crafting2);
+
+            sounds.AddRange(CraftingSounds);
+        }
+
+        private void DisposeSounds()
+        {
+            sounds.ForEach(s => s.dispose());
+        }
+
+        private void PlayAmbienceSound()
+        {
+            if (Player.IsSubmerged)
+            {
+                playerWasSubmerged = true;
+                SurfaceAmbience.stop();
+                BreathingSound.stop();
+                UnderwaterAmbience.play(true);
+            }
+            else
+            {
+                UnderwaterAmbience.stop();
+                SurfaceAmbience.play(true);
+
+                if (playerWasSubmerged)
+                {
+                    BreathingSound.play();
+                    playerWasSubmerged = false;
+                }
+            }
+        }
+
+        private void UpdateParticleEmitter()
+        {
+            timeSinceLastBubblesReposition += ElapsedTime;
+
+            if (timeSinceLastBubblesReposition >= bubblesRepositionCooldown)
+            {
+                int relativeXPosition = MathExtended.GetRandomNumberBetween(-600, 600);
+                int relativeYPosition = MathExtended.GetRandomNumberBetween(-100, 300);
+                int relativeZPosition = MathExtended.GetRandomNumberBetween(700, 2000);
+
+                TGCVector3 particlesRelativePosition = Player.RelativeRightDirection * relativeXPosition + Player.RelativeUpDirection * relativeYPosition + Player.LookDirection * relativeZPosition;
+                bubbleParticleEmitter.Position = Player.Position + particlesRelativePosition;
+
+                timeSinceLastBubblesReposition = 0f;
+            }
+        }
+
+        private void RenderBubbles()
+        {
+            if(Player.IsSubmerged)
+                bubbleParticleEmitter.render(ElapsedTime);
+        }
+
+        private void InitBubbleEmitter()
+        {
+            bubbleParticleEmitter = new ParticleEmitter(MediaDir + "//Sprites//burbujas.png", 10);
+            bubbleParticleEmitter.MinSizeParticle = 1;
+            bubbleParticleEmitter.MaxSizeParticle = 5;
+            bubbleParticleEmitter.ParticleTimeToLive = 3;
+            bubbleParticleEmitter.CreationFrecuency = 0.5f;
+            bubbleParticleEmitter.Dispersion = 10;
+            bubbleParticleEmitter.Speed = TGCVector3.One * 5;
+        }
         #endregion
 
         #region PUBLIC_METHODS

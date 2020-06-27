@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TGC.Core.Sound;
 
 namespace TGC.Group.Model.Items
 {
@@ -57,6 +58,13 @@ namespace TGC.Group.Model.Items
                 Item craftedItem = ItemDatabase.Instance.Generate(ProductId);
                 RemoveRequirementsFrom(crafter);
                 crafter.CollectItem(craftedItem);
+
+                var craftingSounds = crafter.GameInstance.CraftingSounds;
+                craftingSounds[MathExtended.GetRandomNumberBetween(0, craftingSounds.Count)].play();
+            }
+            else
+            {
+                crafter.GameInstance.CraftingFailSound.play();
             }
         }
 

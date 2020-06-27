@@ -8,6 +8,7 @@ using TGC.Group.Model.Utils;
 using TGC.Group.Model.Items;
 using TGC.Group.Model.Menus.Inventory;
 using TGC.Group.Model.Materials;
+using TGC.Core.Sound;
 
 namespace TGC.Group.Model
 {
@@ -268,6 +269,11 @@ namespace TGC.Group.Model
                 return;
 
             Health = FastMath.Clamp(Health + quantity, 0, maxHealth);
+
+            if (quantity < 0 && IsOutOfOxygen)
+            {
+                GameInstance.OutOfOxygenSound.play();
+            }
         }
 
         public void IncreaseMaxHealth(int quantity)

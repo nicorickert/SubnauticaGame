@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TGC.Core.Mathematica;
 using TGC.Core.SceneLoader;
+using TGC.Core.Sound;
 using TGC.Group.Model.Items;
 
 namespace TGC.Group.Model
@@ -29,6 +30,8 @@ namespace TGC.Group.Model
         {
             AddHealth(-1 * interactor.AttackDamage);
 
+            GameInstance.OnHitNpcSounds[MathExtended.GetRandomNumberBetween(0, GameInstance.OnHitNpcSounds.Count)].play();
+
             if (!IsAlive)
             {
                 foreach (Item item in dropsProbability.Keys)
@@ -40,6 +43,7 @@ namespace TGC.Group.Model
                 Destroy();
             }
         }
+
         #endregion
 
         protected void AddHealth(int quantity)

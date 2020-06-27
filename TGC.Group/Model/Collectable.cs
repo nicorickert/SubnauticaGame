@@ -62,7 +62,7 @@ namespace TGC.Group.Model
             if (isActive)
             {
                 interactor.CollectItem(ItemDatabase.Instance.Generate(resourceID));
-
+                GameInstance.CoralpickupSound.play();
                 Deactivate();
             }
         }
