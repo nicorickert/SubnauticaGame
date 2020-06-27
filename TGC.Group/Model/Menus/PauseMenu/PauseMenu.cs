@@ -31,15 +31,15 @@ namespace TGC.Group.Model.Menus.PauseMenu
 
             pauseText = new TgcText2D();
             pauseText.Text = "Pausa";
-            pauseText.Position = new Point(D3DDevice.Instance.Width / 2 - 100, D3DDevice.Instance.Height / 2 - 65);
-            pauseText.Align = TgcText2D.TextAlign.LEFT;
+            pauseText.Position = new Point(0, D3DDevice.Instance.Height / 2 - 65);
+            pauseText.Align = TgcText2D.TextAlign.CENTER;
             pauseText.changeFont(new Font("TimesNewRoman", 50, FontStyle.Bold));
             pauseText.Color = Color.DarkGray;
         }
 
         public override void Render()
         {
-            if (gameInstance.FocusInGame)   // Solo renderizar si estoy en pausa
+            if (gameInstance.FocusInGame || gameInstance.InPrincipalMenu)   // Solo renderizar si estoy en pausa
                 return;
             base.Render();
             Drawer2D drawer = new Drawer2D();

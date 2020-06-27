@@ -25,6 +25,7 @@ using TGC.Core.Fog;
 using TGC.Core.Geometry;
 using TGC.Core.Sound;
 using TGC.Core.Particle;
+using TGC.Group.Model.Menus.PrincipalMenu;
 
 namespace TGC.Group.Model
 {
@@ -104,6 +105,8 @@ namespace TGC.Group.Model
         private TgcText2D gameTimer = new TgcText2D();
 
         private PauseMenu pauseMenu;
+        private PrincipalMenu principalMenu;
+        public bool InPrincipalMenu { get; private set; }
 
         #endregion
 
@@ -120,6 +123,8 @@ namespace TGC.Group.Model
 
         public override void Init()
         {
+            
+
             LightPosition = new TGCVector3(0,80000, -3 * skyBoxDimensions.X);
             lightBox = TGCBox.fromSize(TGCVector3.One * 500, Color.Red);
             lightBox.Transform = TGCMatrix.Translation(LightPosition);
@@ -146,6 +151,10 @@ namespace TGC.Group.Model
             InitGogleViewEffectResources();
             InitSounds();
             InitBubbleEmitter();
+
+            InPrincipalMenu = true;
+            FocusInGame = false;
+            MouseEnable();
         }
 
         public override void Update()
@@ -153,14 +162,16 @@ namespace TGC.Group.Model
             PreUpdate();
             escapeDelay += ElapsedTime;
 
-            if (Input.keyDown(Key.Escape) && escapeDelay > 0.5f) { // uso el delay porque no me funciona el keyUp o keyPressed
+            if (!InPrincipalMenu && Input.keyDown(Key.Escape) && escapeDelay > 0.5f) { // uso el delay porque no me funciona el keyUp o keyPressed
                 escapeDelay = 0;
                 FocusInGame = !FocusInGame;
                 ManageFocus();
             }
 
-            if (FocusInGame)    // Si no se está en modo gameplay, desactivar el update de todo
+            if (FocusInGame || InPrincipalMenu)    // Si no se está en modo gameplay, desactivar el update de todo
             {
+                principalMenu.Update(ElapsedTime);
+
                 UpdateInstantiatedObjects();
                 spawnManager.Update();
 
@@ -381,6 +392,7 @@ namespace TGC.Group.Model
             gameTimer.Align = TgcText2D.TextAlign.LEFT;
 
             pauseMenu = new PauseMenu(this);
+            principalMenu = new PrincipalMenu(this);
         }
 
         private void UpdateHUD()
@@ -392,6 +404,9 @@ namespace TGC.Group.Model
 
         private void RenderHUD()
         {
+            principalMenu.Render();
+            if (InPrincipalMenu)
+                return;
             healthTextBox.render();
             oxygenTextBox.render();
             pauseMenu.Render();
@@ -405,6 +420,7 @@ namespace TGC.Group.Model
         private void DisposeHUD()
         {
             pauseMenu.Dispose();
+            principalMenu.Dispose();
             healthTextBox.Dispose();
             oxygenTextBox.Dispose();
             gameTimer.Dispose();
@@ -527,7 +543,9 @@ namespace TGC.Group.Model
             gogleViewEffect.EndPass();
             gogleViewEffect.End();
 
+            
             RenderHUD();
+
             RenderFPS();
             RenderAxis();
 
@@ -682,6 +700,13 @@ namespace TGC.Group.Model
             effect.SetValue("EndFogDistance", fog.EndDistance);
         }
 
+        public bool startGame()
+        {
+            InPrincipalMenu = false;
+            FocusInGame = true;
+            ManageFocus();
+            return true;
+        }
         #endregion
     }
 }
