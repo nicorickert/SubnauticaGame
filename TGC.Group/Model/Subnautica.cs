@@ -73,7 +73,7 @@ namespace TGC.Group.Model
         public QuadTree ScenesQuadTree = new QuadTree();
         private List<GameObject> removedObjects = new List<GameObject>();
         private float time = 0f;
-        private readonly float waterY = 0f;
+        private readonly float waterY = -50f;
         private readonly float floorY = -7000;
         private float escapeDelay = 0;
         private bool playerWasSubmerged = false;

@@ -37,8 +37,8 @@ namespace TGC.Group.Model
         public Equipment Equipment { get; private set; }
         public int AttackDamage { get; private set; } = 10;
         public List<BluePrint> AvailableBluePrints { get; private set; } = new List<BluePrint>();
-        public bool IsSubmerged { get { return Position.Y < GameInstance.WaterLevelToWorldHeight(-130f); } }
-        public bool IsInTheWater { get { return Position.Y < GameInstance.WaterLevelToWorldHeight(-100f); } }
+        public bool IsSubmerged { get { return Position.Y < GameInstance.WaterLevelToWorldHeight(-60f); } }
+        public bool IsInTheWater { get { return Position.Y < GameInstance.WaterLevelToWorldHeight(-30f); } }
         public bool CollidingWithFloor { get { return Position.Y <= GameInstance.FloorLevelToWorldHeight(0); } }
         public bool IsOutOfTheWater { get { return Position.Y > GameInstance.WaterLevelToWorldHeight(0); } }
         public bool IsInSafeZone { get => IsWithinRange(interactionRange, GameInstance.Ship); }
