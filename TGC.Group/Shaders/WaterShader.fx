@@ -137,7 +137,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
     float3 specularLight = ks * specularColor * pow(n_dot_h, shininess);
 	
     float3 finalColorRGB = saturate(ambientLight + diffuseLight) * texelColor.rgb + specularLight;
-    float4 finalColor = float4(finalColorRGB, texelColor.a);
+    float4 finalColor = float4(finalColorRGB, 0.8);
 	
     //return float4(n_dot_l, 0, 0, 1);
     //return float4(abs(input.WorldNormal), 1);
