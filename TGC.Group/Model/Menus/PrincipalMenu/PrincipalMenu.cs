@@ -17,6 +17,7 @@ namespace TGC.Group.Model.Menus.PrincipalMenu
         private CustomBitmap bitmapSlotBackground;
         private Subnautica gameInstance;
         private CustomSprite background;
+        private CustomSprite controlsSprite;
         private TgcText2D titleText;
         public PrincipalMenu(Subnautica gameInstance)
             : base()
@@ -30,6 +31,10 @@ namespace TGC.Group.Model.Menus.PrincipalMenu
             background.Color = Color.FromArgb(80, 0, 0, 0); // para la transparencia
             background.SrcRect = new Rectangle(0, 0, D3DDevice.Instance.Width, D3DDevice.Instance.Height);
             background.Position = TGCVector2.Zero;
+
+            controlsSprite = new CustomSprite(gameInstance.MediaDir + "Sprites//WASD.png");
+            controlsSprite.SrcRect = new Rectangle(0, 0, D3DDevice.Instance.Width, D3DDevice.Instance.Height);
+            controlsSprite.Position = new TGCVector2(D3DDevice.Instance.Width / 4, D3DDevice.Instance.Height / 2.5f);
 
             titleText = new TgcText2D();
             titleText.Text = "Tgcito se va de buceo";
@@ -51,6 +56,7 @@ namespace TGC.Group.Model.Menus.PrincipalMenu
             drawer.BeginDrawSprite();
 
             drawer.DrawSprite(background);
+            drawer.DrawSprite(controlsSprite);
 
             drawer.EndDrawSprite();
             titleText.render();
@@ -59,6 +65,7 @@ namespace TGC.Group.Model.Menus.PrincipalMenu
         {
             background.Dispose();
             titleText.Dispose();
+            controlsSprite.Dispose();
         }
 
         public override void Update(float elapsedTime)
