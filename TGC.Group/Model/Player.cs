@@ -125,6 +125,12 @@ namespace TGC.Group.Model
 
         private void ManageMovement()
         {
+            if (GameInstance.InPrincipalMenu || !GameInstance.FocusInGame)
+            {
+                nextTransform *= TGCMatrix.Translation(Position); ;
+                return;
+            }
+
             TgcD3dInput input = GameInstance.Input;
             TGCVector3 movementDirection = TGCVector3.Empty;
             TGCVector3 rotationVector = TGCVector3.Empty;
@@ -175,6 +181,8 @@ namespace TGC.Group.Model
 
             TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
             nextTransform *= translationMatrix;
+
+            
         }
 
         private void FixRotation()

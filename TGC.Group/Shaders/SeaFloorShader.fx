@@ -75,7 +75,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
 
 	float n_dot_l = abs(dot(Nn, Ln));
 
-	float textureScale = 90;
+	float textureScale = 600;
     float4 textureColor = tex2D(textureSampler, input.Texcoord * textureScale);
 	
 	// Diffuse color

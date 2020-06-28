@@ -16,7 +16,7 @@ namespace TGC.Group.Model
     internal class QuadTreeBuilder
     {
         //Parametros de corte del QUADTRE
-        private readonly int MAX_SECTOR_QuadTree_RECURSION = 1;
+        private readonly int MAX_SECTOR_QuadTree_RECURSION = 2;
 
         private readonly int MIN_MESH_PER_LEAVE_THRESHOLD = 5;
 

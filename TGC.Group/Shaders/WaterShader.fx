@@ -61,9 +61,8 @@ struct VS_OUTPUT
 
 // Funciones adicionales
 
-float waveGenerator(float3 p, inout float derivadaX, inout float derivadaZ, float2 direction, float waveLenght, float k, float amplitude)
+float waveGenerator(float3 p, inout float derivadaX, inout float derivadaZ, float2 direction, float waveLenght, float k, float amplitude, float speed)
 {
-    float speed = 500;
     
     float2 d = normalize(direction);
     float w = 2 / waveLenght;
@@ -72,9 +71,9 @@ float waveGenerator(float3 p, inout float derivadaX, inout float derivadaZ, floa
     float F = dot(d, p.xz) * w + time * phase ;
     float G = (sin(F) + 1) / 2;
     // ola
-    //p.x = d.x * sinF * amp; // X(p.x, p.y)
+    p.x = d.x * cos(F); // X(p.x, p.y)
     float y = 2 * amplitude * pow(G, k); // Y(p.x, p.y)
-    //p.z = d.y * sinF * amp; // Z(p.x, p.y)
+    p.z = d.y * cos(F); // Z(p.x, p.y)
 	
     float derivada = k * w * amplitude * pow(G, k - 1) * cos(F);
     
@@ -96,10 +95,10 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 
     float3 position = input.Position.xyz;
     float y = position.y;
-    y += waveGenerator(position, derivadaX, derivadaZ, float2(1, -1), 1200, 2, 15);
-    y += waveGenerator(position, derivadaX, derivadaZ, float2(3,5), 2000, 1.8, 15);
-    y += waveGenerator(position, derivadaX, derivadaZ, float2(-5, 1.7), 800, 2.3, 15);
-    y += waveGenerator(position, derivadaX, derivadaZ, float2(-1, -2), 700, 2, 15);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(1, -1), 1200, 2, 15, 500);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(3,5), 2000, 1.8, 15, 500);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(-5, 1.7), 800, 2.3, 15, 500);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(-1, -2), 700, 3, 15, 500);
     
     input.Position.y = y;
     input.Normal = normalize(float3(-derivadaX, 1, -derivadaZ));
@@ -117,7 +116,7 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 float4 psDefault(VS_OUTPUT input) : COLOR0
 {
 	
-	float textureScale = 100;
+	float textureScale = 500;
     float4 texelColor = tex2D(textureSampler, textureScale * input.Texcoord);
 	
     float3 ambientColor = float3(1, 1, 1);

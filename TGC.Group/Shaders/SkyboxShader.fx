@@ -66,7 +66,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
     float4 textureColor = tex2D(textureSampler, input.Texcoord);
 	
 	// no hacer fog encima del mar
-	float proportion = input.WorldPosition.y > WaterLevel;
+	float proportion = input.WorldPosition.y > WaterLevel + 60;
 	
 		
 	
