@@ -123,7 +123,8 @@ namespace TGC.Group.Model
 
         public override void Init()
         {
-            
+            StaticSceneObjects.Clear();
+            NonStaticSceneObjects.Clear();
 
             LightPosition = new TGCVector3(0,80000, -6 * skyBoxDimensions.X);
             lightBox = TGCBox.fromSize(TGCVector3.One * 500, Color.Red);
@@ -348,6 +349,7 @@ namespace TGC.Group.Model
 
         private void LoadTerrain()
         {
+            heightMaps.Clear();
             SueloDelMar = new SueloDelMar(this, "SeaFloor", new TGCVector3(0, floorY, 0), MediaDir + "Terrain\\" + "HMFondo-x128.jpg", MediaDir + "Terrain\\" + "sand.jpg", ShadersDir + "SeaFloorShader.fx", 2000f, 20f);
             heightMaps.Add(SueloDelMar);
             heightMaps.Add(new HeightMapTextured(this, "Mar", new TGCVector3(0, waterY, 0), MediaDir + "Terrain\\" + "HeightMapPlanox1024.jpg", MediaDir + "Skybox\\down.jpg", ShadersDir + "WaterShader.fx", 250f, 1f));
@@ -570,6 +572,7 @@ namespace TGC.Group.Model
 
         private void InitSounds()
         {
+            sounds.Clear();
             OnHitPlayerSound.loadSound(MediaDir + "//Sounds//GolpeAPlayer.wav", DirectSound.DsDevice);
             sounds.Add(OnHitPlayerSound);
 
@@ -610,6 +613,8 @@ namespace TGC.Group.Model
             TgcStaticSound hit2 = new TgcStaticSound();
             hit2.loadSound(MediaDir + "//Sounds//Golpe2.wav", DirectSound.DsDevice);
 
+            OnHitNpcSounds.Clear();
+
             OnHitNpcSounds.Add(hit1);
             OnHitNpcSounds.Add(hit2);
 
@@ -621,6 +626,8 @@ namespace TGC.Group.Model
 
             TgcStaticSound crafting2 = new TgcStaticSound();
             crafting2.loadSound(MediaDir + "//Sounds//Construir2.wav", DirectSound.DsDevice);
+
+            CraftingSounds.Clear();
 
             CraftingSounds.Add(crafting1);
             CraftingSounds.Add(crafting2);
@@ -705,6 +712,13 @@ namespace TGC.Group.Model
             InPrincipalMenu = false;
             FocusInGame = true;
             ManageFocus();
+            return true;
+        }
+
+        public bool restartGame()
+        {
+            Init();
+            MouseEnable();
             return true;
         }
         #endregion

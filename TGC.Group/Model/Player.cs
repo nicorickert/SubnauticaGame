@@ -99,6 +99,10 @@ namespace TGC.Group.Model
                 UpdateVitals();
                 inventoryMenu.Update(GameInstance.ElapsedTime);
                 CheckInventoryUsage();
+            } else
+            {
+                GameInstance.restartGame();
+                this.Destroy();
             }
         }
 
