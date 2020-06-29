@@ -17,7 +17,9 @@ namespace TGC.Group.Model.Menus.PrincipalMenu
         private CustomBitmap bitmapSlotBackground;
         private Subnautica gameInstance;
         private CustomSprite background;
-        private CustomSprite controlsSprite;
+        private CustomSprite wasdSprite;
+        private CustomSprite escISprite;
+        private CustomSprite mouseSprite;
         private TgcText2D titleText;
         public PrincipalMenu(Subnautica gameInstance)
             : base()
@@ -32,9 +34,17 @@ namespace TGC.Group.Model.Menus.PrincipalMenu
             background.SrcRect = new Rectangle(0, 0, D3DDevice.Instance.Width, D3DDevice.Instance.Height);
             background.Position = TGCVector2.Zero;
 
-            controlsSprite = new CustomSprite(gameInstance.MediaDir + "Sprites//WASD.png");
-            controlsSprite.SrcRect = new Rectangle(0, 0, D3DDevice.Instance.Width, D3DDevice.Instance.Height);
-            controlsSprite.Position = new TGCVector2(D3DDevice.Instance.Width / 4, D3DDevice.Instance.Height / 2.5f);
+            wasdSprite = new CustomSprite(gameInstance.MediaDir + "Sprites//WASD.png");
+            wasdSprite.SrcRect = new Rectangle(0, 0, D3DDevice.Instance.Width, D3DDevice.Instance.Height);
+            wasdSprite.Position = new TGCVector2(D3DDevice.Instance.Width / 8, D3DDevice.Instance.Height / 2.5f);
+
+            escISprite = new CustomSprite(gameInstance.MediaDir + "Sprites//EscI.png");
+            escISprite.SrcRect = new Rectangle(0, 0, D3DDevice.Instance.Width, D3DDevice.Instance.Height);
+            escISprite.Position = new TGCVector2(D3DDevice.Instance.Width / 2.7f, D3DDevice.Instance.Height / 2.5f);
+
+            mouseSprite = new CustomSprite(gameInstance.MediaDir + "Sprites//Mouse.png");
+            mouseSprite.SrcRect = new Rectangle(0, 0, D3DDevice.Instance.Width, D3DDevice.Instance.Height);
+            mouseSprite.Position = new TGCVector2(D3DDevice.Instance.Width / 1.5f, D3DDevice.Instance.Height / 2f);
 
             titleText = new TgcText2D();
             titleText.Text = "Tgcito se va de buceo";
@@ -56,7 +66,9 @@ namespace TGC.Group.Model.Menus.PrincipalMenu
             drawer.BeginDrawSprite();
 
             drawer.DrawSprite(background);
-            drawer.DrawSprite(controlsSprite);
+            drawer.DrawSprite(wasdSprite);
+            drawer.DrawSprite(escISprite);
+            drawer.DrawSprite(mouseSprite);
 
             drawer.EndDrawSprite();
             titleText.render();
@@ -65,7 +77,9 @@ namespace TGC.Group.Model.Menus.PrincipalMenu
         {
             background.Dispose();
             titleText.Dispose();
-            controlsSprite.Dispose();
+            wasdSprite.Dispose();
+            escISprite.Dispose();
+            mouseSprite.Dispose();
         }
 
         public override void Update(float elapsedTime)
