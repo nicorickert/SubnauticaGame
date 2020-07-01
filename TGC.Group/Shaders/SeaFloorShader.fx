@@ -11,6 +11,10 @@ float4x4 matInverseTransposeWorld; //Matriz Transpose(Invert(World))
 
 float time = 0;
 
+float ka = 0.1;
+float kd = 1000000;
+float ks = 0;
+    
 float3 lightPosition;
 float3 eyePosition;
 
@@ -70,17 +74,27 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 //Pixel Shader
 float4 psDefault(VS_OUTPUT input) : COLOR0
 {
-	float3 Nn = normalize(input.WorldNormal);
-	float3 Ln = normalize(float3(0,-2,1));
-
-	float n_dot_l = abs(dot(Nn, Ln));
-
-	float textureScale = 600;
-    float4 textureColor = tex2D(textureSampler, input.Texcoord * textureScale);
+    float textureScale = 200;
+    float4 texelColor = tex2D(textureSampler, textureScale * input.Texcoord);
+    
+    float3 ambientColor = float3(0.4, 0.1, 0.5);
+    float3 diffuseColor = float3(1, 1, 1);
+    //float3 specularColor = float3(1, 1, 1);
+    //float shininess = 1;
+    
+    float3 l = normalize(lightPosition - input.WorldPosition.xyz);
+    //float3 v = normalize(eyePosition - input.WorldPosition.xyz);
+    //float3 h = normalize(v + l);
+    
+    float n_dot_l = max(0, dot(input.WorldNormal, l));
+    //float n_dot_h = max(0, dot(input.WorldNormal, h));
+    
+    float3 ambientLight = ambientColor * ka;
+    float3 diffuseLight = diffuseColor * kd * n_dot_l;
+    //float3 specularLight = ks * specularColor * pow(n_dot_h, shininess);
 	
-	// Diffuse color
-	float3 diffuseColor = float3(1,0.6,0) * n_dot_l;
-	textureColor = textureColor * 0.8 + 0.2 * float4(diffuseColor, 1);
+    float3 finalColorRGB = saturate(ambientLight + diffuseLight) * texelColor.rgb;//   +specularLight;
+    float4 textureColor = float4(finalColorRGB, 1);
     
 	// FOG
 	float zNear = StartFogDistance;
@@ -95,7 +109,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
     textureColor = lerp(textureColor, ColorFog, proportion);
 	
 	return textureColor;
-	//return float4(abs(Nn.x), 0, abs(Nn.z), 1) * 3;
+    return float4(n_dot_l, 0,0, 1);
 }
 
 
