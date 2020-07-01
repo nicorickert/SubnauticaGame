@@ -14,10 +14,10 @@ namespace TGC.Group.Model.Utils
         private List<TgcMesh> sharkMeshes;
         private List<TgcMesh> fishMeshes;
 
-        private readonly int initialFishNumber = 400;
+        private readonly int initialFishNumber = 300;
         private int totalFishCounter = 0;
 
-        private readonly float fishSpawnCooldown = 10f;
+        private readonly float fishSpawnCooldown = 100f;
         private float timeSinceLastFishSpawn = 0f;
 
         private readonly float sharkSpawnCooldown = 30f;
