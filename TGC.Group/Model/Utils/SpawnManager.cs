@@ -14,7 +14,7 @@ namespace TGC.Group.Model.Utils
         private List<TgcMesh> sharkMeshes;
         private List<TgcMesh> fishMeshes;
 
-        private readonly int initialFishNumber = 200;
+        private readonly int initialFishNumber = 400;
         private int totalFishCounter = 0;
 
         private readonly float fishSpawnCooldown = 10f;
