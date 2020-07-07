@@ -281,7 +281,7 @@ float4 ps_BlinnPhong(VS_OUTPUT_BlinnPhong input) : COLOR0
     float4 texelColor = tex2D(diffuseMap, input.TextureCoordinates);
     
     float3 ambientColor = float3(1, 1, 1);
-    float3 diffuseColor = texelColor.xyz;
+    float3 diffuseColor = float3(1, 1, 1);
     float3 specularColor = float3(1, 1, 1);
     float shininess = 10;
     
@@ -313,6 +313,7 @@ float4 ps_BlinnPhong(VS_OUTPUT_BlinnPhong input) : COLOR0
     finalColor = lerp(finalColor, ColorFog, proportion);
 	
     return finalColor;
+
 }
 
 
