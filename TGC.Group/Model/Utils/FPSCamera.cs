@@ -24,14 +24,7 @@ namespace TGC.Group.Model.Utils
 
         public override void UpdateCamera(float elapsedTime)
         {
-            /*SETEO LA CAMARA*/
-            //float normEyePosition = TGCVector3.Length(eyePosition);
-            //TGCVector3 eyePositionLookingTo = normEyePosition * TGCVector3.Normalize(player.LookDirection);  // Pongo la norma del eyePosition en la direccion del lookDir
-            //TGCVector3 camaraPosition = player.Position + eyePositionLookingTo + player.RelativeUpDirection * eyePosition.Y;
-
-            // ---
-
-            TGCVector3 transformedRelativeEyePosition = eyePosition.X * player.RelativeRightDirection + eyePosition.Y * player.RelativeUpDirection + eyePosition.Z * player.LookDirection; 
+            TGCVector3 transformedRelativeEyePosition = eyePosition.X * player.RelativeRightDirection + eyePosition.Y * player.RelativeUpDirection + eyePosition.Z * player.LookDirection;
             TGCVector3 camaraPosition = player.Position + transformedRelativeEyePosition;
 
             SetCamera(camaraPosition, camaraPosition + player.LookDirection);
@@ -39,6 +32,7 @@ namespace TGC.Group.Model.Utils
             // ROTO EL LOOKDIRECTION DEL PLAYER
             if (GameInstance.MouseEnabled) // Si se tiene el mouse activado, no rotar la cámara
                 return;
+
             UpdatePlayerLookDirection();
         }
 

@@ -173,7 +173,7 @@ namespace TGC.Group.Model
             if (!IsInTheWater && movementDirection.Y > 0 && !godMode)
                 movementDirection.Y = 0;
 
-            if((CollidingWithFloor))
+            if(CollidingWithFloor)
             {
                 movementDirection.Y = 0;
                 Position = new TGCVector3(Position.X, GameInstance.FloorLevelToWorldHeight(0), Position.Z);
@@ -185,8 +185,6 @@ namespace TGC.Group.Model
 
             TGCMatrix translationMatrix = TGCMatrix.Translation(Position);
             nextTransform *= translationMatrix;
-
-            
         }
 
         private void FixRotation()

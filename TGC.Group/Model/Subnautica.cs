@@ -34,6 +34,7 @@ namespace TGC.Group.Model
         #region SOUNDS
         private List<TgcStaticSound> sounds = new List<TgcStaticSound>();
 
+        public TgcStaticSound AmbientMusic { get; private set; } = new TgcStaticSound();
         public TgcStaticSound OnHitPlayerSound { get; private set; } = new TgcStaticSound();
         public TgcStaticSound OutOfOxygenSound { get; private set; } = new TgcStaticSound();
         public List<TgcStaticSound> OnHitNpcSounds { get; private set; } = new List<TgcStaticSound>();
@@ -156,6 +157,8 @@ namespace TGC.Group.Model
             InPrincipalMenu = true;
             FocusInGame = false;
             MouseEnable();
+
+            AmbientMusic.play(true);
         }
 
         public override void Update()
@@ -573,6 +576,10 @@ namespace TGC.Group.Model
         private void InitSounds()
         {
             sounds.Clear();
+
+            AmbientMusic.loadSound(MediaDir + "//Sounds//InterstellarSoundtrack.wav", DirectSound.DsDevice);
+            sounds.Add(AmbientMusic);
+
             OnHitPlayerSound.loadSound(MediaDir + "//Sounds//GolpeAPlayer.wav", DirectSound.DsDevice);
             sounds.Add(OnHitPlayerSound);
 
