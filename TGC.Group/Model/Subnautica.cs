@@ -81,6 +81,9 @@ namespace TGC.Group.Model
         private ParticleEmitter bubbleParticleEmitter;
         private float timeSinceLastBubblesReposition = 0f;
         private float bubblesRepositionCooldown = 2f;
+        public bool RenderBB { get; private set; } = false;
+        private float renderBBCooldown = 0.5f;
+        private float timeSinceLastChangeInRenderBB = 0f;
 
         public bool MouseEnabled { get; private set; } = false;
         public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
@@ -179,6 +182,7 @@ namespace TGC.Group.Model
                 UpdateInstantiatedObjects();
                 spawnManager.Update();
 
+                UpdateBoundingBoxRendering();
 
                 // Actualizo el frustum para que solo tome hasta la fog distance asi no manda a renderizar items del quadtree que estén por detras
                 var projectionMatrixFog = TGCMatrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView, D3DDevice.Instance.AspectRatio, D3DDevice.Instance.ZNearPlaneDistance, FastMath.Abs(fog.EndDistance));
@@ -198,8 +202,6 @@ namespace TGC.Group.Model
 
                 // Muevo el centro del skybox para que sea inalcanzable
                 skyBox.Center = new TGCVector3(Camera.Position.X, 0, Camera.Position.Z);
-
-
             }
 
             UpdateHUD();
@@ -701,6 +703,17 @@ namespace TGC.Group.Model
             bubbleParticleEmitter.CreationFrecuency = 0.5f;
             bubbleParticleEmitter.Dispersion = 10;
             bubbleParticleEmitter.Speed = TGCVector3.One * 5;
+        }
+
+        private void UpdateBoundingBoxRendering()
+        {
+            timeSinceLastChangeInRenderBB += ElapsedTime;
+
+            if (Input.keyDown(Key.B) && timeSinceLastChangeInRenderBB >= renderBBCooldown)
+            {
+                RenderBB = !RenderBB;
+                timeSinceLastChangeInRenderBB = 0f;
+            }
         }
         #endregion
 

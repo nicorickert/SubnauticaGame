@@ -78,7 +78,11 @@ namespace TGC.Group.Model
                 mesh.Effect.SetValue("kd", MaterialInfo.Kd);
                 mesh.Effect.SetValue("ks", MaterialInfo.Ks);
                 mesh.Render();
-                //mesh.BoundingBox.Render(); // Borrar para no mostrar los bounding box
+                
+                if (GameInstance.RenderBB) // Para debug
+                {
+                    mesh.BoundingBox.Render();
+                }
             }
         }
 
