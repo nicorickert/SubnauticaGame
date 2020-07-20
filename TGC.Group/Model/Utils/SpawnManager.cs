@@ -14,7 +14,7 @@ namespace TGC.Group.Model.Utils
         private List<TgcMesh> sharkMeshes;
         private List<TgcMesh> fishMeshes;
 
-        private readonly int initialFishNumber = 300;
+        private readonly int initialFishNumber = 200;
         private int totalFishCounter = 0;
 
         private readonly float fishSpawnCooldown = 100f;
@@ -43,7 +43,13 @@ namespace TGC.Group.Model.Utils
             timeSinceLastSharkSpawn += gameInstance.ElapsedTime;
 
             if (timeSinceLastFishSpawn >= fishSpawnCooldown)
-                SpawnFish();
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    SpawnFish();
+                }
+            }
+                
 
             if (timeSinceLastSharkSpawn >= sharkSpawnCooldown)
                 SpawnShark();

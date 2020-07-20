@@ -323,7 +323,8 @@ float4 psGogleView(PS_INPUT_GOGLEVIEW input) : COLOR0
     float4 mainSceneColor = tex2D(mainSceneSampler, input.Texcoord);
     float4 gogleViewColor = tex2D(gogleViewSampler, input.Texcoord);
 	
-    float4 finalColor = (gogleViewColor.a <= 0.005) ? mainSceneColor : gogleViewColor;
+    float3 glass = lerp(mainSceneColor.rgb, float3(0, 0, 0.2), 0.3);
+    float4 finalColor = (gogleViewColor.a <= 0.005) ? float4(glass, 1) : gogleViewColor;
     return finalColor;
 }
 
