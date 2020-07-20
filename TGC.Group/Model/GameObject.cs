@@ -133,11 +133,17 @@ namespace TGC.Group.Model
             Position = newPosition;
             Transform = newTransform;
 
-            if (CollisionDetected())
+            if (CollisionDetected() || OutOfBoundaries())
             {
                 Position = oldPosition;
                 Transform = oldTransform;
             }
+        }
+
+        protected bool OutOfBoundaries()
+        {
+            float radius = GameInstance.SueloDelMar.XZRadius;
+            return FastMath.Abs(Position.X) > radius || FastMath.Abs(Position.Z) > radius;
         }
 
         protected void SimulateAndSetTransformation(TGCVector3 newPosition, TGCVector3 newRotation, TGCVector3 newScale, TGCMatrix newTransform)
