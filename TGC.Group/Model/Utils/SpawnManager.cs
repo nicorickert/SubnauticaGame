@@ -67,9 +67,9 @@ namespace TGC.Group.Model.Utils
         {
             Random random = new Random();
             TGCVector3 spawnLocation = TGCVector3.Empty;
-            spawnLocation.X = MathExtended.GetRandomNumberBetween(-gameInstance.SueloDelMar.XZRadius, gameInstance.SueloDelMar.XZRadius);
-            spawnLocation.Y = MathExtended.GetRandomNumberBetween(-gameInstance.SueloDelMar.XZRadius, gameInstance.SueloDelMar.XZRadius);
-            spawnLocation.Z = MathExtended.GetRandomNumberBetween(-gameInstance.SueloDelMar.XZRadius, gameInstance.SueloDelMar.XZRadius);
+            spawnLocation.X = MathExtended.GetRandomNumberBetween(-gameInstance.BoundariesRadius, gameInstance.BoundariesRadius);
+            spawnLocation.Y = MathExtended.GetRandomNumberBetween(-gameInstance.BoundariesRadius, gameInstance.BoundariesRadius);
+            spawnLocation.Z = MathExtended.GetRandomNumberBetween(-gameInstance.BoundariesRadius, gameInstance.BoundariesRadius);
 
             return spawnLocation;
         }

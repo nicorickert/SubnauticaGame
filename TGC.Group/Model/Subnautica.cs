@@ -85,6 +85,7 @@ namespace TGC.Group.Model
         private float renderBBCooldown = 0.5f;
         private float timeSinceLastChangeInRenderBB = 0f;
 
+        public int BoundariesRadius => (int)FastMath.Floor(SueloDelMar.XZRadius - fogRadius() * 1.15f);
         public bool MouseEnabled { get; private set; } = false;
         public bool FocusInGame { get; private set; } = true; // Variable para saber si estoy jugando o en menu
         public TGCVector3 LightPosition { get; private set; }
