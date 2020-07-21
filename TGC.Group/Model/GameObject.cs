@@ -142,7 +142,7 @@ namespace TGC.Group.Model
 
         protected bool OutOfBoundaries()
         {
-            float radius = GameInstance.SueloDelMar.XZRadius - GameInstance.fogRadius() * 1.1f;
+            float radius = GameInstance.SueloDelMar.XZRadius - GameInstance.fogRadius() * 1.15f;
             return FastMath.Abs(Position.X) > radius || FastMath.Abs(Position.Z) > radius;
         }
 
