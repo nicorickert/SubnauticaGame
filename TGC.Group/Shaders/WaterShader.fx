@@ -115,8 +115,7 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 //Pixel Shader
 float4 psDefault(VS_OUTPUT input) : COLOR0
 {
-	
-	float textureScale = 500;
+    float textureScale = 500;
     float4 texelColor = tex2D(textureSampler, textureScale * input.Texcoord);
 	
     float3 ambientColor = float3(1, 1, 1);

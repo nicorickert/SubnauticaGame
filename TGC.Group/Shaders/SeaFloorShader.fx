@@ -104,7 +104,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
     float distPlanes = zFar - zNear;
     float distPosToNear = zPos - zNear;
 	
-    float proportion = clamp(distPosToNear / distPlanes, 0, 1);	// clamp = minimo 0 maximo 1 o sino la division
+    float proportion = saturate(distPosToNear / distPlanes);	// clamp = minimo 0 maximo 1 o sino la division
 	
     textureColor = lerp(textureColor, ColorFog, proportion);
 	

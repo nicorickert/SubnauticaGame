@@ -114,7 +114,6 @@ namespace TGC.Group.Model
 
         #endregion
 
-
         public Subnautica(string mediaDir, string shadersDir) : base(mediaDir, shadersDir)
         {
             Category = Game.Default.Category;
@@ -725,6 +724,11 @@ namespace TGC.Group.Model
             //effect.SetValue("CameraPos", TGCVector3.TGCVector3ToFloat4Array(Camera.Position));
             effect.SetValue("StartFogDistance", fog.StartDistance);
             effect.SetValue("EndFogDistance", fog.EndDistance);
+        }
+
+        public float fogRadius()
+        {
+            return fog.EndDistance;
         }
 
         public bool startGame()

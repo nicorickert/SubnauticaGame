@@ -20,8 +20,10 @@ namespace TGC.Group.Model
         private readonly float chasingSpeed = 400f;
         private readonly int attackDamage = 40;
         private readonly float attackRange = 600f;
+        private float checkChaseCooldown = 2f;
+        private float timeSinceLastCheckChase = 0f;
 
-        private bool IsChasing { get { return NearObjects().Contains(GameInstance.Player) && !GameInstance.Player.IsOutOfTheWater && !GameInstance.Player.IsInSafeZone; } }
+        private bool IsChasing = false;
 
         public Shark(Subnautica gameInstace, string name, List<TgcMesh> meshes, TGCVector3 spawnLocation)
             : base(gameInstace, name, meshes, 100, 200f)
@@ -42,6 +44,13 @@ namespace TGC.Group.Model
         public override void Update()
         {
             base.Update();
+
+            timeSinceLastCheckChase += GameInstance.ElapsedTime;
+            if (timeSinceLastCheckChase >= checkChaseCooldown)
+            {
+                IsChasing = CheckChase();
+                timeSinceLastCheckChase = 0;
+            }
 
             if (IsChasing)
             {
@@ -66,6 +75,10 @@ namespace TGC.Group.Model
         }
         #endregion
 
+        private bool CheckChase ()
+        {
+            return NearObjects().Contains(GameInstance.Player) && !GameInstance.Player.IsOutOfTheWater && !GameInstance.Player.IsInSafeZone;
+        }
 
         private void Chase()
         {

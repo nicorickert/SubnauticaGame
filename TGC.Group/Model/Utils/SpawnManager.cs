@@ -52,7 +52,9 @@ namespace TGC.Group.Model.Utils
                 
 
             if (timeSinceLastSharkSpawn >= sharkSpawnCooldown)
+            {
                 SpawnShark();
+            }
         }
 
         public void Dispose()
