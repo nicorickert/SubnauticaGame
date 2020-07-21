@@ -158,7 +158,7 @@ namespace TGC.Group.Model
             scale = newScale;
             Transform = newTransform;
 
-            if (CollisionDetected())
+            if (CollisionDetected() || OutOfBoundaries())
             {
                 Position = oldPosition;
                 rotation = oldRotation;
