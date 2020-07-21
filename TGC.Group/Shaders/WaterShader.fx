@@ -95,10 +95,10 @@ VS_OUTPUT vsDefault(VS_INPUT input)
 
     float3 position = input.Position.xyz;
     float y = position.y;
-    y += waveGenerator(position, derivadaX, derivadaZ, float2(1, -1), 1200, 2, 15, 500);
-    y += waveGenerator(position, derivadaX, derivadaZ, float2(3,5), 2000, 1.8, 15, 500);
-    y += waveGenerator(position, derivadaX, derivadaZ, float2(-5, 1.7), 800, 2.3, 15, 500);
-    y += waveGenerator(position, derivadaX, derivadaZ, float2(-1, -2), 700, 3, 15, 500);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(1, -1), 1300, 2, 15, 500);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(3,5), 2200, 1.8, 15, 500);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(-5, 1.7), 900, 2.3, 15, 500);
+    y += waveGenerator(position, derivadaX, derivadaZ, float2(-1, -2), 800, 3, 15, 500);
     
     input.Position.y = y;
     input.Normal = normalize(float3(-derivadaX, 1, -derivadaZ));

@@ -11,7 +11,7 @@ float4x4 matInverseTransposeWorld; //Matriz Transpose(Invert(World))
 
 float time = 0;
 
-float ka = 0.1;
+float ka = 1;
 float kd = 1000000;
 float ks = 0;
     
@@ -77,7 +77,7 @@ float4 psDefault(VS_OUTPUT input) : COLOR0
     float textureScale = 200;
     float4 texelColor = tex2D(textureSampler, textureScale * input.Texcoord);
     
-    float3 ambientColor = float3(0.4, 0.1, 0.5);
+    float3 ambientColor = texelColor;
     float3 diffuseColor = float3(1, 1, 1);
     //float3 specularColor = float3(1, 1, 1);
     //float shininess = 1;
