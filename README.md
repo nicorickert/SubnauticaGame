@@ -18,8 +18,9 @@ Proyecto plantilla para los trabajos prácticos de la asignatura electiva [Técn
 
 ## Integrantes
 
-Abdón, Juan Bautista | Rickert, Nicolas Hernán
-![fotointegrante1](https://github.com/CimimUxMaio/2020_1C_3051_QuarantineGames/blob/master/TGC.Group/Media/Documentacion/foto.jpg)
+|Abdón, Juan Bautista | Rickert, Nicolas Hernán|
+|---------------------|------------------------|
+<img src="https://github.com/CimimUxMaio/2020_1C_3051_QuarantineGames/blob/master/TGC.Group/Media/Documentacion/foto.jpg" width="200" height="200"/>   | <img src="https://github.com/CimimUxMaio/2020_1C_3051_QuarantineGames/blob/master/TGC.Group/Media/Documentacion/foto2.jpeg" width="200" height="200"/>
 
 ## ScreenShot
 
@@ -31,4 +32,4 @@ Abdón, Juan Bautista | Rickert, Nicolas Hernán
 
 ## Game Play
 
-[![Watch the video](https://img.youtube.com/vi/qESIu8ozanU/0.jpg)](https://www.youtube.com/playlist?list=PLRM4L32DjvnazuMl8wZlbpEYL5Qh63ulG)
+[![Watch the video](https://drive.google.com/drive/u/0/folders/1I7htSUqwF3Yl3goxU2boptNammLYvyB1)
