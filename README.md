@@ -18,17 +18,16 @@ Proyecto plantilla para los trabajos prácticos de la asignatura electiva [Técn
 
 ## Integrantes
 
-| TGC, Tgcito                                                                                                                             | Abdón, Juan Bautista                                                                                  |
-| --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| <img src="https://github.com/CimimUxMaio/2020_1C_3051_QuarantineGames/tree/master/TGC.Group/Media/Documentacion/foto,jpg" height="500"> | <img src="https://github.com/tgc-utn/tgc-utn.github.io/blob/master/images/trofeotp.png" height="500"> |
+Abdón, Juan Bautista | Rickert, Nicolas Hernán
+![fotointegrante1](https://github.com/CimimUxMaio/2020_1C_3051_QuarantineGames/blob/master/TGC.Group/Media/Documentacion/foto.jpg)
 
 ## ScreenShot
 
-![screenshot1](https://github.com/tgc-utn/tgc-group/blob/master/TGC.Group/Media/cajaMadera4.jpg)
-![screenshot2](https://github.com/tgc-utn/tgc-group/blob/master/TGC.Group/Media/cajaMadera4.jpg)
-![screenshot3](https://github.com/tgc-utn/tgc-group/blob/master/TGC.Group/Media/cajaMadera4.jpg)
-![screenshot4](https://github.com/tgc-utn/tgc-group/blob/master/TGC.Group/Media/cajaMadera4.jpg)
-![screenshot5](https://github.com/tgc-utn/tgc-group/blob/master/TGC.Group/Media/cajaMadera4.jpg)
+![screenshot1](https://github.com/CimimUxMaio/2020_1C_3051_QuarantineGames/blob/master/TGC.Group/Media/Documentacion/QuarantineGames%20-%20Subnautica%207_21_2020%2011_05_05%20PM.png)
+![screenshot2](https://github.com/CimimUxMaio/2020_1C_3051_QuarantineGames/blob/master/TGC.Group/Media/Documentacion/QuarantineGames%20-%20Subnautica%207_21_2020%2011_05_35%20PM.png)
+![screenshot3](https://github.com/CimimUxMaio/2020_1C_3051_QuarantineGames/blob/master/TGC.Group/Media/Documentacion/QuarantineGames%20-%20Subnautica%207_21_2020%2011_05_47%20PM.png)
+![screenshot4](https://github.com/CimimUxMaio/2020_1C_3051_QuarantineGames/blob/master/TGC.Group/Media/Documentacion/QuarantineGames%20-%20Subnautica%207_21_2020%2011_06_30%20PM.png)
+![screenshot5](https://github.com/CimimUxMaio/2020_1C_3051_QuarantineGames/blob/master/TGC.Group/Media/Documentacion/QuarantineGames%20-%20Subnautica%207_21_2020%2011_11_28%20PM.png)
 
 ## Game Play
 
