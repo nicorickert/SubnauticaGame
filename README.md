@@ -32,4 +32,4 @@ Proyecto plantilla para los trabajos prácticos de la asignatura electiva [Técn
 
 ## Game Play
 
-[![Watch the video](https://drive.google.com/drive/u/0/folders/1I7htSUqwF3Yl3goxU2boptNammLYvyB1)
+[Ver video](https://drive.google.com/file/d/1HowkseIGU7ZYe_Od-pJlgz33kUfY5i5c/view?usp=sharing)
